@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.lingola.lingola_app"
+    namespace = "com.flywork.lingolajobapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.lingola.lingola_app"
+        applicationId = "com.flywork.lingolajobapp"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

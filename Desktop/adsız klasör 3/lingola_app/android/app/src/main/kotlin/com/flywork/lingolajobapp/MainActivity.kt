@@ -1,4 +1,4 @@
-package com.lingola.lingola_app
+package com.flywork.lingolajobapp
 
 import io.flutter.embedding.android.FlutterActivity
 
