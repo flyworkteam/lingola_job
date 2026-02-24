@@ -1,0 +1,327 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:lingola_app/src/theme/typography.dart';
+
+/// Ortak ipucu (ampul) butonu — 3D gölge efektiyle. Kart içinde kullanılır.
+class WordCardHintButton extends StatelessWidget {
+  const WordCardHintButton({super.key, required this.onTap});
+
+  final VoidCallback onTap;
+
+  static const Color _layer1 = Color(0xFFD7D7D7);
+  static const Color _layer2 = Color(0xFFCFCFCF);
+  static const double _layerOffset = 4;
+  static const double _radius = 10;
+  static const double _btnSize = 44;
+
+  Widget _buildButtonLayer(Color color) {
+    return Container(
+      width: _btnSize,
+      height: _btnSize,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(_radius),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _btnSize,
+      height: _btnSize + _layerOffset * 2,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topLeft,
+        children: [
+          Positioned(left: 0, top: _layerOffset * 2, child: _buildButtonLayer(_layer2)),
+          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_layer1)),
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Container(
+              width: _btnSize,
+              height: _btnSize,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(_radius),
+                border: Border.all(color: Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(_radius),
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(_radius),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/icons/icon_hint.svg',
+                      width: 20,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.black87,
+                        BlendMode.srcIn,
+                      ),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ortak Save Word butonu — 3D gölge efektiyle.
+class WordCardSaveWordButton extends StatelessWidget {
+  const WordCardSaveWordButton({super.key, required this.onTap});
+
+  final VoidCallback onTap;
+
+  static const Color _mainColor = Color(0xFFEE6A5E);
+  static const Color _layer1 = Color(0xFFE06055);
+  static const Color _layer2 = Color(0xFFD3544B);
+  static const double _layerOffset = 4;
+  static const double _radius = 10;
+  static const double _btnWidth = 139;
+  static const double _btnHeight = 44;
+
+  Widget _buildButtonLayer(Color color) {
+    return Container(
+      width: _btnWidth,
+      height: _btnHeight,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(_radius),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _btnWidth,
+      height: _btnHeight + _layerOffset * 2,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topLeft,
+        children: [
+          Positioned(left: 0, top: _layerOffset * 2, child: _buildButtonLayer(_layer2)),
+          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_layer1)),
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Material(
+              color: _mainColor,
+              borderRadius: BorderRadius.circular(_radius),
+              elevation: 2,
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(_radius),
+                child: SizedBox(
+                  width: _btnWidth,
+                  height: _btnHeight,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/icon_heart_save.svg',
+                            width: 20,
+                            height: 18,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Save Word',
+                            style: AppTypography.labelLarge.copyWith(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ortak Listen butonu — 3D gölge efektiyle.
+class WordCardListenButton extends StatelessWidget {
+  const WordCardListenButton({super.key, required this.onTap});
+
+  final VoidCallback onTap;
+
+  static const Color _layer1 = Color(0xFFD7D7D7);
+  static const Color _layer2 = Color(0xFFCFCFCF);
+  static const double _layerOffset = 4;
+  static const double _radius = 10;
+  static const double _btnWidth = 139;
+  static const double _btnHeight = 44;
+
+  Widget _buildButtonLayer(Color color) {
+    return Container(
+      width: _btnWidth,
+      height: _btnHeight,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(_radius),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _btnWidth,
+      height: _btnHeight + _layerOffset * 2,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topLeft,
+        children: [
+          Positioned(left: 0, top: _layerOffset * 2, child: _buildButtonLayer(_layer2)),
+          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_layer1)),
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Container(
+              width: _btnWidth,
+              height: _btnHeight,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(_radius),
+                border: Border.all(color: Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(_radius),
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(_radius),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.volume_up, color: Color(0xFF0575E6), size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Listen',
+                          style: AppTypography.labelLarge.copyWith(
+                            color: const Color(0xFF0575E6),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ortak Back / Next butonu — Saved Word sayfasındaki gibi 155x46, radius 50.
+/// Ok ikonu: icon_arrow_right.svg — Back: siyah, Next: beyaz.
+class BackNextButton extends StatelessWidget {
+  const BackNextButton({
+    super.key,
+    required this.label,
+    required this.isPrimary,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isPrimary;
+  final VoidCallback onTap;
+
+  static const Color _blue = Color(0xFF0575E6);
+  static const double _width = 155;
+  static const double _height = 46;
+  static const double _radius = 50;
+
+  static const Color _backBg = Color(0xFFD9D9D9);
+
+  @override
+  Widget build(BuildContext context) {
+    final isBack = label == 'Back';
+    final arrowColor = isBack ? Colors.black : Colors.white;
+    final textColor = isBack ? Colors.black : Colors.white;
+    final bgColor = isBack ? _backBg : _blue;
+
+    final arrowWidget = SvgPicture.asset(
+      'assets/icons/icon_arrow_back_next.svg',
+      width: 20,
+      height: 17,
+      colorFilter: ColorFilter.mode(arrowColor, BlendMode.srcIn),
+      fit: BoxFit.contain,
+    );
+
+    return Material(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(_radius),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(_radius),
+        child: SizedBox(
+          width: _width,
+          height: _height,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isBack) ...[
+                arrowWidget,
+                const SizedBox(width: 10),
+              ],
+              Text(
+                label,
+                style: AppTypography.labelLarge.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                ),
+              ),
+              if (label == 'Next') ...[
+                const SizedBox(width: 10),
+                Transform.scale(scaleX: -1, child: arrowWidget),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
