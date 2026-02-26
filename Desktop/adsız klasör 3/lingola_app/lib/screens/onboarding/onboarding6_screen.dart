@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lingola_app/screens/onboarding/onboarding5_screen.dart';
 import 'package:lingola_app/src/navigation/route_transitions.dart';
 import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/widgets/onboarding_bottom_bar.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
@@ -29,18 +28,13 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: SafeArea(
-        top: true,
-        bottom: true,
-        left: false,
-        right: false,
-        child: Column(
+      body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
                   AppSpacing.xl,
-                  AppSpacing.xl,
+                  AppSpacing.xl + MediaQuery.paddingOf(context).top,
                   AppSpacing.xl,
                   AppSpacing.lg,
                 ),
@@ -76,32 +70,79 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
                                 setState(() => _selectedGoal = goal.id),
                           ),
                         )),
-                    SizedBox(height: AppSpacing.xxl),
                   ],
                 ),
               ),
             ),
-            OnboardingBottomBar(
-              onBack: () => pushReplacementWithBackAnimation(
-                context,
-                const Onboarding5Screen(),
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.lg,
+                AppSpacing.xl,
+                AppSpacing.xl,
               ),
-              onNext: () {
-                if (_selectedGoal == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please select your daily goal'),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => pushReplacementWithBackAnimation(
+                        context,
+                        const Onboarding5Screen(),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                        foregroundColor: AppColors.onSurface,
+                        side: BorderSide(color: AppColors.surfaceVariant),
+                        padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Text(
+                        'Back',
+                        style: AppTypography.labelLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
-                  );
-                  return;
-                }
-                Navigator.of(context).pushReplacementNamed('/onboarding7');
-              },
-              nextEnabled: _selectedGoal != null,
+                  ),
+                  SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Opacity(
+                      opacity: _selectedGoal != null ? 1.0 : 0.5,
+                      child: IgnorePointer(
+                        ignoring: _selectedGoal == null,
+                        child: Material(
+                          color: AppColors.primaryBrand,
+                          borderRadius: BorderRadius.circular(50),
+                          child: InkWell(
+                            onTap: _selectedGoal != null
+                                ? () => Navigator.of(context).pushReplacementNamed('/onboarding7')
+                                : null,
+                            borderRadius: BorderRadius.circular(50),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Next',
+                                style: AppTypography.labelLarge.copyWith(
+                                  color: AppColors.onPrimary,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-      ),
     );
   }
 

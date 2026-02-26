@@ -31,7 +31,7 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
       word: 'Friend',
       phonetic: '/frend/',
       translations: 'Arkadaş, Dost, Yoldaş',
-      exampleEn: 'A good friend is hard to find.',
+      exampleEn: '"A good friend is hard to find."',
       exampleTr: 'İyi bir arkadaş bulmak zordur.',
     ),
     SavedWordItem(
@@ -97,43 +97,47 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
       appBar: _buildAppBar(context),
       body: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, 120),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: WordCard3D(
-                  onSwipeLeft: _goPrev,
-                  onSwipeRight: _goNext,
-                  childKey: ValueKey<int>(_currentIndex),
-                  lastSwipeDirection: _lastSwipeDirection,
-                  child: WordCardBody(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, 120),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  WordCard3D(
+                    onSwipeLeft: _goPrev,
+                    onSwipeRight: _goNext,
+                    childKey: ValueKey<int>(_currentIndex),
+                    lastSwipeDirection: _lastSwipeDirection,
+                    child: WordCardBody(
                     data: WordCardData.fromSavedWordItem(currentCard),
                     showSaveWord: false,
+                    savedWordStyle: true,
                     onListen: () {},
                     onHint: () {},
                   ),
-                ),
-              ),
-              const SizedBox(height: 72),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  BackNextButton(
-                    label: 'Back',
-                    isPrimary: false,
-                    onTap: _goPrev,
                   ),
-                  const SizedBox(width: 32),
-                  BackNextButton(
-                    label: 'Next',
-                    isPrimary: true,
-                    onTap: _goNext,
+                  const SizedBox(height: 96),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      BackNextButton(
+                        label: 'Back',
+                        isPrimary: false,
+                        onTap: _goPrev,
+                      ),
+                      const SizedBox(width: 32),
+                      BackNextButton(
+                        label: 'Next',
+                        isPrimary: true,
+                        onTap: _goNext,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

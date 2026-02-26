@@ -4,6 +4,7 @@ import 'package:lingola_app/screens/splash/splash_screen.dart';
 import 'package:lingola_app/screens/splash/splash1_screen.dart';
 import 'package:lingola_app/screens/splash/splash2_screen.dart';
 import 'package:lingola_app/screens/splash/splash3_screen.dart';
+import 'package:lingola_app/screens/splash/splash_intro_screen.dart';
 import 'package:lingola_app/screens/onboarding/onboarding_screen.dart';
 import 'package:lingola_app/screens/onboarding/onboarding2_screen.dart';
 import 'package:lingola_app/screens/onboarding/onboarding3_screen.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/splash',
       routes: <String, WidgetBuilder>{
         '/splash': (_) => const SplashScreen(),
+        '/splash_intro': (_) => const SplashIntroScreen(),
         '/splash1': (_) => const Splash1Screen(),
         '/splash2': (_) => const Splash2Screen(),
         '/splash3': (_) => const Splash3Screen(),
@@ -55,10 +57,7 @@ class MyApp extends StatelessWidget {
           return NotificationsScreen(isPremium: args?['isPremium'] as bool? ?? false);
         },
         '/profile_settings': (context) {
-          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-          return ProfileSettingsScreen(
-            initialName: args?['name'] as String? ?? 'Jhon Doe',
-          );
+          return const ProfileSettingsScreen(initialName: '');
         },
         '/faq': (_) => const FaqScreen(),
         '/most_frequently_used_terms': (_) => const MostFrequentlyUsedTermsScreen(),

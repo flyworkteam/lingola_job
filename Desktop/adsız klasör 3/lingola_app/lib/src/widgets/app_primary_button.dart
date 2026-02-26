@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 
@@ -19,18 +18,20 @@ class AppPrimaryButton extends StatelessWidget {
   /// true ise genişlik double.infinity (varsayılan).
   final bool expand;
 
+  static const double _buttonRadius = 50;
+
   @override
   Widget build(BuildContext context) {
     final child = Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: AppRadius.large,
+        borderRadius: BorderRadius.circular(_buttonRadius),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
           decoration: BoxDecoration(
             color: AppColors.primaryBrand,
-            borderRadius: AppRadius.large,
+            borderRadius: BorderRadius.circular(_buttonRadius),
           ),
           child: Center(
             child: AppLabel(

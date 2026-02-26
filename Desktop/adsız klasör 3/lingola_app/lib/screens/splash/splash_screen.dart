@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _navigateToHome() async {
     await Future<void>.delayed(const Duration(seconds: 4));
     if (!mounted) return;
-    Navigator.of(context).pushReplacementNamed('/splash1');
+    Navigator.of(context).pushReplacementNamed('/splash_intro');
   }
 
   @override
@@ -43,25 +43,30 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
         child: SafeArea(
           child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/splash/Layer_1.png',
-                  fit: BoxFit.contain,
-                ),
-                Transform.translate(
-                  offset: const Offset(0, -28),
-                  child: AppTitle(
-                    'Lingola Job',
-                    style: AppTypography.splashBrandTitle.copyWith(
-                      color: AppColors.white,
-                      height: 1.0,
+            child: Transform.translate(
+              offset: const Offset(0, -28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/splash/Layer_1.png',
+                    width: 350,
+                    height: 350,
+                    fit: BoxFit.contain,
+                  ),
+                  Transform.translate(
+                    offset: const Offset(0, -40),
+                    child: AppTitle(
+                      'Lingola Job',
+                      style: AppTypography.splashBrandTitle.copyWith(
+                        color: AppColors.white,
+                        height: 1.0,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

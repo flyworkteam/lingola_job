@@ -43,25 +43,28 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
         child: SafeArea(
           child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/splash/Layer_1.png',
-                  fit: BoxFit.contain,
-                ),
-                Transform.translate(
-                  offset: const Offset(0, -28),
-                  child: AppTitle(
+            child: Transform.translate(
+              offset: const Offset(0, 100),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/splash/Layer_1.png',
+                    width: 180,
+                    height: 180,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  AppTitle(
                     'Lingola Job',
                     style: AppTypography.splashBrandTitle.copyWith(
                       color: Colors.white,
                       height: 1.0,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

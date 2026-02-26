@@ -32,7 +32,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
       word: 'Friend',
       phonetic: '/frend/',
       translations: 'Arkadaş, Dost, Yoldaş',
-      exampleEn: 'A good friend is hard to find.',
+      exampleEn: '“A good friend is hard to find.”',
       exampleTr: 'İyi bir arkadaş bulmak zordur.',
     ),
     WordCardData(

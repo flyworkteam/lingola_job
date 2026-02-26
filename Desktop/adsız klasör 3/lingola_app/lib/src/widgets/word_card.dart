@@ -175,6 +175,7 @@ class WordCardBody extends StatelessWidget {
     required this.data,
     this.showHint = true,
     this.showSaveWord = true,
+    this.savedWordStyle = false,
     this.onHint,
     this.onSaveWord,
     this.onListen,
@@ -183,6 +184,8 @@ class WordCardBody extends StatelessWidget {
   final WordCardData data;
   final bool showHint;
   final bool showSaveWord;
+  /// Saved Word sayfası tipografi: word Quicksand 700/40, phonetic Nunito Sans 400, çeviri Quicksand 600.
+  final bool savedWordStyle;
   final VoidCallback? onHint;
   final VoidCallback? onSaveWord;
   final VoidCallback? onListen;
@@ -203,34 +206,55 @@ class WordCardBody extends StatelessWidget {
           Text(
             data.word,
             textAlign: TextAlign.center,
-            style: AppTypography.titleLarge.copyWith(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-            ),
+            style: savedWordStyle
+                ? AppTypography.titleLarge.copyWith(
+                    fontFamily: 'Quicksand',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 40,
+                    color: Colors.white,
+                  )
+                : AppTypography.titleLarge.copyWith(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                  ),
           ),
           const SizedBox(height: 4),
           Text(
             data.phonetic,
             textAlign: TextAlign.center,
-            style: AppTypography.bodySmall.copyWith(
-              color: const Color(0xFFFFFFFF),
-              fontSize: 14,
-            ),
+            style: savedWordStyle
+                ? AppTypography.bodySmall.copyWith(
+                    fontFamily: 'Nunito Sans',
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFFFFFFFF),
+                    fontSize: 14,
+                  )
+                : AppTypography.bodySmall.copyWith(
+                    color: const Color(0xFFFFFFFF),
+                    fontSize: 14,
+                  ),
           ),
           const SizedBox(height: 8),
           Text(
             data.translations,
             textAlign: TextAlign.center,
-            style: AppTypography.body.copyWith(
-              color: Colors.white,
-              fontSize: 16,
-            ),
+            style: savedWordStyle
+                ? AppTypography.body.copyWith(
+                    fontFamily: 'Quicksand',
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    fontSize: 16,
+                  )
+                : AppTypography.body.copyWith(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
           ),
           const SizedBox(height: 12),
           const Center(
             child: Text(
-              '"',
+              '\u201C',
               style: TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontSize: 48,
@@ -244,6 +268,8 @@ class WordCardBody extends StatelessWidget {
             data.exampleEn,
             textAlign: TextAlign.center,
             style: AppTypography.body.copyWith(
+              fontFamily: 'Quicksand',
+              fontWeight: FontWeight.w600,
               color: Colors.white,
               fontSize: 15,
             ),
@@ -253,6 +279,8 @@ class WordCardBody extends StatelessWidget {
             data.exampleTr,
             textAlign: TextAlign.center,
             style: AppTypography.body.copyWith(
+              fontFamily: 'Quicksand',
+              fontWeight: FontWeight.w400,
               color: const Color(0xFFFFFFFF),
               fontSize: 14,
             ),
@@ -290,11 +318,12 @@ class WordCardReadingTestBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 60, 20, 28),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Friend + phonetic — üstten sabit
           Text(
             word,
             textAlign: TextAlign.center,
@@ -313,7 +342,8 @@ class WordCardReadingTestBody extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 45),
+          // Bayrak + çizgiler — sadece yukarıdaki boşluk değişince hareket eder
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -341,11 +371,14 @@ class WordCardReadingTestBody extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 40),
+          // Çeviri — sadece yukarıdaki boşluk değişince hareket eder
           Text(
             translation,
             textAlign: TextAlign.center,
             style: AppTypography.body.copyWith(
+              fontFamily: 'Quicksand',
+              fontWeight: FontWeight.w600,
               color: const Color(0xFFFFFFFF),
               fontSize: 16,
             ),

@@ -4,8 +4,6 @@ import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
-import 'package:lingola_app/src/widgets/app_bottom_nav_bar.dart';
-
 /// Tek bildirim öğesi (liste silindiğinde state'ten kaldırılır).
 class _NotificationItem {
   const _NotificationItem({
@@ -36,13 +34,6 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  static const List<AppNavItem> _navItems = [
-    AppNavItem(iconAsset: 'assets/icons/nav_home.svg', label: 'Home'),
-    AppNavItem(iconAsset: 'assets/icons/nav_learn.svg', label: 'Learn'),
-    AppNavItem(iconAsset: 'assets/icons/nav_library.svg', label: 'Library'),
-    AppNavItem(iconAsset: 'assets/icons/nav_profil.svg', label: 'Profile'),
-  ];
-
   late List<_NotificationItem> _notifications;
 
   @override
@@ -204,18 +195,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ),
               ),
             ],
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AppBottomNavBar(
-              items: _navItems,
-              currentIndex: 0,
-              onTap: (index) {
-                Navigator.of(context).pop();
-              },
-            ),
           ),
         ],
       ),

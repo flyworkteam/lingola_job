@@ -75,7 +75,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
         child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 24),
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -102,16 +102,35 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Soru metni
-                        Text(
-                          'My father _______',
-                          textAlign: TextAlign.center,
-                          style: AppTypography.titleLarge.copyWith(
-                            fontFamily: 'Quicksand',
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.onSurface,
-                          ),
+                        // Soru metni (My father + kesikli çizgi)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              'My father ',
+                              style: AppTypography.titleLarge.copyWith(
+                                fontFamily: 'Quicksand',
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.onSurface,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 100,
+                              height: 28,
+                              child: CustomPaint(
+                                painter: _DashedLinePainter(
+                                  color: AppColors.onSurface,
+                                  strokeWidth: 2,
+                                  dashWidth: 8,
+                                  gapWidth: 4,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -187,7 +206,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 96),
                 // Back | Next butonları
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -214,3 +233,35 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
   }
 }
 
+/// Yatay kesikli çizgi çizer (soru kartındaki boşluk için).
+class _DashedLinePainter extends CustomPainter {
+  _DashedLinePainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.dashWidth,
+    required this.gapWidth,
+  });
+
+  final Color color;
+  final double strokeWidth;
+  final double dashWidth;
+  final double gapWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+    final y = size.height -1;
+    double x = 0;
+    while (x < size.width) {
+      final endX = (x + dashWidth).clamp(0.0, size.width);
+      canvas.drawLine(Offset(x, y), Offset(endX, y), paint);
+      x += dashWidth + gapWidth;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}

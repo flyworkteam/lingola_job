@@ -18,6 +18,7 @@ class Splash1Screen extends StatelessWidget {
         children: [
           Column(
             children: [
+              const SizedBox(height: 0),
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.lg),
                 child: SizedBox(

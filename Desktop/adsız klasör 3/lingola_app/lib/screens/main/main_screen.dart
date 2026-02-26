@@ -6,6 +6,7 @@ import 'package:lingola_app/screens/profile/profile_screen.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/app_bottom_nav_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Ana kabuk: ortak alt navigasyon bar + seçilen sekme.
 class MainScreen extends StatefulWidget {
@@ -37,10 +38,21 @@ class _MainScreenState extends State<MainScreen> {
     AppNavItem(iconAsset: 'assets/icons/nav_profil.svg', label: 'Profile'),
   ];
 
+  static const String _keyProfileName = 'profile_name';
+
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    _loadSavedProfileName();
+  }
+
+  Future<void> _loadSavedProfileName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedName = prefs.getString(_keyProfileName);
+    if (savedName != null && savedName.isNotEmpty && mounted) {
+      setState(() => _userName = savedName);
+    }
   }
 
   @override

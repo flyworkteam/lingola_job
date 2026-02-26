@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/word_card.dart';
 import 'package:lingola_app/src/widgets/word_card_buttons.dart';
@@ -47,47 +46,48 @@ class ReadingTestScreen extends StatelessWidget {
       ),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, 120),
-          child: Center(
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-              WordCard3D(
-                height: 300,
-                child: WordCardReadingTestBody(
-                  word: 'Friend',
-                  phonetic: '/frend/',
-                  translation: 'Arkadaş, Dost, Yoldaş',
+                WordCard3D(
+                  height: 300,
+                  child: WordCardReadingTestBody(
+                    word: 'Friend',
+                    phonetic: '/frend/',
+                    translation: 'Arkadaş, Dost, Yoldaş',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  WordCardHintButton(onTap: () {}),
-                  const SizedBox(width: 12),
-                  _MicButton(onTap: () {}),
-                ],
-              ),
-              const SizedBox(height: 48),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  BackNextButton(
-                    label: 'Back',
-                    isPrimary: false,
-                    onTap: () => Navigator.of(context).pop(),
-                  ),
-                  const SizedBox(width: 32),
-                  BackNextButton(
-                    label: 'Next',
-                    isPrimary: true,
-                    onTap: () {},
-                  ),
-                ],
-              ),
-            ],
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    WordCardHintButton(onTap: () {}),
+                    const SizedBox(width: 12),
+                    _MicButton(onTap: () {}),
+                  ],
+                ),
+                const SizedBox(height: 150),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BackNextButton(
+                      label: 'Back',
+                      isPrimary: false,
+                      onTap: () => Navigator.of(context).pop(),
+                    ),
+                    const SizedBox(width: 32),
+                    BackNextButton(
+                      label: 'Next',
+                      isPrimary: true,
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -97,30 +97,67 @@ class ReadingTestScreen extends StatelessWidget {
 
 }
 
+/// Reading Test mikrofon butonu — 2 katmanlı gölge efekti (Save Word / Listen ile aynı stil).
 class _MicButton extends StatelessWidget {
   const _MicButton({required this.onTap});
 
   final VoidCallback onTap;
 
+  static const Color _mainColor = Color(0xFF0575E6);
+  static const Color _shadowLayer = Color(0xFF004182);
+  static const double _layerOffset = 4;
+  static const double _radius = 16;
+  static const double _btnWidth = 60;
+  static const double _btnHeight = 44;
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xFF0575E6),
-      borderRadius: BorderRadius.circular(16),
-      elevation: 0,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: SvgPicture.asset(
-            'assets/icons/icon_mic.svg',
-            width: 24,
-            height: 28,
-            colorFilter: const ColorFilter.mode(Color(0xFFFFFFFF), BlendMode.srcIn),
-            fit: BoxFit.contain,
+    return SizedBox(
+      width: _btnWidth,
+      height: _btnHeight + _layerOffset,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topLeft,
+        children: [
+          Positioned(
+            left: 0,
+            top: _layerOffset,
+            child: Container(
+              width: _btnWidth,
+              height: _btnHeight,
+              decoration: BoxDecoration(
+                color: _shadowLayer,
+                borderRadius: BorderRadius.circular(_radius),
+              ),
+            ),
           ),
-        ),
+          Positioned(
+            left: 0,
+            top: 0,
+            child: Material(
+              color: _mainColor,
+              borderRadius: BorderRadius.circular(_radius),
+              elevation: 0,
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(_radius),
+                child: SizedBox(
+                  width: _btnWidth,
+                  height: _btnHeight,
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/icons/icon_mic.svg',
+                      width: 24,
+                      height: 28,
+                      colorFilter: const ColorFilter.mode(Color(0xFFFFFFFF), BlendMode.srcIn),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

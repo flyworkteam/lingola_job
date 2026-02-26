@@ -3,22 +3,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:lingola_app/src/theme/typography.dart';
 
-/// Ortak ipucu (ampul) butonu — 3D gölge efektiyle. Kart içinde kullanılır.
+/// Ortak ipucu (ampul) butonu — 2 katmanlı gölge efektiyle. Kart içinde kullanılır.
 class WordCardHintButton extends StatelessWidget {
   const WordCardHintButton({super.key, required this.onTap});
 
   final VoidCallback onTap;
 
-  static const Color _layer1 = Color(0xFFD7D7D7);
-  static const Color _layer2 = Color(0xFFCFCFCF);
+  static const Color _shadowLayer = Color(0xFFA8A8A8);
   static const double _layerOffset = 4;
   static const double _radius = 10;
-  static const double _btnSize = 44;
+  static const double _btnWidth = 60;
+  static const double _btnHeight = 44;
 
   Widget _buildButtonLayer(Color color) {
     return Container(
-      width: _btnSize,
-      height: _btnSize,
+      width: _btnWidth,
+      height: _btnHeight,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(_radius),
@@ -29,20 +29,19 @@ class WordCardHintButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: _btnSize,
-      height: _btnSize + _layerOffset * 2,
+      width: _btnWidth,
+      height: _btnHeight + _layerOffset,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topLeft,
         children: [
-          Positioned(left: 0, top: _layerOffset * 2, child: _buildButtonLayer(_layer2)),
-          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_layer1)),
+          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_shadowLayer)),
           Positioned(
             left: 0,
             top: 0,
             child: Container(
-              width: _btnSize,
-              height: _btnSize,
+              width: _btnWidth,
+              height: _btnHeight,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(_radius),
@@ -83,15 +82,14 @@ class WordCardHintButton extends StatelessWidget {
   }
 }
 
-/// Ortak Save Word butonu — 3D gölge efektiyle.
+/// Ortak Save Word butonu — 2 katmanlı gölge efektiyle.
 class WordCardSaveWordButton extends StatelessWidget {
   const WordCardSaveWordButton({super.key, required this.onTap});
 
   final VoidCallback onTap;
 
   static const Color _mainColor = Color(0xFFEE6A5E);
-  static const Color _layer1 = Color(0xFFE06055);
-  static const Color _layer2 = Color(0xFFD3544B);
+  static const Color _shadowLayer = Color(0xFFD3544B);
   static const double _layerOffset = 4;
   static const double _radius = 10;
   static const double _btnWidth = 139;
@@ -112,13 +110,12 @@ class WordCardSaveWordButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: _btnWidth,
-      height: _btnHeight + _layerOffset * 2,
+      height: _btnHeight + _layerOffset,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topLeft,
         children: [
-          Positioned(left: 0, top: _layerOffset * 2, child: _buildButtonLayer(_layer2)),
-          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_layer1)),
+          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_shadowLayer)),
           Positioned(
             left: 0,
             top: 0,
@@ -167,14 +164,13 @@ class WordCardSaveWordButton extends StatelessWidget {
   }
 }
 
-/// Ortak Listen butonu — 3D gölge efektiyle.
+/// Ortak Listen butonu — 2 katmanlı gölge efektiyle.
 class WordCardListenButton extends StatelessWidget {
   const WordCardListenButton({super.key, required this.onTap});
 
   final VoidCallback onTap;
 
-  static const Color _layer1 = Color(0xFFD7D7D7);
-  static const Color _layer2 = Color(0xFFCFCFCF);
+  static const Color _shadowLayer = Color(0xFFA8A8A8);
   static const double _layerOffset = 4;
   static const double _radius = 10;
   static const double _btnWidth = 139;
@@ -195,13 +191,12 @@ class WordCardListenButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: _btnWidth,
-      height: _btnHeight + _layerOffset * 2,
+      height: _btnHeight + _layerOffset,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topLeft,
         children: [
-          Positioned(left: 0, top: _layerOffset * 2, child: _buildButtonLayer(_layer2)),
-          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_layer1)),
+          Positioned(left: 0, top: _layerOffset, child: _buildButtonLayer(_shadowLayer)),
           Positioned(
             left: 0,
             top: 0,

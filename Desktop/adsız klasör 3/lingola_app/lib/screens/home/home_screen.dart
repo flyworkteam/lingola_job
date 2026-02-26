@@ -65,8 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
   _HomeLanguage get _selectedLanguage =>
       _languages.firstWhere((l) => l.id == _selectedLanguageId, orElse: () => _languages.first);
 
-  static const double _cardWidth = 170;
+  static const double _cardWidth = 162;
   static const double _cardHeight = 223;
+  static const double _cardGap = 12;
   static const double _headerExpandedHeight = 150;
 
   void _showLanguageSheet(BuildContext context) {
@@ -203,9 +204,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(
+              AppSpacing.sm,
               AppSpacing.lg,
-              AppSpacing.lg,
-              AppSpacing.lg,
+              AppSpacing.sm,
               AppSpacing.lg + 100,
             ),
             sliver: SliverList(
@@ -480,27 +481,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMaskGroupCards(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16),
-      child: Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                      GestureDetector(
-                        onTap: widget.onLearnNewWordsTap,
-                        child: Transform.translate(
-                          offset: const Offset(-12, 0),
-                          child: SizedBox(
-                            width: _cardWidth,
-                            height: _cardHeight,
-                            child: Stack(
-                              children: [
-                                SvgPicture.asset(
-                                'assets/icons/mask_group.svg',
-                                fit: BoxFit.fill,
-                                width: _cardWidth,
-                                height: _cardHeight,
-                              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: widget.onLearnNewWordsTap,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              width: _cardWidth,
+              height: _cardHeight,
+              child: Stack(
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/mask_group.svg',
+                    fit: BoxFit.fill,
+                    width: _cardWidth,
+                    height: _cardHeight,
+                  ),
                               Positioned(
                                 top: AppSpacing.xxxl,
                                 left: AppSpacing.lg,
@@ -556,21 +554,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 0),
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pushNamed('/most_frequently_used_terms'),
-                      child: SizedBox(
-                        width: _cardWidth,
-                        height: _cardHeight,
-                        child: Stack(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icons/mask_group_1.svg',
-                              fit: BoxFit.fill,
-                              width: _cardWidth,
-                              height: _cardHeight,
-                            ),
+        ),
+        SizedBox(width: _cardGap),
+        GestureDetector(
+          onTap: () => Navigator.of(context).pushNamed('/most_frequently_used_terms'),
+          child: SizedBox(
+            width: _cardWidth,
+            height: _cardHeight,
+            child: Stack(
+              children: [
+                SvgPicture.asset(
+                  'assets/icons/mask_group_1.svg',
+                  fit: BoxFit.fill,
+                  width: _cardWidth,
+                  height: _cardHeight,
+                ),
                             Positioned(
                               top: AppSpacing.xxxl,
                               left: AppSpacing.lg,
@@ -620,10 +618,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                      ],
-                    ),
-                  ),
-                );
+                ],
+              );
   }
 
   Widget _buildGetPremiumCard() {
@@ -813,15 +809,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
   }
 
+  static const double _bottomCardGap = 16;
+  static const double _bottomCardHeight = 180;
+
   Widget _buildBottomCards(BuildContext context) {
     return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
+                    Expanded(
+                      child: GestureDetector(
                       onTap: widget.onSavedWordsTap,
                       child: SizedBox(
-                        width: 161,
-                        height: 171,
+                        height: _bottomCardHeight,
                         child: AppCard(
                         borderRadius: 22,
                         padding: const EdgeInsets.symmetric(
@@ -895,12 +893,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                    const SizedBox(width: AppSpacing.md),
-                    GestureDetector(
+                    ),
+                    SizedBox(width: _bottomCardGap),
+                    Expanded(
+                      child: GestureDetector(
                       onTap: widget.onDictionaryTap,
                       child: SizedBox(
-                        width: 161,
-                        height: 171,
+                        height: _bottomCardHeight,
                         child: AppCard(
                           borderRadius: 22,
                           padding: const EdgeInsets.symmetric(
@@ -971,6 +970,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
+                    ),
                     ),
                     ),
                   ],

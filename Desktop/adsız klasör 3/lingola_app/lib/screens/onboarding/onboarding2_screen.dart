@@ -64,18 +64,13 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
     return DismissKeyboard(
       child: Scaffold(
         backgroundColor: AppColors.surface,
-        body: SafeArea(
-        top: true,
-        bottom: true,
-        left: false,
-        right: false,
-        child: Column(
+        body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
                   AppSpacing.xl,
-                  AppSpacing.xl,
+                  AppSpacing.xl + MediaQuery.paddingOf(context).top,
                   AppSpacing.xl,
                   AppSpacing.lg,
                 ),
@@ -93,8 +88,9 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                     ),
                     SizedBox(height: AppSpacing.xl),
                     _SearchBar(controller: _searchController),
-                    SizedBox(height: AppSpacing.xl),
-                    GridView.builder(
+                    Transform.translate(
+                      offset: const Offset(0, -12),
+                      child: GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -114,20 +110,16 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                         );
                       },
                     ),
+                    ),
                     SizedBox(height: AppSpacing.xxl),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.paddingOf(context).bottom,
-                      ),
-                      child: Opacity(
-                        opacity: _selectedProfession != null ? 1.0 : 0.5,
-                        child: IgnorePointer(
-                          ignoring: _selectedProfession == null,
-                          child: AppPrimaryButton(
-                            label: 'Next',
-                            onPressed: () =>
-                                Navigator.of(context).pushReplacementNamed('/onboarding3'),
-                          ),
+                    Opacity(
+                      opacity: _selectedProfession != null ? 1.0 : 0.5,
+                      child: IgnorePointer(
+                        ignoring: _selectedProfession == null,
+                        child: AppPrimaryButton(
+                          label: 'Next',
+                          onPressed: () =>
+                              Navigator.of(context).pushReplacementNamed('/onboarding3'),
                         ),
                       ),
                     ),
@@ -138,7 +130,6 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
           ],
         ),
       ),
-    ),
     );
   }
 }
@@ -198,7 +189,7 @@ class _SearchBar extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: AppColors.surfaceVariant),
       ),
       child: Row(
@@ -246,7 +237,7 @@ class _ProfessionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(AppSpacing.md),
+        padding: EdgeInsets.fromLTRB(AppSpacing.sm, 6, AppSpacing.sm, AppSpacing.sm),
         decoration: BoxDecoration(
           color: AppColors.surfaceVariant.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -262,16 +253,24 @@ class _ProfessionCard extends StatelessWidget {
             if (profession.iconAsset != null)
               SvgPicture.asset(
                 profession.iconAsset!,
-                width: 24,
-                height: 24,
+                width: 32,
+                height: 32,
+                colorFilter: isSelected
+                    ? ColorFilter.mode(
+                        AppColors.primaryBrand,
+                        BlendMode.srcIn,
+                      )
+                    : null,
               )
             else
               Icon(
                 profession.icon!,
-                size: 24,
-                color: AppColors.onboardingText,
+                size: 32,
+                color: isSelected
+                    ? AppColors.primaryBrand
+                    : AppColors.onboardingText,
               ),
-            SizedBox(height: AppSpacing.sm),
+            SizedBox(height: 4),
             Text(
               profession.title,
               style: AppTypography.labelLarge.copyWith(
@@ -283,13 +282,15 @@ class _ProfessionCard extends StatelessWidget {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: AppSpacing.xs),
+            SizedBox(height: 2),
             Text(
               profession.description,
-              style: AppTypography.onboardingDescription.copyWith(
-                fontSize: profession.id == 'it' ? 11 : 13,
-                color: AppColors.outline,
-                height: 1.3,
+              style: TextStyle(
+                fontFamily: AppTypography.fontFamily,
+                fontWeight: FontWeight.w400,
+                fontSize: 13,
+                height: 16 / 13,
+                color: const Color(0xFF000000),
               ),
               textAlign: TextAlign.left,
               maxLines: 4,

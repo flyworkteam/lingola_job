@@ -5,7 +5,7 @@ import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 
-/// Onboarding 7. sayfa: Mavi arka plan, animasyonlu progress 55% → 100%
+/// Onboarding 7. sayfa: Mavi arka plan, animasyonlu progress 0% → 100%
 class Onboarding7Screen extends StatefulWidget {
   const Onboarding7Screen({super.key});
 
@@ -48,7 +48,7 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
       vsync: this,
       duration: const Duration(milliseconds: 3500),
     );
-    _progressAnimation = Tween<double>(begin: 0.55, end: 1.0).animate(
+    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
     );
 
@@ -175,17 +175,12 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _screenBackground,
-      body: SafeArea(
-        top: true,
-        bottom: true,
-        left: false,
-        right: false,
-        child: Column(
+      body: Column(
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(
                 AppSpacing.xl,
-                AppSpacing.xxl,
+                AppSpacing.xxl + MediaQuery.paddingOf(context).top,
                 AppSpacing.xl,
                 AppSpacing.md,
               ),
@@ -492,16 +487,13 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                 AppSpacing.xl,
                 AppSpacing.md,
                 AppSpacing.xl,
-                MediaQuery.paddingOf(context).bottom + AppSpacing.md,
+                AppSpacing.md,
               ),
               child: AnimatedBuilder(
                 animation: _progressController,
                 builder: (context, child) {
                   final value = _progressAnimation.value;
-                  final opacity = value >= 1.0
-                      ? 1.0
-                      : 0.5 + (value - 0.55) / 0.45 * 0.5;
-                  final clampedOpacity = opacity.clamp(0.5, 1.0);
+                  final clampedOpacity = value.clamp(0.5, 1.0);
                   return Material(
                     color: Colors.transparent,
                     child: InkWell(
@@ -536,7 +528,6 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
             ),
           ],
         ),
-      ),
     );
   }
 }

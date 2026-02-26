@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lingola_app/screens/onboarding/onboarding4_screen.dart';
 import 'package:lingola_app/src/navigation/route_transitions.dart';
 import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/widgets/onboarding_bottom_bar.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
@@ -62,18 +61,13 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: SafeArea(
-        top: true,
-        bottom: true,
-        left: false,
-        right: false,
-        child: Column(
+      body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
                   AppSpacing.xl,
-                  AppSpacing.xl,
+                  AppSpacing.xl + MediaQuery.paddingOf(context).top,
                   AppSpacing.xl,
                   AppSpacing.lg,
                 ),
@@ -101,31 +95,71 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
                           ),
                         )),
                     SizedBox(height: AppSpacing.xxl),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => pushReplacementWithBackAnimation(
+                              context,
+                              const Onboarding4Screen(),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                              foregroundColor: AppColors.onSurface,
+                              side: BorderSide(color: AppColors.surfaceVariant),
+                              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                            ),
+                            child: Text(
+                              'Back',
+                              style: AppTypography.labelLarge.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Opacity(
+                            opacity: _selectedLevel != null ? 1.0 : 0.5,
+                            child: IgnorePointer(
+                              ignoring: _selectedLevel == null,
+                              child: Material(
+                                color: AppColors.primaryBrand,
+                                borderRadius: BorderRadius.circular(50),
+                                child: InkWell(
+                                  onTap: _selectedLevel != null
+                                      ? () => Navigator.of(context).pushReplacementNamed('/onboarding6')
+                                      : null,
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Next',
+                                      style: AppTypography.labelLarge.copyWith(
+                                        color: AppColors.onPrimary,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
             ),
-            OnboardingBottomBar(
-              onBack: () => pushReplacementWithBackAnimation(
-                context,
-                const Onboarding4Screen(),
-              ),
-              onNext: () {
-                if (_selectedLevel == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please select your language level'),
-                    ),
-                  );
-                  return;
-                }
-                Navigator.of(context).pushReplacementNamed('/onboarding6');
-              },
-              nextEnabled: _selectedLevel != null,
-            ),
           ],
         ),
-      ),
     );
   }
 
@@ -203,12 +237,17 @@ class _LevelCard extends StatelessWidget {
                   width: 44,
                   height: 44,
                   fit: BoxFit.contain,
-                  colorFilter: level.id == 'b2'
-                      ? const ColorFilter.mode(
-                          Color(0xFF79747E),
+                  colorFilter: isSelected
+                      ? ColorFilter.mode(
+                          AppColors.primaryBrand,
                           BlendMode.srcIn,
                         )
-                      : null,
+                      : level.id == 'b2'
+                          ? const ColorFilter.mode(
+                              Color(0xFF79747E),
+                              BlendMode.srcIn,
+                            )
+                          : null,
                 ),
               ),
             ),
@@ -220,7 +259,9 @@ class _LevelCard extends StatelessWidget {
                   Text(
                     level.title,
                     style: AppTypography.labelLarge.copyWith(
-                      color: AppColors.onboardingText,
+                      color: isSelected
+                          ? AppColors.primaryBrand
+                          : AppColors.onboardingText,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -229,7 +270,9 @@ class _LevelCard extends StatelessWidget {
                   Text(
                     level.description,
                     style: AppTypography.body.copyWith(
-                      color: AppColors.outline,
+                      color: isSelected
+                          ? AppColors.primaryBrand
+                          : AppColors.outline,
                       fontSize: 14,
                     ),
                   ),

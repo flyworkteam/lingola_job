@@ -30,6 +30,7 @@ class LearnScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF2F5FC),
       body: SafeArea(
         top: false,
+        bottom: false,
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -249,7 +250,7 @@ class LearnScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                width: 256,
+                width: 263,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
@@ -535,7 +536,7 @@ class LearnScreen extends StatelessWidget {
                         style: AppTypography.title.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: 18,
+                          fontSize: 24,
                         ),
                       ),
                     ),

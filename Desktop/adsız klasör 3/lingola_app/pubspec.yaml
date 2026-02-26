@@ -35,6 +35,7 @@ dependencies:
   google_fonts: ^6.2.1
   font_awesome_flutter: ^10.7.0
   flutter_svg: ^2.0.10+1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -143,6 +144,7 @@ flutter:
     - assets/icons/icon_tutorial_arrow_next.svg
     - assets/icons/yıldız.svg
     - assets/icons/ses.svg
+    - assets/icons/icon_search_library.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

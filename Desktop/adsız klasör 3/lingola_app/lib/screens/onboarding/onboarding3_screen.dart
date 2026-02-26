@@ -6,7 +6,6 @@ import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/dismiss_keyboard.dart';
-import 'package:lingola_app/src/widgets/onboarding_bottom_bar.dart';
 
 /// Onboarding 3. sayfa: "Describe your profession in three words."
 class Onboarding3Screen extends StatefulWidget {
@@ -37,18 +36,13 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
     return DismissKeyboard(
       child: Scaffold(
         backgroundColor: AppColors.surface,
-        body: SafeArea(
-        top: true,
-        bottom: true,
-        left: false,
-        right: false,
-        child: Column(
+        body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
                   AppSpacing.xl,
-                  AppSpacing.xl,
+                  AppSpacing.xl + MediaQuery.paddingOf(context).top,
                   AppSpacing.xl,
                   AppSpacing.lg,
                 ),
@@ -75,7 +69,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceVariant.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                        borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: AppColors.surfaceVariant),
                       ),
                       child: TextField(
@@ -101,27 +95,75 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                 ),
               ),
             ),
-            OnboardingBottomBar(
-              onBack: () => pushReplacementWithBackAnimation(
-                context,
-                const Onboarding2Screen(),
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.lg,
+                AppSpacing.xl,
+                AppSpacing.xl,
               ),
-              onNext: () {
-                if (!canProceed) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please describe your profession'),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => pushReplacementWithBackAnimation(
+                        context,
+                        const Onboarding2Screen(),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                        foregroundColor: AppColors.onSurface,
+                        side: BorderSide(color: AppColors.surfaceVariant),
+                        padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Text(
+                        'Back',
+                        style: AppTypography.labelLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
-                  );
-                  return;
-                }
-                Navigator.of(context).pushReplacementNamed('/onboarding4');
-              },
-              nextEnabled: canProceed,
+                  ),
+                  SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Opacity(
+                      opacity: canProceed ? 1.0 : 0.5,
+                      child: IgnorePointer(
+                        ignoring: !canProceed,
+                        child: Material(
+                          color: AppColors.primaryBrand,
+                          borderRadius: BorderRadius.circular(50),
+                          child: InkWell(
+                            onTap: canProceed
+                                ? () => Navigator.of(context).pushReplacementNamed('/onboarding4')
+                                : null,
+                            borderRadius: BorderRadius.circular(50),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Next',
+                                style: AppTypography.labelLarge.copyWith(
+                                  color: AppColors.onPrimary,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-      ),
     ),
     );
   }

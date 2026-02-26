@@ -16,7 +16,7 @@ abstract final class AppColors {
   static const int _onSecondaryContainerValue = 0xFF1D192B;
   static const int _surfaceValue = 0xFFFFFBFE;
   static const int _onSurfaceValue = 0xFF1C1B1F;
-  static const int _surfaceVariantValue = 0xFFE7E0EC;
+  static const int _surfaceVariantValue = 0xFFE0E0E0;
   static const int _onSurfaceVariantValue = 0xFF49454F;
   static const int _outlineValue = 0xFF79747E;
   static const int _errorValue = 0xFFB3261E;

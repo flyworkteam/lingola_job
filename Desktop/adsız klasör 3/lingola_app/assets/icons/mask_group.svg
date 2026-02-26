@@ -1,8 +1,6 @@
 <svg width="165" height="223" viewBox="0 0 165 223" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="3" width="162" height="223" rx="20" fill="#021B79"/>
-<!-- Dekoratif daireler -->
-<circle opacity="0.2" cx="128" cy="27" r="85" fill="#00061C"/>
-<circle opacity="0.2" cx="125" cy="29" r="97.5" stroke="#00061C" fill="none" stroke-width="1"/>
+<rect width="165" height="223" rx="20" fill="#021B79"/>
+<!-- Dekoratif daire (sadece alt sağ) - sağ üstteki daireler kaldırıldı (artefakt önlendi) -->
 <circle opacity="0.2" cx="146" cy="148" r="13" fill="#00061C"/>
 <!-- Ok ikonu -->
 <path d="M37.25 193.25L41 197M41 197L37.25 200.75M41 197H23" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

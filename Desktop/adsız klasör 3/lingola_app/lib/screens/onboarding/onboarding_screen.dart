@@ -15,35 +15,41 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fade;
-  late Animation<Offset> _slide;
+  AnimationController? _controller;
+  Animation<double>? _fade;
+  Animation<Offset>? _slide;
 
-  @override
-  void initState() {
-    super.initState();
+  void _ensureAnimations() {
+    if (_controller != null) return;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
     _fade = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+      CurvedAnimation(parent: _controller!, curve: Curves.easeOutCubic),
     );
     _slide = Tween<Offset>(
       begin: const Offset(0, 0.12),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
-    _controller.forward();
+    ).animate(CurvedAnimation(parent: _controller!, curve: Curves.easeOutCubic));
+    _controller!.forward();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _ensureAnimations();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _ensureAnimations();
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -74,9 +80,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             right: 0,
             top: 470,
             child: FadeTransition(
-              opacity: _fade,
+              opacity: _fade!,
               child: SlideTransition(
-                position: _slide,
+                position: _slide!,
                 child: Container(
               padding: EdgeInsets.fromLTRB(
                 AppSpacing.xl,
@@ -92,9 +98,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 12,
-                    offset: const Offset(0, -4),
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 20,
+                    offset: const Offset(0, -2),
                   ),
                 ],
               ),

@@ -27,7 +27,7 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
   int _selectedTabIndex = 0; // 0: Library, 1: Dictionary
-  Set<String> _selectedFilterIds = {'Psychology', 'Technology'}; // Başlangıçta seçili (görsele göre)
+  Set<String> _selectedFilterIds = {'Psychology', 'Technology', 'Saved'}; // Başlangıçta seçili; Saved = sözlükten yıldızlananlar
   final Set<String> _favoritedDictionaryWords = {};
   static const double _headerExpandedHeight = 200;
 
@@ -179,15 +179,25 @@ class _LibraryScreenState extends State<LibraryScreen> {
           hintStyle: AppTypography.bodySmall.copyWith(
             color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            size: 22,
-            color: AppColors.onSurfaceVariant,
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12),
+            child: SvgPicture.asset(
+              'assets/icons/icon_search_library.svg',
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(
+                AppColors.onSurfaceVariant,
+                BlendMode.srcIn,
+              ),
+              fit: BoxFit.contain,
+            ),
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+          contentPadding: const EdgeInsets.only(
+            left: AppSpacing.md,
+            right: AppSpacing.md,
+            top: 14,
+            bottom: 10,
           ),
         ),
         style: AppTypography.bodySmall.copyWith(
@@ -319,10 +329,24 @@ class _LibraryScreenState extends State<LibraryScreen> {
   ];
 
   List<_LibraryWordItem> get _filteredWords {
-    if (_selectedFilterIds.isEmpty) return _libraryWords;
-    return _libraryWords
-        .where((item) => _selectedFilterIds.contains(item.category))
-        .toList();
+    final fromStatic = _selectedFilterIds.isEmpty
+        ? _libraryWords
+        : _libraryWords
+            .where((item) => _selectedFilterIds.contains(item.category))
+            .toList();
+    final showSaved = _selectedFilterIds.isEmpty ||
+        _selectedFilterIds.contains('Saved');
+    if (!showSaved) return fromStatic;
+    final fromDictionary = _favoritedDictionaryWords.map((word) {
+      final match = _dictionaryWords.where((e) => e.word == word).toList();
+      final translation = match.isEmpty ? '' : match.first.translation;
+      return _LibraryWordItem(
+        word: word,
+        category: 'Saved',
+        translation: translation,
+      );
+    }).toList();
+    return [...fromStatic, ...fromDictionary];
   }
 
   Widget _buildLibrarySliverList() {
@@ -340,7 +364,15 @@ class _LibraryScreenState extends State<LibraryScreen> {
         const SizedBox(height: AppSpacing.lg),
         ...words.map((item) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: _LibraryWordCard(item: item),
+          child: _LibraryWordCard(
+            item: item,
+            isFavorited: _favoritedDictionaryWords.contains(item.word),
+            onStarTap: _favoritedDictionaryWords.contains(item.word)
+                ? () {
+                    setState(() => _favoritedDictionaryWords.remove(item.word));
+                  }
+                : null,
+          ),
         )),
         const SizedBox(height: 120),
       ]),
@@ -414,12 +446,30 @@ class _LibraryWordItem {
 
 /// Beyaz kart: kelime, kategori etiketi, çeviri, ses ve yıldız ikonu.
 class _LibraryWordCard extends StatelessWidget {
-  const _LibraryWordCard({required this.item});
+  const _LibraryWordCard({
+    required this.item,
+    this.isFavorited = false,
+    this.onStarTap,
+  });
 
   final _LibraryWordItem item;
+  final bool isFavorited;
+  final VoidCallback? onStarTap;
 
   @override
   Widget build(BuildContext context) {
+    final starWidget = Transform.translate(
+      offset: const Offset(0, -4),
+      child: SvgPicture.asset(
+        'assets/icons/yıldız.svg',
+        width: 24,
+        height: 24,
+        colorFilter: const ColorFilter.mode(
+          AppColors.primaryBrand,
+          BlendMode.srcIn,
+        ),
+      ),
+    );
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -453,7 +503,7 @@ class _LibraryWordCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryBrand,
+                        color: const Color(0xFF0575E6).withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -496,18 +546,14 @@ class _LibraryWordCard extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
               ),
-              Transform.translate(
-                offset: const Offset(0, -4),
-                child: SvgPicture.asset(
-                  'assets/icons/yıldız.svg',
-                  width: 24,
-                  height: 24,
-                  colorFilter: const ColorFilter.mode(
-                    Color(0xFFD9D9D9),
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
+              if (onStarTap != null)
+                GestureDetector(
+                  onTap: onStarTap,
+                  behavior: HitTestBehavior.opaque,
+                  child: starWidget,
+                )
+              else
+                starWidget,
             ],
           ),
         ],
@@ -621,6 +667,7 @@ class _LibraryFilterBottomSheet extends StatefulWidget {
 
 class _LibraryFilterBottomSheetState extends State<_LibraryFilterBottomSheet> {
   static const List<String> _filterCategories = [
+    'Saved',
     'Psychology',
     'Business',
     'Finance',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
@@ -11,7 +12,7 @@ import 'package:lingola_app/src/widgets/dismiss_keyboard.dart';
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({
     super.key,
-    this.initialName = 'Jhon Doe',
+    this.initialName = '',
   });
 
   final String initialName;
@@ -862,7 +863,13 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  void _onSave() {
+  static const String _keyProfileName = 'profile_name';
+  static const String _keyProfileLanguage = 'profile_language';
+  static const String _keyProfileAppLanguage = 'profile_app_language';
+  static const String _keyProfileLevel = 'profile_level';
+  static const String _keyProfileProfession = 'profile_profession';
+
+  Future<void> _onSave() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -873,7 +880,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       );
       return;
     }
-    // İsteğe bağlı: API'ye kaydet veya SharedPreferences ile sakla
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyProfileName, name);
+    if (_selectedLanguage != null) await prefs.setString(_keyProfileLanguage, _selectedLanguage!);
+    if (_selectedAppLanguage != null) await prefs.setString(_keyProfileAppLanguage, _selectedAppLanguage!);
+    if (_selectedLevel != null) await prefs.setString(_keyProfileLevel, _selectedLevel!);
+    if (_selectedProfession != null) await prefs.setString(_keyProfileProfession, _selectedProfession!);
+
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Profile saved successfully', style: GoogleFonts.nunitoSans(color: Colors.white)),
