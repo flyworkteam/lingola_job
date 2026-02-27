@@ -65,10 +65,14 @@ class _HomeScreenState extends State<HomeScreen> {
   _HomeLanguage get _selectedLanguage =>
       _languages.firstWhere((l) => l.id == _selectedLanguageId, orElse: () => _languages.first);
 
-  static const double _cardWidth = 162;
-  static const double _cardHeight = 223;
-  static const double _cardGap = 12;
+  static const double _cardWidth = 180;
+  static const double _cardHeight = 250;
+  static const double _cardGap = 10;
   static const double _headerExpandedHeight = 150;
+  static const double _maskCardIconTop = 32;
+  static const double _maskCardTextTop = 115; // yazı orijinal konumda (xxxl+icon+gap)
+  static const double _contentMaxWidth = 380;
+  static const double _continueLessonMaxWidth = 370;
 
   void _showLanguageSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -417,17 +421,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickActionsHeader() {
-    return Text(
-      'Quick Actions',
-      style: AppTypography.titleLarge.copyWith(
-        fontWeight: FontWeight.w700,
-        color: AppColors.onSurface,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Quick Actions',
+            style: AppTypography.titleLarge.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.onSurface,
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildLevelCard() {
-    return AppCard(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
+        child: AppCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -477,7 +492,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                );
+                ),
+      ),
+    );
   }
 
   Widget _buildMaskGroupCards(BuildContext context) {
@@ -500,33 +517,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: _cardHeight,
                   ),
                               Positioned(
-                                top: AppSpacing.xxxl,
+                                top: _maskCardIconTop,
+                                left: AppSpacing.lg,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      width: 37,
+                                      height: 37,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF00061C).withValues(alpha: 0.4),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    SvgPicture.asset(
+                                      'assets/icons/vector_search.svg',
+                                      width: 28,
+                                      height: 28,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Positioned(
+                                top: _maskCardTextTop,
                                 left: AppSpacing.lg,
                                 right: AppSpacing.lg,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Container(
-                                          width: 37,
-                                          height: 37,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF00061C).withValues(alpha: 0.4),
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        SvgPicture.asset(
-                                          'assets/icons/vector_search.svg',
-                                          width: 28,
-                                          height: 28,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: AppSpacing.sm),
                                     Text(
                                       'Learn New\nWords',
                                       style: AppTypography.title.copyWith(
@@ -570,50 +590,53 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: _cardHeight,
                 ),
                             Positioned(
-                              top: AppSpacing.xxxl,
+                              top: _maskCardIconTop,
+                              left: AppSpacing.lg,
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF021B79).withValues(alpha: 0.4),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                alignment: Alignment.center,
+                                child: SvgPicture.asset(
+                                  'assets/icons/frame_terms.svg',
+                                  width: 24,
+                                  height: 24,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: _maskCardTextTop,
                               left: AppSpacing.lg,
                               right: AppSpacing.lg,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF021B79).withValues(alpha: 0.4),
-                                    borderRadius: BorderRadius.circular(10),
+                                  Text(
+                                    'Most Frequently\nUsed Terms',
+                                    style: AppTypography.title.copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                      height: 1.2,
+                                    ),
                                   ),
-                                  alignment: Alignment.center,
-                                  child: SvgPicture.asset(
-                                    'assets/icons/frame_terms.svg',
-                                    width: 24,
-                                    height: 24,
-                                    fit: BoxFit.contain,
+                                  const SizedBox(height: AppSpacing.sm),
+                                  Text(
+                                    'Take a Look at the Most\nFrequently Used Terms',
+                                    style: AppTypography.bodySmall.copyWith(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      height: 1.25,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: AppSpacing.sm),
-                                Text(
-                                  'Most Frequently\nUsed Terms',
-                                  style: AppTypography.title.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                    height: 1.2,
-                                  ),
-                                ),
-                                const SizedBox(height: AppSpacing.sm),
-                                Text(
-                                  'Take a Look at the Most\nFrequently Used Terms',
-                                  style: AppTypography.bodySmall.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                    height: 1.25,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -729,7 +752,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildContinueLessonCard() {
-    return AppCard(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _continueLessonMaxWidth),
+        child: AppCard(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.lg,
                     vertical: AppSpacing.xl,
@@ -806,20 +832,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                );
+                ),
+      ),
+    );
   }
 
-  static const double _bottomCardGap = 16;
-  static const double _bottomCardHeight = 180;
+  static const double _bottomCardGap = 20;
+  static const double _bottomCardWidth = 165;
+  static const double _bottomCardHeight = 165;
 
   Widget _buildBottomCards(BuildContext context) {
-    return Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                      onTap: widget.onSavedWordsTap,
-                      child: SizedBox(
-                        height: _bottomCardHeight,
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: widget.onSavedWordsTap,
+            child: SizedBox(
+              width: _bottomCardWidth,
+              height: _bottomCardHeight,
                         child: AppCard(
                         borderRadius: 22,
                         padding: const EdgeInsets.symmetric(
@@ -834,21 +865,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 const SizedBox(height: 12),
                                 SizedBox(
-                                  width: 37,
-                                  height: 37,
+                                  width: 44,
+                                  height: 44,
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
                                       SvgPicture.asset(
                                         'assets/icons/rectangle_141.svg',
-                                        width: 37,
-                                        height: 37,
+                                        width: 41,
+                                        height: 41,
                                         fit: BoxFit.contain,
                                       ),
                                       SvgPicture.asset(
                                         'assets/icons/frame_saved_words.svg',
-                                        width: 32,
-                                        height: 32,
+                                        width: 36,
+                                        height: 36,
                                         fit: BoxFit.contain,
                                       ),
                                     ],
@@ -857,10 +888,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 14),
                                 Text(
                                   'Saved\nWords',
-                                  style: AppTypography.title.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.onSurface,
+                                  style: AppTypography.titleLarge.copyWith(
                                     fontSize: 16,
+                                    color: AppColors.onSurface,
                                     height: 1.2,
                                   ),
                                   maxLines: 2,
@@ -883,8 +913,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               bottom: 0,
                               child: SvgPicture.asset(
                                 'assets/icons/icon_arrow_right.svg',
-                                width: 20,
-                                height: 9,
+                                width: 24,
+                                height: 11,
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -893,13 +923,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                    ),
-                    SizedBox(width: _bottomCardGap),
-                    Expanded(
-                      child: GestureDetector(
-                      onTap: widget.onDictionaryTap,
-                      child: SizedBox(
-                        height: _bottomCardHeight,
+          SizedBox(width: _bottomCardGap),
+          GestureDetector(
+            onTap: widget.onDictionaryTap,
+            child: SizedBox(
+              width: _bottomCardWidth,
+              height: _bottomCardHeight,
                         child: AppCard(
                           borderRadius: 22,
                           padding: const EdgeInsets.symmetric(
@@ -914,21 +943,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   const SizedBox(height: 12),
                                   SizedBox(
-                                    width: 37,
-                                    height: 37,
+                                    width: 44,
+                                    height: 44,
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
                                         SvgPicture.asset(
                                           'assets/icons/rectangle_141.svg',
-                                          width: 37,
-                                          height: 37,
+                                          width: 41,
+                                          height: 41,
                                           fit: BoxFit.contain,
                                         ),
                                         SvgPicture.asset(
                                           'assets/icons/frame_dictionary.svg',
-                                        width: 28,
-                                        height: 28,
+                                        width: 36,
+                                        height: 36,
                                         fit: BoxFit.contain,
                                       ),
                                     ],
@@ -937,10 +966,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 14),
                                 Text(
                                   'Dictionary',
-                                  style: AppTypography.title.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.onSurface,
+                                  style: AppTypography.titleLarge.copyWith(
                                     fontSize: 14,
+                                    color: AppColors.onSurface,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -962,8 +990,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               bottom: 0,
                               child: SvgPicture.asset(
                                 'assets/icons/icon_arrow_right.svg',
-                                width: 20,
-                                height: 9,
+                                width: 24,
+                                height: 11,
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -971,10 +999,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    ),
-                    ),
-                  ],
-                );
+                  ),
+                ],
+              ),
+    );
   }
 }
 

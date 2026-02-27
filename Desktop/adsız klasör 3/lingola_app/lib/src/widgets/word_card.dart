@@ -214,6 +214,7 @@ class WordCardBody extends StatelessWidget {
                     color: Colors.white,
                   )
                 : AppTypography.titleLarge.copyWith(
+                    fontFamily: 'Quicksand',
                     color: Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -228,7 +229,7 @@ class WordCardBody extends StatelessWidget {
                     fontFamily: 'Nunito Sans',
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFFFFFFFF),
-                    fontSize: 14,
+                    fontSize: 15,
                   )
                 : AppTypography.bodySmall.copyWith(
                     color: const Color(0xFFFFFFFF),
@@ -328,8 +329,9 @@ class WordCardReadingTestBody extends StatelessWidget {
             word,
             textAlign: TextAlign.center,
             style: AppTypography.titleLarge.copyWith(
+              fontFamily: 'Quicksand',
               color: const Color(0xFFFFFFFF),
-              fontSize: 32,
+              fontSize: 48,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -338,8 +340,10 @@ class WordCardReadingTestBody extends StatelessWidget {
             phonetic,
             textAlign: TextAlign.center,
             style: AppTypography.bodySmall.copyWith(
+              fontFamily: 'Quicksand',
               color: const Color(0xFFFFFFFF),
-              fontSize: 14,
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
             ),
           ),
           const SizedBox(height: 45),
@@ -380,7 +384,7 @@ class WordCardReadingTestBody extends StatelessWidget {
               fontFamily: 'Quicksand',
               fontWeight: FontWeight.w600,
               color: const Color(0xFFFFFFFF),
-              fontSize: 16,
+              fontSize: 15,
             ),
           ),
         ],

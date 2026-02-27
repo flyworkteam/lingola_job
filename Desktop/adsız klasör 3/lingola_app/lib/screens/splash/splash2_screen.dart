@@ -115,11 +115,12 @@ class Splash2Screen extends StatelessWidget {
                           maxLines: 2,
                         ),
                       ),
-                      SizedBox(height: AppSpacing.xxl + 24),
+                      SizedBox(height: AppSpacing.xxl + 56),
                       AppPrimaryButton(
                         label: 'Get Started',
                         onPressed: () =>
                             Navigator.of(context).pushReplacementNamed('/splash3'),
+                        borderRadius: 10,
                       ),
                     ],
                   ),

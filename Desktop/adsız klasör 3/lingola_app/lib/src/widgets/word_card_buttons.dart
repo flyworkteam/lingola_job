@@ -11,9 +11,9 @@ class WordCardHintButton extends StatelessWidget {
 
   static const Color _shadowLayer = Color(0xFFA8A8A8);
   static const double _layerOffset = 4;
-  static const double _radius = 10;
-  static const double _btnWidth = 60;
-  static const double _btnHeight = 44;
+  static const double _radius = 12;
+  static const double _btnWidth = 72;
+  static const double _btnHeight = 52;
 
   Widget _buildButtonLayer(Color color) {
     return Container(
@@ -63,8 +63,8 @@ class WordCardHintButton extends StatelessWidget {
                   child: Center(
                     child: SvgPicture.asset(
                       'assets/icons/icon_hint.svg',
-                      width: 20,
-                      height: 24,
+                      width: 24,
+                      height: 28,
                       colorFilter: const ColorFilter.mode(
                         Colors.black87,
                         BlendMode.srcIn,
@@ -265,7 +265,7 @@ class BackNextButton extends StatelessWidget {
   static const Color _blue = Color(0xFF0575E6);
   static const double _width = 155;
   static const double _height = 46;
-  static const double _radius = 50;
+  static const double _radius = 40;
 
   static const Color _backBg = Color(0xFFD9D9D9);
 
@@ -306,7 +306,7 @@ class BackNextButton extends StatelessWidget {
                 style: AppTypography.labelLarge.copyWith(
                   color: textColor,
                   fontWeight: FontWeight.w700,
-                  fontSize: 17,
+                  fontSize: 16,
                 ),
               ),
               if (label == 'Next') ...[

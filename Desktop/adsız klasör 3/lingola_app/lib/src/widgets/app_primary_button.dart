@@ -11,27 +11,31 @@ class AppPrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.expand = true,
+    this.borderRadius,
   });
 
   final String label;
   final VoidCallback? onPressed;
   /// true ise genişlik double.infinity (varsayılan).
   final bool expand;
+  /// Verilirse bu radius kullanılır; yoksa varsayılan _buttonRadius.
+  final double? borderRadius;
 
   static const double _buttonRadius = 50;
 
   @override
   Widget build(BuildContext context) {
+    final radius = borderRadius ?? _buttonRadius;
     final child = Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(_buttonRadius),
+        borderRadius: BorderRadius.circular(radius),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
           decoration: BoxDecoration(
             color: AppColors.primaryBrand,
-            borderRadius: BorderRadius.circular(_buttonRadius),
+            borderRadius: BorderRadius.circular(radius),
           ),
           child: Center(
             child: AppLabel(

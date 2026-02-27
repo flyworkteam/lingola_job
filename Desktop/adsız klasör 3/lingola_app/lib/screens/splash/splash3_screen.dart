@@ -125,9 +125,10 @@ class Splash3Screen extends StatelessWidget {
                           maxLines: 1,
                         ),
                       ),
-                      SizedBox(height: AppSpacing.xxl + 24),
+                      SizedBox(height: AppSpacing.xxl + 56),
                       AppPrimaryButton(
                         label: 'Get Started',
+                        borderRadius: 10,
                         onPressed: () {
                           final navigator = Navigator.of(context);
                           navigator.pushReplacement(

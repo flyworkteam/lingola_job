@@ -108,10 +108,11 @@ class _NavBarItem extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: AppTypography.label.copyWith(
-                color: color,
+              style: AppTypography.labelLarge.copyWith(
+                fontFamily: 'Quicksand',
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
+                color: color,
               ),
             ),
           ],

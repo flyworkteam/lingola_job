@@ -46,6 +46,7 @@ class ReadingTestScreen extends StatelessWidget {
       ),
       body: SafeArea(
         top: false,
+        bottom: false,
         child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
@@ -54,7 +55,7 @@ class ReadingTestScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 WordCard3D(
-                  height: 300,
+                  height: 340,
                   child: WordCardReadingTestBody(
                     word: 'Friend',
                     phonetic: '/frend/',
@@ -70,7 +71,7 @@ class ReadingTestScreen extends StatelessWidget {
                     _MicButton(onTap: () {}),
                   ],
                 ),
-                const SizedBox(height: 150),
+                const SizedBox(height: 180),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -79,7 +80,7 @@ class ReadingTestScreen extends StatelessWidget {
                       isPrimary: false,
                       onTap: () => Navigator.of(context).pop(),
                     ),
-                    const SizedBox(width: 32),
+                    const SizedBox(width: 16),
                     BackNextButton(
                       label: 'Next',
                       isPrimary: true,
@@ -104,11 +105,11 @@ class _MicButton extends StatelessWidget {
   final VoidCallback onTap;
 
   static const Color _mainColor = Color(0xFF0575E6);
-  static const Color _shadowLayer = Color(0xFF004182);
-  static const double _layerOffset = 4;
-  static const double _radius = 16;
-  static const double _btnWidth = 60;
-  static const double _btnHeight = 44;
+  static const Color _shadowLayer = Color(0xFF002D5C);
+  static const double _layerOffset = 7;
+  static const double _radius = 18;
+  static const double _btnWidth = 72;
+  static const double _btnHeight = 52;
 
   @override
   Widget build(BuildContext context) {
@@ -147,8 +148,8 @@ class _MicButton extends StatelessWidget {
                   child: Center(
                     child: SvgPicture.asset(
                       'assets/icons/icon_mic.svg',
-                      width: 24,
-                      height: 28,
+                      width: 28,
+                      height: 32,
                       colorFilter: const ColorFilter.mode(Color(0xFFFFFFFF), BlendMode.srcIn),
                       fit: BoxFit.contain,
                     ),

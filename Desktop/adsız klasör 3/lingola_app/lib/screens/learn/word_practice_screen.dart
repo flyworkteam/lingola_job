@@ -39,14 +39,14 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
       word: 'Journey',
       phonetic: '/ˈdʒɜː.ni/',
       translations: 'Yolculuk, Seyahat',
-      exampleEn: 'The journey was longer than we expected.',
+      exampleEn: '\u201CThe journey was longer than we expected.\u201D',
       exampleTr: 'Yolculuk beklediğimizden daha uzundu.',
     ),
     WordCardData(
       word: 'Improve',
       phonetic: '/ɪmˈpruːv/',
       translations: 'Geliştirmek, İyileştirmek',
-      exampleEn: 'Practice every day to improve your skills.',
+      exampleEn: '\u201CPractice every day to improve your skills.\u201D',
       exampleTr: 'Becerilerini geliştirmek için her gün pratik yap.',
     ),
   ];
@@ -240,75 +240,78 @@ class _TutorialFullScreenOverlayState extends State<_TutorialFullScreenOverlay>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/icon_tutorial_arrow_prev.svg',
-                          width: 52,
-                          height: 22,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Previous',
-                          style: AppTypography.caption.copyWith(
-                            color: Colors.white,
-                            fontSize: 12,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/icon_tutorial_arrow_prev.svg',
+                            width: 52,
+                            height: 22,
+                            fit: BoxFit.contain,
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 24),
-                    AnimatedBuilder(
-                      animation: _handAnimation,
-                      builder: (context, child) {
-                        // -1 (sol) -> 1 (sağ): 40px hareket, swipe yönüne hafif eğim
-                        final t = _handAnimation.value;
-                        final dx = t * 40;
-                        // Hareket yönüne doğru hafif eğim (sağa giderken sağa yatık)
-                        final angle = t * (math.pi / 12);
-                        return Transform.translate(
-                          offset: Offset(dx, 0),
-                          child: Transform.rotate(
-                            angle: angle,
-                            alignment: Alignment.center,
-                            child: child,
+                          const SizedBox(height: 8),
+                          Text(
+                            'Previous',
+                            style: AppTypography.caption.copyWith(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
                           ),
-                        );
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/icon_tutorial_hand.svg',
-                        width: 72,
-                        height: 78,
-                        fit: BoxFit.contain,
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 24),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/icon_tutorial_arrow_next.svg',
-                          width: 52,
-                          height: 22,
+                      const SizedBox(width: 24),
+                      AnimatedBuilder(
+                        animation: _handAnimation,
+                        builder: (context, child) {
+                          // -1 (sol) -> 1 (sağ): 40px hareket, swipe yönüne hafif eğim
+                          final t = _handAnimation.value;
+                          final dx = t * 40;
+                          // Hareket yönüne doğru hafif eğim (sağa giderken sağa yatık)
+                          final angle = t * (math.pi / 12);
+                          return Transform.translate(
+                            offset: Offset(dx, 0),
+                            child: Transform.rotate(
+                              angle: angle,
+                              alignment: Alignment.center,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: SvgPicture.asset(
+                          'assets/icons/icon_tutorial_hand.svg',
+                          width: 72,
+                          height: 78,
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Next',
-                          style: AppTypography.caption.copyWith(
-                            color: Colors.white,
-                            fontSize: 12,
+                      ),
+                      const SizedBox(width: 24),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/icon_tutorial_arrow_next.svg',
+                            width: 52,
+                            height: 22,
+                            fit: BoxFit.contain,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(height: 8),
+                          Text(
+                            'Next',
+                            style: AppTypography.caption.copyWith(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Text(

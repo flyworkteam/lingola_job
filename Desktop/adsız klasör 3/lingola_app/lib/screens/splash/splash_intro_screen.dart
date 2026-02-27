@@ -212,6 +212,8 @@ class _IntroSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final imageHeight = size.height * 0.60;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -221,8 +223,8 @@ class _IntroSlide extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(AppRadius.lg),
               child: SizedBox(
-                width: 447,
-                height: 503,
+                width: size.width,
+                height: imageHeight,
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
@@ -235,7 +237,7 @@ class _IntroSlide extends StatelessWidget {
         Positioned(
           left: 0,
           right: 0,
-          top: 460,
+          top: imageHeight - 50,
           child: Container(
             padding: EdgeInsets.fromLTRB(
               AppSpacing.xl,
@@ -249,13 +251,6 @@ class _IntroSlide extends StatelessWidget {
                 topLeft: Radius.circular(AppRadius.xl),
                 topRight: Radius.circular(AppRadius.xl),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, -4),
-                ),
-              ],
             ),
             child: ConstrainedBox(
               constraints: BoxConstraints(
@@ -313,16 +308,18 @@ class _IntroSlide extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: AppSpacing.xxl + 24),
+                    SizedBox(height: AppSpacing.xxl + 48),
                     if (isLastPage)
                       AppPrimaryButton(
                         label: 'Get Started',
                         onPressed: onGetStarted,
+                        borderRadius: 10,
                       )
                     else
                       AppPrimaryButton(
                         label: 'Get Started',
                         onPressed: onNext ?? () {},
+                        borderRadius: 10,
                       ),
                   ],
                 ),

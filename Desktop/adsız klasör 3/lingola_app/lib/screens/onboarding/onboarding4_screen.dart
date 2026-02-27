@@ -45,7 +45,7 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
                   AppSpacing.xl,
                   AppSpacing.xl + MediaQuery.paddingOf(context).top,
                   AppSpacing.xl,
-                  AppSpacing.lg,
+                  AppSpacing.xxxl,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,7 +69,7 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
                         onTap: () => setState(() => _selectedLanguage = lang.id),
                       ),
                     )),
-                    SizedBox(height: AppSpacing.xxl),
+                    SizedBox(height: AppSpacing.xl),
                     Row(
                       children: [
                         Expanded(
@@ -96,7 +96,7 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
                             ),
                           ),
                         ),
-                        SizedBox(width: AppSpacing.md),
+                        SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Opacity(
                             opacity: _selectedLanguage != null ? 1.0 : 0.5,
@@ -196,7 +196,7 @@ class _LanguageCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? AppColors.primaryBrand : AppColors.surfaceVariant,
-            width: isSelected ? 2 : 1,
+            width: 2,
           ),
         ),
         child: Row(

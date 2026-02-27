@@ -100,7 +100,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                 AppSpacing.xl,
                 AppSpacing.lg,
                 AppSpacing.xl,
-                AppSpacing.xl,
+                AppSpacing.xxxl,
               ),
               child: Row(
                 children: [
@@ -128,7 +128,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: AppSpacing.md),
+                  SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Opacity(
                       opacity: canProceed ? 1.0 : 0.5,

@@ -63,6 +63,22 @@ abstract final class AppTypography {
         color: AppColors.onboardingTitle,
       ).copyWith(letterSpacing: -1.2);
 
+  /// Onboarding 2 sayfa başlığı: "What is your profession?" — 28px, Bold (700), tek stil (copyWith kalınlığı kaybettirmesin diye).
+  static TextStyle get onboardingPageTitle => _quicksand(
+        fontSize: 28,
+        fontWeight: weightBold,
+        height: 40 / 28,
+        color: AppColors.onboardingText,
+      ).copyWith(letterSpacing: -1.2);
+
+  /// Meslek kartı başlığı: 16px, Bold (700), line height 15.
+  static TextStyle get professionCardTitle => _quicksand(
+        fontSize: 16,
+        fontWeight: weightBold,
+        height: 15 / 16,
+        color: AppColors.onboardingText,
+      );
+
   /// Onboarding bottom sheet açıklama: siyah (#000000), gövde metni, 14px, line height 22px.
   static TextStyle get onboardingDescription => _quicksand(
         fontSize: 14,

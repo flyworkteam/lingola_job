@@ -31,21 +31,21 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
       word: 'Friend',
       phonetic: '/frend/',
       translations: 'Arkadaş, Dost, Yoldaş',
-      exampleEn: '"A good friend is hard to find."',
+      exampleEn: '\u201CA good friend is hard to find.\u201D',
       exampleTr: 'İyi bir arkadaş bulmak zordur.',
     ),
     SavedWordItem(
       word: 'Journey',
       phonetic: '/ˈdʒɜː.ni/',
       translations: 'Yolculuk, Seyahat',
-      exampleEn: 'The journey was longer than we expected.',
+      exampleEn: '\u201CThe journey was longer than we expected.\u201D',
       exampleTr: 'Yolculuk beklediğimizden daha uzundu.',
     ),
     SavedWordItem(
       word: 'Improve',
       phonetic: '/ɪmˈpruːv/',
       translations: 'Geliştirmek, İyileştirmek',
-      exampleEn: 'Practice every day to improve your skills.',
+      exampleEn: '\u201CPractice every day to improve your skills.\u201D',
       exampleTr: 'Becerilerini geliştirmek için her gün pratik yap.',
     ),
   ];
@@ -93,11 +93,9 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
         if (!didPop) _handleBack();
       },
       child: Scaffold(
-      backgroundColor: const Color(0xFFF2F5FC),
-      appBar: _buildAppBar(context),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
+        backgroundColor: const Color(0xFFF2F5FC),
+        appBar: _buildAppBar(context),
+        body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, 120),
             child: Center(
@@ -118,7 +116,7 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
                     onHint: () {},
                   ),
                   ),
-                  const SizedBox(height: 96),
+                  const SizedBox(height: 180),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -127,7 +125,7 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
                         isPrimary: false,
                         onTap: _goPrev,
                       ),
-                      const SizedBox(width: 32),
+                      const SizedBox(width: 16),
                       BackNextButton(
                         label: 'Next',
                         isPrimary: true,
@@ -141,7 +139,6 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
           ),
         ),
       ),
-    ),
     );
   }
 

@@ -72,6 +72,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
       ),
       body: SafeArea(
         top: false,
+        bottom: false,
         child: Align(
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
@@ -85,8 +86,8 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                   child: Container(
                     key: ValueKey<int>(_currentCardIndex),
                     width: _cardWidth,
-                    constraints: const BoxConstraints(minHeight: 320),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                    constraints: const BoxConstraints(minHeight: 500),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(_cardRadius),
@@ -102,6 +103,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        const SizedBox(height: 28),
                         // Soru metni (My father + kesikli çizgi)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -206,7 +208,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 96),
+                const SizedBox(height: 102),
                 // Back | Next butonları
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -216,7 +218,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                       isPrimary: false,
                       onTap: () => Navigator.of(context).pop(),
                     ),
-                    const SizedBox(width: 32),
+                    const SizedBox(width: 16),
                     BackNextButton(
                       label: 'Next',
                       isPrimary: true,

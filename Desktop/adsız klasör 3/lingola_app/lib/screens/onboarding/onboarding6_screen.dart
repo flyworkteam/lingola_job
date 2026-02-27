@@ -79,7 +79,7 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
                 AppSpacing.xl,
                 AppSpacing.lg,
                 AppSpacing.xl,
-                AppSpacing.xl,
+                AppSpacing.xxxl,
               ),
               child: Row(
                 children: [
@@ -106,9 +106,9 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: AppSpacing.md),
-                  Expanded(
+                    ),
+                    SizedBox(width: AppSpacing.sm),
+                    Expanded(
                     child: Opacity(
                       opacity: _selectedGoal != null ? 1.0 : 0.5,
                       child: IgnorePointer(
@@ -202,7 +202,7 @@ class _GoalCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? AppColors.primaryBrand : AppColors.surfaceVariant,
-            width: isSelected ? 2 : 1,
+            width: 2,
           ),
         ),
         child: Row(
@@ -283,7 +283,7 @@ class _GoalCard extends StatelessWidget {
                   Text(
                     goal.title,
                     style: AppTypography.labelLarge.copyWith(
-                      color: const Color(0xFF000000),
+                      color: isSelected ? AppColors.primaryBrand : AppColors.onboardingText,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -292,7 +292,7 @@ class _GoalCard extends StatelessWidget {
                   Text(
                     goal.subtitle,
                     style: AppTypography.body.copyWith(
-                      color: const Color(0xFF000000),
+                      color: isSelected ? AppColors.primaryBrand : AppColors.onboardingText,
                       fontSize: 14,
                     ),
                   ),

@@ -472,7 +472,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 vertical: AppSpacing.md,
               ),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
                 border: Border.all(color: const Color(0xFFE0E0E0)),
               ),
@@ -735,7 +735,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
             ),
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.lg),
               borderSide: const BorderSide(color: Color(0xFFE0E0E0)),

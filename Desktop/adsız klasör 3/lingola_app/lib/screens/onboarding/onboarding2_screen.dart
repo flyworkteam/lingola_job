@@ -72,7 +72,7 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                   AppSpacing.xl,
                   AppSpacing.xl + MediaQuery.paddingOf(context).top,
                   AppSpacing.xl,
-                  AppSpacing.lg,
+                  AppSpacing.xxxl,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,37 +81,53 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                     SizedBox(height: AppSpacing.xl),
                     Text(
                       'What is your profession?',
-                      style: AppTypography.onboardingTitle.copyWith(
-                        fontSize: 28,
-                        color: AppColors.onboardingText,
+                      style: AppTypography.onboardingPageTitle,
+                    ),
+                    SizedBox(height: AppSpacing.xl),
+                    Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 340),
+                        child: _SearchBar(controller: _searchController),
+                      ),
+                    ),
+                    Transform.translate(
+                      offset: const Offset(0, -33),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          const gap = AppSpacing.lg; // 16px — kartlar arası boşluk
+                          const maxCellSize = 160.0; // kartlar dar ve kısa (max 130x130)
+                          final w = constraints.maxWidth;
+                          final cellSize = ((w - gap) / 2).clamp(0.0, maxCellSize);
+                          final gridWidth = 2 * cellSize + gap;
+                          return Center(
+                            child: SizedBox(
+                              width: gridWidth,
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: gap,
+                                  mainAxisSpacing: gap,
+                                  mainAxisExtent: cellSize,
+                                ),
+                                itemCount: _filteredProfessions.length,
+                                itemBuilder: (context, index) {
+                                  final p = _filteredProfessions[index];
+                                  final isSelected = _selectedProfession == p.id;
+                                  return _ProfessionCard(
+                                    profession: p,
+                                    isSelected: isSelected,
+                                    onTap: () => setState(() => _selectedProfession = p.id),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(height: AppSpacing.xl),
-                    _SearchBar(controller: _searchController),
-                    Transform.translate(
-                      offset: const Offset(0, -12),
-                      child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 0.95,
-                      ),
-                      itemCount: _filteredProfessions.length,
-                      itemBuilder: (context, index) {
-                        final p = _filteredProfessions[index];
-                        final isSelected = _selectedProfession == p.id;
-                        return _ProfessionCard(
-                          profession: p,
-                          isSelected: isSelected,
-                          onTap: () => setState(() => _selectedProfession = p.id),
-                        );
-                      },
-                    ),
-                    ),
-                    SizedBox(height: AppSpacing.xxl),
                     Opacity(
                       opacity: _selectedProfession != null ? 1.0 : 0.5,
                       child: IgnorePointer(
@@ -243,41 +259,39 @@ class _ProfessionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? AppColors.primaryBrand : AppColors.surfaceVariant,
-            width: isSelected ? 2 : 1,
+            width: 2,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (profession.iconAsset != null)
-              SvgPicture.asset(
-                profession.iconAsset!,
-                width: 32,
-                height: 32,
-                colorFilter: isSelected
-                    ? ColorFilter.mode(
-                        AppColors.primaryBrand,
-                        BlendMode.srcIn,
-                      )
-                    : null,
-              )
-            else
-              Icon(
-                profession.icon!,
-                size: 32,
-                color: isSelected
-                    ? AppColors.primaryBrand
-                    : AppColors.onboardingText,
-              ),
-            SizedBox(height: 4),
+            Transform.translate(
+              offset: Offset(0, profession.id == 'it' ? 0 : -6),
+              child: profession.iconAsset != null
+                  ? SvgPicture.asset(
+                      profession.iconAsset!,
+                      width: 32,
+                      height: 32,
+                      colorFilter: isSelected
+                          ? ColorFilter.mode(
+                              AppColors.primaryBrand,
+                              BlendMode.srcIn,
+                            )
+                          : null,
+                    )
+                  : Icon(
+                      profession.icon!,
+                      size: 32,
+                      color: isSelected
+                          ? AppColors.primaryBrand
+                          : AppColors.onboardingText,
+                    ),
+            ),
+            SizedBox(height: profession.id == 'it' ? 0 : 6),
             Text(
               profession.title,
-              style: AppTypography.labelLarge.copyWith(
-                color: AppColors.onboardingText,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+              style: AppTypography.professionCardTitle,
               textAlign: TextAlign.left,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
@@ -289,7 +303,7 @@ class _ProfessionCard extends StatelessWidget {
                 fontFamily: AppTypography.fontFamily,
                 fontWeight: FontWeight.w400,
                 fontSize: 13,
-                height: 16 / 13,
+                height: 15 / 13,
                 color: const Color(0xFF000000),
               ),
               textAlign: TextAlign.left,

@@ -396,7 +396,7 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                                   ),
                                 Positioned(
                                   left: 145,
-                                  top: 290,
+                                  top: 340,
                                   child: FadeTransition(
                                     opacity: _char3Opacity,
                                     child: Transform.translate(
@@ -482,48 +482,51 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                 },
               ),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.xl,
-                AppSpacing.md,
-                AppSpacing.xl,
-                AppSpacing.md,
-              ),
-              child: AnimatedBuilder(
-                animation: _progressController,
-                builder: (context, child) {
-                  final value = _progressAnimation.value;
-                  final clampedOpacity = value.clamp(0.5, 1.0);
-                  return Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () => Navigator.of(context)
-                          .pushReplacementNamed('/home'),
-                      borderRadius: BorderRadius.circular(AppRadius.xl),
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                        decoration: BoxDecoration(
-                          color: AppColors.white.withValues(
-                            alpha: clampedOpacity,
+            Transform.translate(
+              offset: const Offset(0, -32),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.xl,
+                  AppSpacing.md,
+                  AppSpacing.xl,
+                  AppSpacing.xxl + MediaQuery.paddingOf(context).bottom,
+                ),
+                child: AnimatedBuilder(
+                  animation: _progressController,
+                  builder: (context, child) {
+                    final value = _progressAnimation.value;
+                    final clampedOpacity = value.clamp(0.5, 1.0);
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => Navigator.of(context)
+                            .pushReplacementNamed('/home'),
+                        borderRadius: BorderRadius.circular(AppRadius.xl),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                          decoration: BoxDecoration(
+                            color: AppColors.white.withValues(
+                              alpha: clampedOpacity,
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.xl),
                           ),
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.xl),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Get Started',
-                            style: AppTypography.labelLarge.copyWith(
-                              color: _screenBackground,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                          child: Center(
+                            child: Text(
+                              'Get Started',
+                              style: AppTypography.labelLarge.copyWith(
+                                color: _screenBackground,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ],

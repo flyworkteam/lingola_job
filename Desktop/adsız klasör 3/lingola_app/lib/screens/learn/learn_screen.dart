@@ -249,8 +249,7 @@ class LearnScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 263,
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
@@ -275,7 +274,7 @@ class LearnScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 12),
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Material(
@@ -502,7 +501,7 @@ class LearnScreen extends StatelessWidget {
         onTap: () => Navigator.of(context).pushNamed('/saved_word'),
         borderRadius: BorderRadius.circular(22),
         child: Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(22),
@@ -516,6 +515,7 @@ class LearnScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -523,6 +523,7 @@ class LearnScreen extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     ShaderMask(
                       blendMode: BlendMode.srcIn,
@@ -533,19 +534,21 @@ class LearnScreen extends StatelessWidget {
                       ).createShader(bounds),
                       child: Text(
                         'Saved Word',
-                        style: AppTypography.title.copyWith(
-                          color: Colors.white,
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
                           fontWeight: FontWeight.w700,
                           fontSize: 24,
+                          color: Colors.white,
+                          height: AppTypography.lineHeightTight,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       'Review the words\nyou have saved',
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.onSurfaceVariant,
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -553,14 +556,14 @@ class LearnScreen extends StatelessWidget {
               ),
               SvgPicture.asset(
                 'assets/icons/frame_saved_words.svg',
-                width: 36,
-                height: 36,
+                width: 50,
+                height: 50,
                 colorFilter: const ColorFilter.mode(_learnBlue, BlendMode.srcIn),
                 fit: BoxFit.contain,
               ),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Row(
             children: [
               Text(
@@ -577,7 +580,7 @@ class LearnScreen extends StatelessWidget {
                   onTap: () => Navigator.of(context).pushNamed('/saved_word'),
                   borderRadius: BorderRadius.circular(24),
                   child: Padding(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     child: ShaderMask(
                       blendMode: BlendMode.srcIn,
                       shaderCallback: (bounds) => const LinearGradient(
@@ -587,8 +590,8 @@ class LearnScreen extends StatelessWidget {
                       ).createShader(bounds),
                       child: SvgPicture.asset(
                         'assets/icons/icon_frame_arrow.svg',
-                        width: 28,
-                        height: 28,
+                        width: 35,
+                        height: 35,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -597,7 +600,6 @@ class LearnScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
         ],
       ),
         ),

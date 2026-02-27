@@ -50,6 +50,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     _ensureAnimations();
+    final size = MediaQuery.sizeOf(context);
+    final imageHeight = size.height * 0.57;
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -64,8 +66,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.lg),
                 child: SizedBox(
-                  width: 447,
-                  height: 503,
+                  width: size.width,
+                  height: imageHeight,
                   child: Image.asset(
                     'assets/onboard/onboard.png',
                     fit: BoxFit.cover,
@@ -78,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           Positioned(
             left: 0,
             right: 0,
-            top: 470,
+            top: imageHeight - 50,
             child: FadeTransition(
               opacity: _fade!,
               child: SlideTransition(
@@ -96,13 +98,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   topLeft: Radius.circular(AppRadius.xl),
                   topRight: Radius.circular(AppRadius.xl),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 20,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(

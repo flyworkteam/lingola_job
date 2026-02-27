@@ -69,7 +69,7 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
                   AppSpacing.xl,
                   AppSpacing.xl + MediaQuery.paddingOf(context).top,
                   AppSpacing.xl,
-                  AppSpacing.lg,
+                  AppSpacing.xxxl,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,7 +94,7 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
                                 setState(() => _selectedLevel = level.id),
                           ),
                         )),
-                    SizedBox(height: AppSpacing.xxl),
+                    SizedBox(height: AppSpacing.xl),
                     Row(
                       children: [
                         Expanded(
@@ -121,7 +121,7 @@ class _Onboarding5ScreenState extends State<Onboarding5Screen> {
                             ),
                           ),
                         ),
-                        SizedBox(width: AppSpacing.md),
+                        SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: Opacity(
                             opacity: _selectedLevel != null ? 1.0 : 0.5,
@@ -221,7 +221,7 @@ class _LevelCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isSelected ? AppColors.primaryBrand : AppColors.surfaceVariant,
-            width: isSelected ? 2 : 1,
+            width: 2,
           ),
         ),
         child: Row(
@@ -259,9 +259,7 @@ class _LevelCard extends StatelessWidget {
                   Text(
                     level.title,
                     style: AppTypography.labelLarge.copyWith(
-                      color: isSelected
-                          ? AppColors.primaryBrand
-                          : AppColors.onboardingText,
+                      color: AppColors.onboardingText,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -270,9 +268,7 @@ class _LevelCard extends StatelessWidget {
                   Text(
                     level.description,
                     style: AppTypography.body.copyWith(
-                      color: isSelected
-                          ? AppColors.primaryBrand
-                          : AppColors.outline,
+                      color: AppColors.onboardingText,
                       fontSize: 14,
                     ),
                   ),
