@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/src/state/saved_words_store.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
@@ -166,7 +167,7 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
       titleSpacing: 4,
       title: Text(
         'Saved Word',
-        style: AppTypography.titleLarge.copyWith(
+        style: GoogleFonts.quicksand(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: AppColors.onSurface,
@@ -191,18 +192,20 @@ class _SavedWordScreenState extends State<SavedWordScreen> {
           const SizedBox(height: AppSpacing.lg),
           Text(
             'No saved words yet',
-            style: AppTypography.title.copyWith(
-              color: AppColors.onSurface,
+            style: GoogleFonts.quicksand(
+              fontSize: 20,
               fontWeight: FontWeight.w700,
+              color: AppColors.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Save words from Word Practice\nto review them here.',
             textAlign: TextAlign.center,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.onSurfaceVariant,
+            style: GoogleFonts.quicksand(
               fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: AppColors.onSurfaceVariant,
             ),
           ),
         ],

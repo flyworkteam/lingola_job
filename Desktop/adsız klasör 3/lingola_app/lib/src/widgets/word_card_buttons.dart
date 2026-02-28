@@ -226,13 +226,14 @@ class WordCardListenButton extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.volume_up, color: Color(0xFF0575E6), size: 20),
-                        const SizedBox(width: 8),
+                        const Icon(Icons.volume_up, color: Color(0xFF0575E6), size: 28),
+                        const SizedBox(width: 10),
                         Text(
                           'Listen',
                           style: AppTypography.labelLarge.copyWith(
                             color: const Color(0xFF0575E6),
-                            fontSize: 14,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],

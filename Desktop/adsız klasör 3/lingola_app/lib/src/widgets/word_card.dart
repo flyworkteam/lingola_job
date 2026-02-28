@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/word_card_buttons.dart';
 
@@ -207,14 +208,12 @@ class WordCardBody extends StatelessWidget {
             data.word,
             textAlign: TextAlign.center,
             style: savedWordStyle
-                ? AppTypography.titleLarge.copyWith(
-                    fontFamily: 'Quicksand',
+                ? GoogleFonts.quicksand(
                     fontWeight: FontWeight.w700,
                     fontSize: 40,
                     color: Colors.white,
                   )
-                : AppTypography.titleLarge.copyWith(
-                    fontFamily: 'Quicksand',
+                : GoogleFonts.quicksand(
                     color: Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -225,15 +224,15 @@ class WordCardBody extends StatelessWidget {
             data.phonetic,
             textAlign: TextAlign.center,
             style: savedWordStyle
-                ? AppTypography.bodySmall.copyWith(
-                    fontFamily: 'Nunito Sans',
+                ? GoogleFonts.quicksand(
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFFFFFFFF),
                     fontSize: 15,
                   )
-                : AppTypography.bodySmall.copyWith(
+                : GoogleFonts.quicksand(
                     color: const Color(0xFFFFFFFF),
                     fontSize: 14,
+                    fontWeight: FontWeight.w400,
                   ),
           ),
           const SizedBox(height: 8),
@@ -241,23 +240,23 @@ class WordCardBody extends StatelessWidget {
             data.translations,
             textAlign: TextAlign.center,
             style: savedWordStyle
-                ? AppTypography.body.copyWith(
-                    fontFamily: 'Quicksand',
+                ? GoogleFonts.quicksand(
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                     fontSize: 16,
                   )
-                : AppTypography.body.copyWith(
+                : GoogleFonts.quicksand(
                     color: Colors.white,
                     fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
           ),
           const SizedBox(height: 12),
-          const Center(
+          Center(
             child: Text(
               '\u201C',
-              style: TextStyle(
-                color: Color(0xFFFFFFFF),
+              style: GoogleFonts.quicksand(
+                color: const Color(0xFFFFFFFF),
                 fontSize: 48,
                 height: 1,
                 fontWeight: FontWeight.w700,
@@ -268,8 +267,7 @@ class WordCardBody extends StatelessWidget {
           Text(
             data.exampleEn,
             textAlign: TextAlign.center,
-            style: AppTypography.body.copyWith(
-              fontFamily: 'Quicksand',
+            style: GoogleFonts.quicksand(
               fontWeight: FontWeight.w600,
               color: Colors.white,
               fontSize: 15,
@@ -279,8 +277,7 @@ class WordCardBody extends StatelessWidget {
           Text(
             data.exampleTr,
             textAlign: TextAlign.center,
-            style: AppTypography.body.copyWith(
-              fontFamily: 'Quicksand',
+            style: GoogleFonts.quicksand(
               fontWeight: FontWeight.w400,
               color: const Color(0xFFFFFFFF),
               fontSize: 14,
@@ -328,8 +325,7 @@ class WordCardReadingTestBody extends StatelessWidget {
           Text(
             word,
             textAlign: TextAlign.center,
-            style: AppTypography.titleLarge.copyWith(
-              fontFamily: 'Quicksand',
+            style: GoogleFonts.quicksand(
               color: const Color(0xFFFFFFFF),
               fontSize: 48,
               fontWeight: FontWeight.w700,
@@ -339,8 +335,7 @@ class WordCardReadingTestBody extends StatelessWidget {
           Text(
             phonetic,
             textAlign: TextAlign.center,
-            style: AppTypography.bodySmall.copyWith(
-              fontFamily: 'Quicksand',
+            style: GoogleFonts.quicksand(
               color: const Color(0xFFFFFFFF),
               fontSize: 15,
               fontWeight: FontWeight.w400,
@@ -380,8 +375,7 @@ class WordCardReadingTestBody extends StatelessWidget {
           Text(
             translation,
             textAlign: TextAlign.center,
-            style: AppTypography.body.copyWith(
-              fontFamily: 'Quicksand',
+            style: GoogleFonts.quicksand(
               fontWeight: FontWeight.w600,
               color: const Color(0xFFFFFFFF),
               fontSize: 15,

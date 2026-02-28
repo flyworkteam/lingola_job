@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/word_card_buttons.dart';
@@ -62,7 +63,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
         titleSpacing: 4,
         title: Text(
           'Test',
-          style: AppTypography.titleLarge.copyWith(
+          style: GoogleFonts.quicksand(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: AppColors.onSurface,
@@ -113,8 +114,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                           children: [
                             Text(
                               'My father ',
-                              style: AppTypography.titleLarge.copyWith(
-                                fontFamily: 'Quicksand',
+                              style: GoogleFonts.quicksand(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.onSurface,
@@ -138,8 +138,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                         Text(
                           'newspaper every',
                           textAlign: TextAlign.center,
-                          style: AppTypography.titleLarge.copyWith(
-                            fontFamily: 'Quicksand',
+                          style: GoogleFonts.quicksand(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: AppColors.onSurface,
@@ -149,8 +148,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                         Text(
                           'morning.',
                           textAlign: TextAlign.center,
-                          style: AppTypography.titleLarge.copyWith(
-                            fontFamily: 'Quicksand',
+                          style: GoogleFonts.quicksand(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: AppColors.onSurface,
@@ -192,8 +190,7 @@ class _DailyTestScreenState extends State<DailyTestScreen> {
                                   child: Text(
                                     _options[i],
                                     textAlign: TextAlign.center,
-                                    style: AppTypography.body.copyWith(
-                                      fontFamily: 'Quicksand',
+                                    style: GoogleFonts.quicksand(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w300,
                                       color: textColor,

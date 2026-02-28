@@ -534,12 +534,11 @@ class LearnScreen extends StatelessWidget {
                       ).createShader(bounds),
                       child: Text(
                         'Saved Word',
-                        style: TextStyle(
-                          fontFamily: AppTypography.fontFamily,
+                        style: GoogleFonts.quicksand(
                           fontWeight: FontWeight.w700,
                           fontSize: 24,
-                          color: Colors.white,
                           height: AppTypography.lineHeightTight,
+                          color: Colors.white,
                         ),
                       ),
                     ),

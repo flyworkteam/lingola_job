@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/word_card.dart';
@@ -36,7 +37,7 @@ class ReadingTestScreen extends StatelessWidget {
         titleSpacing: 4,
         title: Text(
           'Reading Test',
-          style: AppTypography.titleLarge.copyWith(
+          style: GoogleFonts.quicksand(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             color: AppColors.onSurface,

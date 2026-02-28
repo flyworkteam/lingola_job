@@ -838,8 +838,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   static const double _bottomCardGap = 20;
-  static const double _bottomCardWidth = 165;
-  static const double _bottomCardHeight = 165;
+  static const double _bottomCardWidth = 177;
+  static const double _bottomCardHeight = 177;
 
   Widget _buildBottomCards(BuildContext context) {
     return Center(
@@ -859,54 +859,58 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: Stack(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const SizedBox(height: 12),
-                                SizedBox(
-                                  width: 44,
-                                  height: 44,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/icons/rectangle_141.svg',
-                                        width: 41,
-                                        height: 41,
-                                        fit: BoxFit.contain,
-                                      ),
-                                      SvgPicture.asset(
-                                        'assets/icons/frame_saved_words.svg',
-                                        width: 36,
-                                        height: 36,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ],
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    width: 52,
+                                    height: 52,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/rectangle_141.svg',
+                                          width: 48,
+                                          height: 48,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        SvgPicture.asset(
+                                          'assets/icons/frame_saved_words.svg',
+                                          width: 42,
+                                          height: 42,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 14),
-                                Text(
-                                  'Saved\nWords',
-                                  style: AppTypography.titleLarge.copyWith(
-                                    fontSize: 16,
-                                    color: AppColors.onSurface,
-                                    height: 1.2,
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'Saved\nWord',
+                                    style: AppTypography.titleLarge.copyWith(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.onSurface,
+                                      height: 1.25,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${widget.savedWordsCount} words',
-                                  style: AppTypography.bodySmall.copyWith(
-                                    color: AppColors.onSurfaceVariant,
-                                    fontSize: 12,
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    '${widget.savedWordsCount} words',
+                                    style: AppTypography.bodySmall.copyWith(
+                                      color: AppColors.onSurfaceVariant,
+                                      fontSize: 12,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             Positioned(
                               right: 0,
@@ -937,69 +941,74 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           child: Stack(
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(height: 12),
-                                  SizedBox(
-                                    width: 44,
-                                    height: 44,
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icons/rectangle_141.svg',
-                                          width: 41,
-                                          height: 41,
-                                          fit: BoxFit.contain,
-                                        ),
-                                        SvgPicture.asset(
-                                          'assets/icons/frame_dictionary.svg',
-                                        width: 36,
-                                        height: 36,
-                                        fit: BoxFit.contain,
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(height: 10),
+                                    SizedBox(
+                                      width: 52,
+                                      height: 52,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icons/rectangle_141.svg',
+                                            width: 48,
+                                            height: 48,
+                                            fit: BoxFit.contain,
+                                          ),
+                                          SvgPicture.asset(
+                                            'assets/icons/frame_dictionary.svg',
+                                            width: 42,
+                                            height: 42,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    const SizedBox(height: 38),
+                                    Text(
+                                      'Dictionary',
+                                      style: AppTypography.titleLarge.copyWith(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.onSurface,
+                                        height: 1.25,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Search Word',
+                                      style: AppTypography.bodySmall.copyWith(
+                                        color: AppColors.onSurfaceVariant,
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 14),
-                                Text(
-                                  'Dictionary',
-                                  style: AppTypography.titleLarge.copyWith(
-                                    fontSize: 14,
-                                    color: AppColors.onSurface,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Look up words',
-                                  style: AppTypography.bodySmall.copyWith(
-                                    color: AppColors.onSurfaceVariant,
-                                    fontSize: 12,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: SvgPicture.asset(
-                                'assets/icons/icon_arrow_right.svg',
-                                width: 24,
-                                height: 11,
-                                fit: BoxFit.contain,
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: SvgPicture.asset(
+                                  'assets/icons/icon_arrow_right.svg',
+                                  width: 24,
+                                  height: 11,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
     );
