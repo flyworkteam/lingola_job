@@ -10,7 +10,7 @@ import 'package:lingola_app/Services/auth_service.dart';
 /// Geçersiz kılmak için: flutter run --dart-define=API_BASE_URL=http://SENIN_IP:3000
 const String kBaseApiUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://192.168.1.8:3000',
+  defaultValue: 'http://lingolajob.fly-work.com',
 );
 
 /// Backend API istekleri. Token otomatik eklenir.
