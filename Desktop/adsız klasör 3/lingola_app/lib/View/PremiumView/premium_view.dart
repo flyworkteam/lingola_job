@@ -36,6 +36,7 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
   List<Package> _packages = [];
   bool _loadingOfferings = true;
   String? _offeringsError;
+  int _selectedPackageIndex = 0;
   bool _purchasing = false;
   bool _restoring = false;
 
@@ -66,6 +67,8 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
         if (!mounted) return;
         setState(() {
           _packages = current.availablePackages;
+          _selectedPackageIndex =
+              _selectedPackageIndex.clamp(0, current.availablePackages.length - 1);
           _loadingOfferings = false;
         });
       } else {
@@ -179,273 +182,193 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
     final canPurchase = revenueCatReady && _packages.isNotEmpty && !_purchasing;
     final isLoading = _loadingOfferings || _purchasing;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF2F5FC),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.sm,
-                AppSpacing.lg,
-                AppSpacing.sm,
-              ),
-              child: Row(
-                children: [
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () => context.pop(),
-                      borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Transform.scale(
-                          scaleX: -1,
-                          child: SvgPicture.asset(
-                            'assets/icons/icon_arrow_right.svg',
-                            width: 20,
-                            height: 9,
-                            colorFilter: const ColorFilter.mode(
-                              Color(0xFF000000),
-                              BlendMode.srcIn,
-                            ),
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    'Premium',
-                    style: AppTypography.titleLarge.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.onSurface,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
-                  AppSpacing.sm,
-                  AppSpacing.xl,
-                  AppSpacing.xxxl,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildHeroCard(),
-                    const SizedBox(height: AppSpacing.xl),
-                    Text(
-                      'Premium ayrıcalıklar',
-                      style: AppTypography.titleLarge.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _buildBenefitsCard(),
-                    const SizedBox(height: AppSpacing.xl),
-                    Text(
-                      'Deneme süresi',
-                      style: AppTypography.titleLarge.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    _buildTrialCard(),
-                    const SizedBox(height: AppSpacing.xl),
-                    if (_offeringsError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                        child: Text(
-                          _offeringsError!,
-                          style: AppTypography.bodySmall.copyWith(
-                            color: Colors.red,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: theme.elevatedButtonTheme.style?.copyWith(
-                              minimumSize:
-                                  WidgetStateProperty.all(const Size.fromHeight(52)),
-                              backgroundColor:
-                                  WidgetStateProperty.all(AppColors.primaryBrand),
-                              shape: WidgetStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(28),
-                                ),
-                              ),
-                            ) ??
-                            ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(52),
-                              backgroundColor: AppColors.primaryBrand,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(28),
-                              ),
-                            ),
-                        onPressed: canPurchase
-                            ? () {
-                                final pkg = _packages.first;
-                                _purchase(pkg);
-                              }
-                            : null,
-                        child: isLoading
-                            ? const SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                _packages.isNotEmpty
-                                    ? _packages.first.storeProduct.priceString
-                                        .isNotEmpty
-                                        ? 'Premium\'a geç — ${_packages.first.storeProduct.priceString}'
-                                        : 'Premium\'a geç'
-                                    : 'Yakında — Premium\'a geç',
-                                style: AppTypography.labelLarge.copyWith(
-                                  color: canPurchase
-                                      ? Colors.white
-                                      : Colors.white.withValues(alpha: 0.8),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    TextButton(
-                      onPressed: (_restoring || _loadingOfferings || !revenueCatReady)
-                          ? null
-                          : _restore,
-                      child: _restoring
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(
-                              'Satın alımları geri yükle',
-                              style: AppTypography.labelLarge.copyWith(
-                                color: AppColors.primaryBrand,
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    final hasMultiplePackages = _packages.length > 1;
 
-  Widget _buildHeroCard() {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF0575E6), Color(0xFF021B79)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.cardShadow,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    final selectedPackage =
+        _packages.isNotEmpty ? _packages[_selectedPackageIndex] : null;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          // Main scrollable content
+          Column(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(
-                    'assets/icons/vector_premium.svg',
-                    width: 26,
-                    height: 26,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
-                      BlendMode.srcIn,
-                    ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                    0,
+                    AppSpacing.xxl,
+                    0,
+                    AppSpacing.lg,
                   ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.lg),
-              Text(
-                'Lingola Job Premium',
-                style: AppTypography.titleLarge.copyWith(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: _buildHeaderCard(),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: _buildBenefitsList(),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      const Divider(
+                        height: AppSpacing.xl,
+                        thickness: 2,
+                        color: Color(0xFFE4E5EC),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: _buildPlanSelector(
+                          theme: theme,
+                          hasMultiplePackages: hasMultiplePackages,
+                          canPurchase: canPurchase,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      if (_offeringsError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: AppSpacing.xs,
+                            left: AppSpacing.xl,
+                            right: AppSpacing.xl,
+                          ),
+                          child: Text(
+                            _offeringsError!,
+                            textAlign: TextAlign.center,
+                            style: AppTypography.bodySmall.copyWith(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.xl,
+                          0,
+                          AppSpacing.xl,
+                          AppSpacing.lg,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style:
+                                    theme.elevatedButtonTheme.style?.copyWith(
+                                          minimumSize: WidgetStateProperty.all(
+                                            const Size.fromHeight(52),
+                                          ),
+                                          backgroundColor:
+                                              WidgetStateProperty.all(
+                                            const Color(0xFF0974E7),
+                                          ),
+                                          shape: WidgetStateProperty.all(
+                                            RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ) ??
+                                        ElevatedButton.styleFrom(
+                                          minimumSize:
+                                              const Size.fromHeight(52),
+                                          backgroundColor:
+                                              const Color(0xFF0974E7),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                onPressed:
+                                    canPurchase && selectedPackage != null
+                                        ? () => _purchase(selectedPackage)
+                                        : null,
+                                child: isLoading
+                                    ? const SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        selectedPackage != null &&
+                                                selectedPackage.storeProduct
+                                                    .priceString.isNotEmpty
+                                            ? 'Continue — ${selectedPackage.storeProduct.priceString}'
+                                            : 'Continue',
+                                        style:
+                                            AppTypography.labelLarge.copyWith(
+                                          color: canPurchase
+                                              ? Colors.white
+                                              : Colors.white
+                                                  .withValues(alpha: 0.8),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            _buildFooterLinks(
+                              revenueCatReady: revenueCatReady,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            'Kariyerine uygun kelimeleri sınırsız öğren, kaydet ve tekrar et.',
-            style: AppTypography.bodySmall.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 14,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.16),
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.flash_on_rounded,
-                  size: 18,
-                  color: Colors.white,
+          // Close button (X) with circular border background, drawn on top
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: AppSpacing.sm,
+                  right: AppSpacing.sm,
                 ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  '2 gün ücretsiz dene',
-                  style: AppTypography.labelLarge.copyWith(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE4E4E9),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFFE4E4E9),
+                      width: 1,
+                    ),
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    splashRadius: 18,
+                    onPressed: () => context.pop(),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      color: Colors.black87,
+                      size: 18,
+                    ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -453,24 +376,65 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
     );
   }
 
-  Widget _buildBenefitsCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.lg,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.cardShadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
+  Widget _buildHeaderCard() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: AppSpacing.lg),
+        Container(
+          width: 100,
+          height: 100,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
           ),
-        ],
+          child: ClipOval(
+            child: Image.asset(
+              'assets/app_icon.png',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          'Get Lingola Job Pro',
+          textAlign: TextAlign.center,
+          style: AppTypography.titleLarge.copyWith(
+            fontSize: 25,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'Poppins',
+            color: AppColors.onSurface,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'Our most advanced features, for our most dedicated users.',
+          textAlign: TextAlign.center,
+          style: AppTypography.bodySmall.copyWith(
+            color: AppColors.onSurfaceVariant,
+            fontSize: 16,
+            height: 1.4,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBenefitsList() {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F4F5),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(
+          color: const Color(0xFFF4F4F5),
+          width: 1,
+        ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: _benefits
             .map(
               (b) => Padding(
@@ -482,12 +446,12 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryBrand.withValues(alpha: 0.12),
+                        color: AppColors.primaryBrand.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.check_rounded,
-                        size: 16,
+                        size: 18,
                         color: AppColors.primaryBrand,
                       ),
                     ),
@@ -496,9 +460,9 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
                       child: Text(
                         b,
                         style: AppTypography.bodySmall.copyWith(
-                          color: AppColors.onSurfaceVariant,
+                          color: AppColors.onSurface,
                           fontSize: 14,
-                          height: 1.35,
+                          height: 1.4,
                         ),
                       ),
                     ),
@@ -511,28 +475,238 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
     );
   }
 
-  Widget _buildTrialCard() {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.cardShadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
+  Widget _buildPlanSelector({
+    required ThemeData theme,
+    required bool hasMultiplePackages,
+    required bool canPurchase,
+  }) {
+    final yearlySelected = _selectedPackageIndex == 0;
+    final monthlySelected = hasMultiplePackages && _selectedPackageIndex == 1;
+
+    String yearlyPrice = '';
+    String monthlyPrice = '';
+
+    if (_packages.isNotEmpty) {
+      yearlyPrice = _packages.first.storeProduct.priceString;
+      if (hasMultiplePackages) {
+        monthlyPrice = _packages[1].storeProduct.priceString;
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (hasMultiplePackages)
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: 4,
+              ),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D7AFF),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                '19% OFF',
+                style: AppTypography.labelLarge.copyWith(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
           ),
-        ],
-      ),
-      child: Text(
-        'Lingola Job ilk indirildiğinde kullanıcıya 2 gün ücretsiz deneme süresi sunulur. Deneme süresi boyunca premium özelliklerin bazılarını veya tamamını deneyimleyebilir; süre sonunda premium pakete geçiş yaparak ayrıcalıklı özellikleri kullanmaya devam edebilirsiniz.',
-        style: AppTypography.bodySmall.copyWith(
-          color: AppColors.onSurfaceVariant,
-          fontSize: 14,
-          height: 1.35,
+        if (hasMultiplePackages) const SizedBox(height: AppSpacing.sm),
+        Row(
+          children: [
+            Expanded(
+              child: _buildPlanOption(
+                title: 'Yearly',
+                priceLabel: '\$5.83/mo',
+                billedLabel: 'Billed at \$69.99/yr',
+                isSelected: yearlySelected,
+                onTap: () {
+                  setState(() => _selectedPackageIndex = 0);
+                },
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _buildPlanOption(
+                title: 'Monthly',
+                priceLabel: '\$9.99/mo',
+                billedLabel: 'Billed at \$9.99/mo.',
+                isSelected: monthlySelected,
+                onTap: () {
+                  setState(() => _selectedPackageIndex = 1);
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlanOption({
+    required String title,
+    required String priceLabel,
+    String? billedLabel,
+    required bool isSelected,
+    VoidCallback? onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.only(
+            left: AppSpacing.lg,
+            right: AppSpacing.lg,
+            top: AppSpacing.md,
+            bottom: AppSpacing.xl,
+          ),
+          decoration: BoxDecoration(
+            color:
+                isSelected ? const Color(0xFFE7F0FF) : const Color(0xFFF2F2F7),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color:
+                  isSelected ? const Color(0xFF0D7AFF) : const Color(0xFFC5C5C7),
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      textAlign: TextAlign.left,
+                      style: AppTypography.labelLarge.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Poppins',
+                        color: const Color(0xFF020814),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      priceLabel,
+                      textAlign: TextAlign.left,
+                      style: AppTypography.bodySmall.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Noto Sans Japanese',
+                        color: AppColors.onSurface,
+                      ),
+                    ),
+                    if (billedLabel != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        billedLabel,
+                        textAlign: TextAlign.left,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: AppTypography.bodySmall.copyWith(
+                          fontSize: 10,
+                          color: const Color(0xFF77737E),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              _buildPlanCheckIndicator(isSelected),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildPlanCheckIndicator(bool isSelected) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        border: Border.all(
+          color: isSelected ? const Color(0xFF0D7AFF) : const Color(0xFFC5C5C7),
+          width: 2,
+        ),
+      ),
+      child: isSelected
+          ? Container(
+              margin: const EdgeInsets.all(3),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFF0D7AFF),
+              ),
+              child: const Icon(
+                Icons.check,
+                size: 16,
+                color: Colors.white,
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildFooterLinks({required bool revenueCatReady}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextButton(
+          onPressed:
+              (_restoring || _loadingOfferings || !revenueCatReady) ? null : _restore,
+          child: Text(
+            'Restore Purchases',
+            style: AppTypography.labelLarge.copyWith(
+              color: const Color(0xFF0974E7),
+              fontSize: 12,
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        TextButton(
+          onPressed: () {
+            // TODO: Terms URL
+          },
+          child: Text(
+            'Terms',
+            style: AppTypography.labelLarge.copyWith(
+              color: const Color(0xFF0974E7),
+              fontSize: 12,
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        TextButton(
+          onPressed: () {
+            // TODO: Privacy URL
+          },
+          child: Text(
+            'Privacy',
+            style: AppTypography.labelLarge.copyWith(
+              color: const Color(0xFF0974E7),
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRevenueCatUnavailableNotice() {
+    return const SizedBox.shrink();
   }
 }

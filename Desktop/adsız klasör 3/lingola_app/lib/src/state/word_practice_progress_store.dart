@@ -28,17 +28,22 @@ abstract final class WordPracticeProgressStore {
 
   static const String _keyProfileLevel = 'profile_level';
   static const String _seenIdsPrefix = 'word_practice_seen_ids';
+  static const String _seenWordsPrefix = 'word_practice_seen_words';
   static const int xpPerLevel = 500;
+
+  static int _completedCountForLevel(SharedPreferences prefs, String level) {
+    final ids = _seenWordIdsForLevel(prefs, level).length;
+    final words = _seenWordsForLevel(prefs, level).length;
+    return (ids + words).clamp(0, totalWordsForLevel(level));
+  }
 
   static Future<WordPracticeProgressSnapshot> getCurrentProgress() async {
     final prefs = await SharedPreferences.getInstance();
+    // Kullanıcının seviyesi hiç seçilmemişse varsayılan olarak A1 kabul edilir.
     final currentLevel = _normalizedProfileLevel(
       prefs.getString(_keyProfileLevel),
     );
-    final completedWords = _seenWordIdsForLevel(
-      prefs,
-      currentLevel,
-    ).length.clamp(0, totalWordsForLevel(currentLevel));
+    final completedWords = _completedCountForLevel(prefs, currentLevel);
 
     return WordPracticeProgressSnapshot(
       currentLevel: currentLevel,
@@ -50,19 +55,22 @@ abstract final class WordPracticeProgressStore {
   static Future<WordPracticeProgressSnapshot> markWordCompleted(
     WordItem word,
   ) async {
-    final wordLevel = UserLevel.normalizedLevel(word.level);
-    if (wordLevel == null || word.id <= 0) {
-      return getCurrentProgress();
+    final wordLevel = UserLevel.normalizedLevel(word.level) ?? UserLevel.orderedLevels.first;
+    final prefs = await SharedPreferences.getInstance();
+
+    if (word.id > 0) {
+      final seenIds = _seenWordIdsForLevel(prefs, wordLevel);
+      seenIds.add(word.id.toString());
+      await prefs.setStringList(_seenIdsKey(wordLevel), seenIds.toList()..sort());
+    } else if (word.word.trim().isNotEmpty) {
+      final seenWords = _seenWordsForLevel(prefs, wordLevel);
+      seenWords.add(word.word.trim().toLowerCase());
+      await prefs.setStringList(_seenWordsKey(wordLevel), seenWords.toList()..sort());
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    final seenIds = _seenWordIdsForLevel(prefs, wordLevel);
-    seenIds.add(word.id.toString());
-    await prefs.setStringList(_seenIdsKey(wordLevel), seenIds.toList()..sort());
-
     var currentLevel = _normalizedProfileLevel(prefs.getString(_keyProfileLevel));
-    if (currentLevel == wordLevel &&
-        seenIds.length >= totalWordsForLevel(wordLevel)) {
+    final completed = _completedCountForLevel(prefs, wordLevel);
+    if (currentLevel == wordLevel && completed >= totalWordsForLevel(wordLevel)) {
       final nextLevel = UserLevel.nextLevel(currentLevel);
       if (nextLevel != null) {
         currentLevel = nextLevel;
@@ -70,10 +78,7 @@ abstract final class WordPracticeProgressStore {
       }
     }
 
-    final completedWords = _seenWordIdsForLevel(
-      prefs,
-      currentLevel,
-    ).length.clamp(0, totalWordsForLevel(currentLevel));
+    final completedWords = _completedCountForLevel(prefs, currentLevel);
 
     return WordPracticeProgressSnapshot(
       currentLevel: currentLevel,
@@ -132,7 +137,13 @@ abstract final class WordPracticeProgressStore {
     required WordPracticeProgressSnapshot snapshot,
     required int totalXp,
   }) {
-    return (combinedProgress(snapshot: snapshot, totalXp: totalXp) * 100).round();
+    final base =
+        (combinedProgress(snapshot: snapshot, totalXp: totalXp) * 100).round();
+    // En az 1% gösterelim ki kullanıcı ilerlemeyi görsün.
+    if (base == 0 && snapshot.completedWords > 0) {
+      return 1;
+    }
+    return base;
   }
 
   static Set<String> _seenWordIdsForLevel(
@@ -142,5 +153,13 @@ abstract final class WordPracticeProgressStore {
     return (prefs.getStringList(_seenIdsKey(level)) ?? <String>[]).toSet();
   }
 
+  static Set<String> _seenWordsForLevel(
+    SharedPreferences prefs,
+    String level,
+  ) {
+    return (prefs.getStringList(_seenWordsKey(level)) ?? <String>[]).toSet();
+  }
+
   static String _seenIdsKey(String level) => '${_seenIdsPrefix}_$level';
+  static String _seenWordsKey(String level) => '${_seenWordsPrefix}_$level';
 }

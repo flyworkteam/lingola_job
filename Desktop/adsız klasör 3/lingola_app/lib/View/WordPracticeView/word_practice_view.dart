@@ -47,9 +47,11 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
   String? _errorMessage;
   int _currentCardIndex = 0;
   int _lastSwipeDirection = 1; // 1: next, -1: prev
+  String? _lastLoadedLocaleCode;
   final Set<String> _translationRequested = {};
   final Set<String> _phoneticRequested = {};
   final Set<String> _exampleRequested = {};
+  final Set<String> _hintRevealed = {};
   FlutterTts? _flutterTts;
   bool _ttsInitialized = false;
   static const String _keyWordPracticeWordIdPrefix = 'word_practice_current_word_id';
@@ -64,6 +66,16 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
       _loadWords();
       _initTts();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale.languageCode;
+    if (_lastLoadedLocaleCode != null && _lastLoadedLocaleCode != currentLocale) {
+      _lastLoadedLocaleCode = currentLocale;
+      _loadWords();
+    }
   }
 
   static const String _keyProfileLevel = 'profile_level';
@@ -131,6 +143,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
       _loading = false;
       _errorMessage = showError ? 'word_practice.words_load_error' : null;
       _currentCardIndex = restoredIndex;
+      _lastLoadedLocaleCode = localeCode;
     });
     await _saveWordPracticeProgress(filtered);
   }
@@ -198,7 +211,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
     _tutorialOverlay = null;
   }
 
-  void _goNextCard() {
+  Future<void> _goNextCard() async {
     final cards = _cards;
     if (cards == null || cards.isEmpty) return;
     final completedWord = _currentWordItem;
@@ -206,11 +219,11 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
       _lastSwipeDirection = 1;
       _currentCardIndex = (_currentCardIndex + 1) % cards.length;
     });
-    _saveWordPracticeProgress();
+    await _saveWordPracticeProgress();
     _markWordCompleted(completedWord);
   }
 
-  void _goPrevCard() {
+  Future<void> _goPrevCard() async {
     final cards = _cards;
     if (cards == null || cards.isEmpty) return;
     final completedWord = _currentWordItem;
@@ -218,7 +231,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
       _lastSwipeDirection = -1;
       _currentCardIndex = (_currentCardIndex - 1) < 0 ? (cards.length - 1) : (_currentCardIndex - 1);
     });
-    _saveWordPracticeProgress();
+    await _saveWordPracticeProgress();
     _markWordCompleted(completedWord);
   }
 
@@ -237,37 +250,29 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
     if (items.isEmpty) return 0;
 
     final prefs = await SharedPreferences.getInstance();
+    // Önce kaydedilen index kullan — böylece kaldığın kelime her zaman doğru restore edilir.
+    final savedIndex = prefs.getInt(_wordPracticeIndexKey);
+    if (savedIndex != null && savedIndex >= 0) {
+      return savedIndex.clamp(0, items.length - 1);
+    }
+
     final normalizedCurrentLevel = UserLevel.normalizedLevel(currentLevel);
     final savedWordId = prefs.getInt(_wordPracticeWordIdKey);
     if (savedWordId != null) {
-      final savedIndex = items.indexWhere(
+      final idx = items.indexWhere(
         (item) =>
             item.id == savedWordId &&
             (normalizedCurrentLevel == null ||
                 UserLevel.normalizedLevel(item.level) == normalizedCurrentLevel),
       );
-      if (savedIndex >= 0) {
-        return savedIndex;
-      }
-    }
-
-    final savedIndex = prefs.getInt(_wordPracticeIndexKey);
-    if (savedIndex != null) {
-      final clampedIndex = savedIndex.clamp(0, items.length - 1);
-      final savedItem = items[clampedIndex];
-      if (normalizedCurrentLevel == null ||
-          UserLevel.normalizedLevel(savedItem.level) == normalizedCurrentLevel) {
-        return clampedIndex;
-      }
+      if (idx >= 0) return idx;
     }
 
     if (normalizedCurrentLevel != null) {
       final firstCurrentLevelIndex = items.indexWhere(
         (item) => UserLevel.normalizedLevel(item.level) == normalizedCurrentLevel,
       );
-      if (firstCurrentLevelIndex >= 0) {
-        return firstCurrentLevelIndex;
-      }
+      if (firstCurrentLevelIndex >= 0) return firstCurrentLevelIndex;
     }
 
     return 0;
@@ -315,8 +320,10 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_wordPracticeIndexKey, index);
     final savedWord = items[index];
-    if (savedWord.id != 0) {
+    if (savedWord.id > 0) {
       await prefs.setInt(_wordPracticeWordIdKey, savedWord.id);
+    } else {
+      await prefs.remove(_wordPracticeWordIdKey);
     }
   }
 
@@ -383,6 +390,14 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
     final idx = _currentCardIndex.clamp(0, cards.length - 1);
     final c = cards[idx];
     if (c.word != card.word) return;
+    // Eğer kartta zaten bir örnek cümle varsa, sadece Türkçe dilinde
+    // (uygulamanın ana dili) onu koruyalım. Diğer dillerde mevcut
+    // Türkçe çeviriyi yeni dile göre güncelleyelim.
+    final hasExistingExample =
+        c.exampleEn.trim().isNotEmpty || c.exampleTr.trim().isNotEmpty;
+    final isTurkishLocale = localeCode.toLowerCase() == 'tr';
+    if (hasExistingExample && isTurkishLocale) return;
+
     setState(() {
       _cards = [
         ...cards.sublist(0, idx),
@@ -398,63 +413,17 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
     });
   }
 
-  Future<void> _showHintDialog() async {
+  void _revealHintForCurrentCard() {
     final card = _currentCard;
     if (card == null || !mounted) return;
-
-    final translation = card.translations.trim().isEmpty ? '—' : card.translations.trim();
-    final exampleEn = card.exampleEn.trim().isEmpty ? '—' : card.exampleEn.trim();
-    final exampleTr = card.exampleTr.trim().isEmpty ? '—' : card.exampleTr.trim();
-
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text(
-            card.word.trim().isEmpty ? 'word_practice.title'.tr() : card.word.trim(),
-            style: AppTypography.titleLarge.copyWith(
-              color: AppColors.onSurface,
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                translation,
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                exampleEn,
-                style: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.onSurface,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                exampleTr,
-                style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text('common.ok'.tr()),
-            ),
-          ],
-        );
-      },
-    );
+    final key = '${card.word}|${context.locale.languageCode}';
+    setState(() {
+      if (_hintRevealed.contains(key)) {
+        _hintRevealed.remove(key);
+      } else {
+        _hintRevealed.add(key);
+      }
+    });
   }
 
   WordCardData? get _currentCard {
@@ -463,7 +432,9 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
     return cards[_currentCardIndex.clamp(0, cards.length - 1)];
   }
 
-  void _handleBack() {
+  Future<void> _handleBack() async {
+    await _saveWordPracticeProgress();
+    if (!mounted) return;
     Navigator.of(context).pop(widget.returnToHomeOnPop);
   }
 
@@ -532,6 +503,8 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
       _exampleRequested.add(exampleKey);
       WidgetsBinding.instance.addPostFrameCallback((_) => _fetchExampleForCurrentCard());
     }
+    final hintKey = '${card.word}|${context.locale.languageCode}';
+    final isHintRevealed = _hintRevealed.contains(hintKey);
     return WordCard3D(
       onSwipeLeft: _goPrevCard,
       onSwipeRight: _goNextCard,
@@ -539,6 +512,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
       lastSwipeDirection: _lastSwipeDirection,
       child: WordCardBody(
         data: card,
+        hideTranslationAndExamples: !isHintRevealed,
         onSaveWord: () async {
           final notifier = ref.read(savedWordsProvider.notifier);
           await notifier.add(SavedWordItem(
@@ -557,7 +531,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
           );
         },
         onListen: _speakCurrentWord,
-        onHint: _showHintDialog,
+        onHint: _revealHintForCurrentCard,
       ),
     );
   }

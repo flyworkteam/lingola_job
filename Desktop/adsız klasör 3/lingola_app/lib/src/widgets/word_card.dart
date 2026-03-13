@@ -262,6 +262,7 @@ class WordCardBody extends StatelessWidget {
     this.showHint = true,
     this.showSaveWord = true,
     this.savedWordStyle = false,
+    this.hideTranslationAndExamples = false,
     this.onHint,
     this.onSaveWord,
     this.onListen,
@@ -272,6 +273,8 @@ class WordCardBody extends StatelessWidget {
   final bool showSaveWord;
   /// Saved Word sayfası tipografi: word Quicksand 700/40, phonetic Nunito Sans 400, çeviri Quicksand 600.
   final bool savedWordStyle;
+  /// true ise ipucu basılana kadar çeviri ve örnek cümleler gizlenir (kartta “—” görünür).
+  final bool hideTranslationAndExamples;
   final VoidCallback? onHint;
   final VoidCallback? onSaveWord;
   final VoidCallback? onListen;
@@ -282,6 +285,17 @@ class WordCardBody extends StatelessWidget {
     final String translationText = data.word.trim().toLowerCase() == 'tebrikler'
         ? 'word_practice.card_tebrikler'.tr()
         : (data.translations.trim().isEmpty ? '—' : data.translations);
+
+    // İpucu kapalıyken:
+    // - Kelimenin kendisi ve İngilizce örnek cümle HER ZAMAN görünür kalsın
+    // - Sadece kelime çevirisi ve Türkçe örnek çevirisi gizlensin.
+    final String effectiveTranslation =
+        hideTranslationAndExamples ? '—' : translationText;
+    final String effectiveExampleEn =
+        data.exampleEn.trim().isEmpty ? '—' : data.exampleEn;
+    final String effectiveExampleTr = hideTranslationAndExamples
+        ? '—'
+        : (data.exampleTr.trim().isEmpty ? '—' : data.exampleTr);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
@@ -332,7 +346,7 @@ class WordCardBody extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            _capitalizeFirst(translationText),
+            _capitalizeFirst(effectiveTranslation),
             textAlign: TextAlign.center,
             style: savedWordStyle
                 ? GoogleFonts.quicksand(
@@ -364,9 +378,9 @@ class WordCardBody extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  data.exampleEn.trim().isEmpty
+                  effectiveExampleEn == '—'
                       ? '—'
-                      : '\u201C${_capitalizeFirst(data.exampleEn)}\u201D',
+                      : '\u201C${_capitalizeFirst(effectiveExampleEn)}\u201D',
                   textAlign: TextAlign.center,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
@@ -378,9 +392,9 @@ class WordCardBody extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  data.exampleTr.trim().isEmpty
+                  effectiveExampleTr == '—'
                       ? '—'
-                      : _capitalizeFirst(data.exampleTr),
+                      : _capitalizeFirst(effectiveExampleTr),
                   textAlign: TextAlign.center,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,

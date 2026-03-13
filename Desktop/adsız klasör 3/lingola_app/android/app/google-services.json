@@ -29,6 +29,13 @@
             {
               "client_id": "542145601165-hms1i8j6c4dbb4vmghi9s0jfojm7t962.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "542145601165-1dih6ekggoud6acd78102s2bpsfmeocn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.flywork.lingolajobapp.RunnerTests"
+              }
             }
           ]
         }

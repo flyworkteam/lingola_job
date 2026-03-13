@@ -36,9 +36,22 @@ class _SavedWordScreenState extends ConsumerState<SavedWordScreen> {
   int _lastSwipeDirection = 1;
   FlutterTts? _flutterTts;
   bool _ttsInitialized = false;
+  final Set<String> _hintRevealed = {};
 
   List<SavedWordItem> _cards(WidgetRef ref) {
     return ref.watch(savedWordsProvider);
+  }
+
+  void _revealHintForItem(SavedWordItem item) {
+    if (!mounted) return;
+    final key = '${item.word}|${context.locale.languageCode}';
+    setState(() {
+      if (_hintRevealed.contains(key)) {
+        _hintRevealed.remove(key);
+      } else {
+        _hintRevealed.add(key);
+      }
+    });
   }
 
   void _goNext(List<SavedWordItem> cards) {
@@ -133,6 +146,8 @@ class _SavedWordScreenState extends ConsumerState<SavedWordScreen> {
     }
     final index = _currentIndex.clamp(0, cards.length - 1);
     final currentCard = cards[index];
+    final hintKey = '${currentCard.word}|${context.locale.languageCode}';
+    final isHintRevealed = _hintRevealed.contains(hintKey);
 
     return PopScope(
       canPop: false,
@@ -159,8 +174,9 @@ class _SavedWordScreenState extends ConsumerState<SavedWordScreen> {
                       data: WordCardData.fromSavedWordItem(currentCard),
                       showSaveWord: false,
                       savedWordStyle: true,
+                      hideTranslationAndExamples: !isHintRevealed,
                       onListen: () => _speakWord(currentCard.word),
-                      onHint: () {},
+                      onHint: () => _revealHintForItem(currentCard),
                     ),
                   ),
                   const SizedBox(height: 180),

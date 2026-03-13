@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>542145601165-1dih6ekggoud6acd78102s2bpsfmeocn.apps.googleusercontent.com</string>
+	<string>542145601165-o7m03aa6dipidvbri7ccfqt5rp22g713.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.542145601165-1dih6ekggoud6acd78102s2bpsfmeocn</string>
+	<string>com.googleusercontent.apps.542145601165-o7m03aa6dipidvbri7ccfqt5rp22g713</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC4YfOhl20LHIClxmAImVvwE2XnZe3SRFM</string>
+	<string>AIzaSyDop2nfRuJa6UuOr1tTCwrXfEXvhoR7KYQ</string>
 	<key>GCM_SENDER_ID</key>
 	<string>542145601165</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.flywork.lingolajobapp.RunnerTests</string>
+	<string>com.flywork.lingolajobapp</string>
 	<key>PROJECT_ID</key>
 	<string>lingola-backend</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:542145601165:ios:bc59c1e30578fe76ae4cc4</string>
+	<string>1:542145601165:ios:cec58918bae647a5ae4cc4</string>
 </dict>
 </plist>

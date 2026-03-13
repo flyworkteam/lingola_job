@@ -39,9 +39,11 @@ class _MostFrequentlyUsedTermsScreenState
   String? _errorMessage;
   int _currentCardIndex = 0;
   int _lastSwipeDirection = 1;
+  String? _lastLoadedLocaleCode;
   final Set<String> _translationRequested = {};
   final Set<String> _phoneticRequested = {};
   final Set<String> _exampleRequested = {};
+  final Set<String> _hintRevealed = {};
   FlutterTts? _flutterTts;
   bool _ttsInitialized = false;
 
@@ -63,6 +65,16 @@ class _MostFrequentlyUsedTermsScreenState
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale.languageCode;
+    if (_lastLoadedLocaleCode != null && _lastLoadedLocaleCode != currentLocale) {
+      _lastLoadedLocaleCode = currentLocale;
+      _loadWords();
+    }
+  }
+
+  @override
   void dispose() {
     _removeTutorialOverlay();
     _flutterTts?.stop();
@@ -81,14 +93,37 @@ class _MostFrequentlyUsedTermsScreenState
     final prefs = await SharedPreferences.getInstance();
     final professionId = prefs.getString(_keyProfileProfession);
     final category = WordDatabaseService.professionIdToCategory(professionId);
+    final localeCode = context.locale.languageCode;
 
     final rawList = await WordDatabaseService.getProfessionalWords(
       category: category,
     );
-    final cards = rawList
-        .map((m) => WordCardData.fromProfessionalWord(m))
-        .where((c) => c.word.trim().isNotEmpty)
-        .toList();
+
+    // Her kelimenin çevirisini seçili uygulama diline göre doldur.
+    final cards = <WordCardData>[];
+    for (final m in rawList) {
+      final word = (m['word'] as String?)?.trim() ?? '';
+      if (word.isEmpty) continue;
+
+      final basePhonetic = (m['phonetic'] as String?)?.trim() ?? '';
+      final exampleEn = (m['example'] as String?)?.trim() ?? '';
+      final exampleTr = (m['example_translation'] as String?)?.trim() ?? '';
+
+      final translation = await WordService.fetchAndCacheTranslationForLocale(
+        word,
+        localeCode,
+      );
+
+      cards.add(
+        WordCardData(
+          word: word,
+          phonetic: basePhonetic,
+          translations: translation,
+          exampleEn: exampleEn,
+          exampleTr: exampleTr,
+        ),
+      );
+    }
 
     if (!mounted) return;
     setState(() {
@@ -96,6 +131,7 @@ class _MostFrequentlyUsedTermsScreenState
       _loading = false;
       _errorMessage = cards.isEmpty ? 'word_practice.words_load_error' : null;
       _currentCardIndex = 0;
+      _lastLoadedLocaleCode = localeCode;
     });
   }
 
@@ -245,17 +281,29 @@ class _MostFrequentlyUsedTermsScreenState
     }
     final exampleTr =
         result.exampleTr.isNotEmpty ? result.exampleTr : result.exampleEn;
-    await WordDatabaseService.updateProfessionalWordExampleByWord(
-      word: card.word,
-      example: result.exampleEn,
-      exampleTranslation: exampleTr,
-    );
+    // Sadece Türkçe dilinde DB'deki örnek cümleyi kalıcı olarak güncelle.
+    if (localeCode.toLowerCase() == 'tr') {
+      await WordDatabaseService.updateProfessionalWordExampleByWord(
+        word: card.word,
+        example: result.exampleEn,
+        exampleTranslation: exampleTr,
+      );
+    }
     final cards = _cards;
     if (cards == null || cards.isEmpty) return;
     final idx = _currentCardIndex.clamp(0, cards.length - 1);
     final c = cards[idx];
     if (c.word != card.word) return;
     if (!mounted) return;
+
+    // Eğer kartta zaten bir örnek cümle varsa, sadece Türkçe dilinde
+    // (uygulamanın ana dili) onu koruyalım. Diğer dillerde mevcut
+    // Türkçe çeviriyi yeni dile göre güncelleyelim.
+    final hasExistingExample =
+        c.exampleEn.trim().isNotEmpty || c.exampleTr.trim().isNotEmpty;
+    final isTurkishLocale = localeCode.toLowerCase() == 'tr';
+    if (hasExistingExample && isTurkishLocale) return;
+
     setState(() {
       _cards = [
         ...cards.sublist(0, idx),
@@ -275,6 +323,19 @@ class _MostFrequentlyUsedTermsScreenState
     final cards = _cards;
     if (cards == null || cards.isEmpty) return null;
     return cards[_currentCardIndex.clamp(0, cards.length - 1)];
+  }
+
+  void _revealHintForCurrentCard() {
+    final card = _currentCard;
+    if (card == null || !mounted) return;
+    final key = '${card.word}|${context.locale.languageCode}';
+    setState(() {
+      if (_hintRevealed.contains(key)) {
+        _hintRevealed.remove(key);
+      } else {
+        _hintRevealed.add(key);
+      }
+    });
   }
 
   void _onNavTap(int index) {
@@ -342,6 +403,8 @@ class _MostFrequentlyUsedTermsScreenState
       WidgetsBinding.instance.addPostFrameCallback(
           (_) => _fetchExampleForCurrentCard());
     }
+    final hintKey = '${card.word}|${context.locale.languageCode}';
+    final isHintRevealed = _hintRevealed.contains(hintKey);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -352,6 +415,7 @@ class _MostFrequentlyUsedTermsScreenState
           lastSwipeDirection: _lastSwipeDirection,
           child: WordCardBody(
             data: card,
+            hideTranslationAndExamples: !isHintRevealed,
             onSaveWord: () async {
               final notifier = ref.read(savedWordsProvider.notifier);
               await notifier.add(SavedWordItem(
@@ -370,7 +434,7 @@ class _MostFrequentlyUsedTermsScreenState
               );
             },
             onListen: _speakCurrentWord,
-            onHint: () {},
+            onHint: _revealHintForCurrentCard,
           ),
         ),
       ],

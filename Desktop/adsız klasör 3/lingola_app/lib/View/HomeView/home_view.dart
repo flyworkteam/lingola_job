@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/src/navigation/app_routes.dart';
 import 'package:lingola_app/src/state/word_practice_progress_store.dart';
@@ -106,6 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Dil id (english, german, ...) → locale kodu (en, de, ...)
+  static const String _keyProfileAppLanguage = 'profile_app_language';
+
   static String? _languageIdToLocale(String id) {
     const m = {
       'english': 'en', 'german': 'de', 'italian': 'it', 'french': 'fr',

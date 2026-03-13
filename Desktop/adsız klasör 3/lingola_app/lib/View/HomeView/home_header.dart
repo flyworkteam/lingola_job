@@ -41,6 +41,9 @@ extension HomeHeaderExtensions on _HomeScreenState {
                       onTap: () async {
                         final localeCode = _HomeScreenState._languageIdToLocale(lang.id);
                         if (localeCode != null) {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString(_HomeScreenState._keyProfileAppLanguage, lang.id);
+                          if (!ctx.mounted) return;
                           await ctx.setLocale(Locale(localeCode));
                           if (!mounted) return;
                           setState(() => _selectedLanguageId = lang.id);
