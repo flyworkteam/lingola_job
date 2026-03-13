@@ -48,6 +48,8 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
 
   static const int _xpPerCorrect = 10;
   static const String _keyProfileLevel = 'profile_level';
+  static const String _keyDailyTestIndexPrefix = 'daily_test_current_index';
+  static const String _keyDailyTestQuestionIdsPrefix = 'daily_test_question_ids';
 
   @override
   void initState() {
@@ -66,6 +68,7 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
 
   Future<void> _loadQuestions() async {
     if (!mounted) return;
+    final localeCode = context.locale.languageCode;
     setState(() {
       _loading = true;
       _errorMessage = null;
@@ -75,7 +78,6 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
       final userLevel = prefs.getString(_keyProfileLevel);
 
       // Kelimeleri backend yerine local veritabanından (assets/words.json -> SQLite) al.
-      final localeCode = context.locale.languageCode;
       var rawList = await WordDatabaseService.getWords();
       rawList = await WordService.enrichWordsWithTranslations(rawList, localeCode: localeCode);
 
@@ -84,18 +86,20 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
           .where((w) => UserLevel.isAllowedForUser(w.level, userLevel))
           .toList();
 
-      final questions = DailyTestQuestion.fromWords(filtered, maxQuestions: 10);
+      final questions = _buildQuestionsWithProgress(filtered, prefs);
+      final restoredIndex = _restoreDailyTestIndex(prefs, questions.length);
       if (!mounted) return;
       setState(() {
         _questions = questions;
         _loading = false;
         _errorMessage = questions.isEmpty ? 'daily_test.no_words_min'.tr() : null;
-        _currentIndex = 0;
+        _currentIndex = restoredIndex;
         _selectedIndex = null;
         _showResult = false;
         _correctCount = 0;
         _xpEarnedThisSession = 0;
       });
+      await _saveDailyTestProgress();
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -109,7 +113,6 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
     if (_showResult || _questions.isEmpty) return;
     final question = _questions[_currentIndex];
     final isCorrect = i == question.correctOptionIndex;
-    final selectedAnswer = question.options[i];
     setState(() {
       _selectedIndex = i;
       _showResult = true;
@@ -119,7 +122,7 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
       }
     });
     if (isCorrect) {
-      ref.read(xpProvider).addXp(_xpPerCorrect);
+      ref.read(xpProvider.notifier).addXp(_xpPerCorrect);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -139,6 +142,7 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
         _selectedIndex = null;
         _showResult = false;
       });
+      _saveDailyTestProgress();
     } else {
       if (_xpEarnedThisSession > 0 || _correctCount > 0) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -151,8 +155,73 @@ class _DailyTestScreenState extends ConsumerState<DailyTestScreen> {
           ),
         );
       }
+      _clearDailyTestProgress();
       Navigator.of(context).pop();
     }
+  }
+
+  String get _dailyTestProgressKeySuffix {
+    final trackPart = widget.trackId?.toString() ?? 'general';
+    final wordPart = widget.wordId?.toString() ?? 'all';
+    return '${widget.questionType}_${trackPart}_$wordPart';
+  }
+
+  String get _dailyTestIndexKey =>
+      '${_keyDailyTestIndexPrefix}_$_dailyTestProgressKeySuffix';
+
+  String get _dailyTestQuestionIdsKey =>
+      '${_keyDailyTestQuestionIdsPrefix}_$_dailyTestProgressKeySuffix';
+
+  List<DailyTestQuestion> _buildQuestionsWithProgress(
+    List<WordItem> words,
+    SharedPreferences prefs,
+  ) {
+    final savedIds = prefs.getStringList(_dailyTestQuestionIdsKey);
+    if (savedIds != null && savedIds.isNotEmpty) {
+      final wordsById = {
+        for (final word in words) word.id.toString(): word,
+      };
+      final restoredWords = savedIds
+          .map((id) => wordsById[id])
+          .whereType<WordItem>()
+          .toList();
+
+      if (restoredWords.length >= 4) {
+        return DailyTestQuestion.fromWords(
+          restoredWords,
+          maxQuestions: restoredWords.length,
+          shuffleWords: false,
+        );
+      }
+    }
+
+    final questions = DailyTestQuestion.fromWords(words, maxQuestions: 10);
+    final questionIds = questions.map((question) => question.wordId.toString()).toList();
+    prefs.setStringList(_dailyTestQuestionIdsKey, questionIds);
+    return questions;
+  }
+
+  int _restoreDailyTestIndex(SharedPreferences prefs, int questionCount) {
+    if (questionCount <= 0) return 0;
+    final savedIndex = prefs.getInt(_dailyTestIndexKey);
+    if (savedIndex == null) return 0;
+    return savedIndex.clamp(0, questionCount - 1);
+  }
+
+  Future<void> _saveDailyTestProgress() async {
+    if (_questions.isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_dailyTestIndexKey, _currentIndex.clamp(0, _questions.length - 1));
+    await prefs.setStringList(
+      _dailyTestQuestionIdsKey,
+      _questions.map((question) => question.wordId.toString()).toList(),
+    );
+  }
+
+  Future<void> _clearDailyTestProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_dailyTestIndexKey);
+    await prefs.remove(_dailyTestQuestionIdsKey);
   }
 
   @override

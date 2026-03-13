@@ -4,15 +4,18 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/src/navigation/app_routes.dart';
+import 'package:lingola_app/src/state/word_practice_progress_store.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/app_card.dart';
 import 'package:lingola_app/src/widgets/app_gradient_button.dart';
 import 'package:lingola_app/src/widgets/app_icon_button.dart';
+import 'package:lingola_app/src/utils/profile_avatar_storage.dart';
+
+part 'home_header.dart';
 
 class _HomeLanguage {
   const _HomeLanguage({required this.id, required this.flagAsset});
@@ -31,6 +34,7 @@ class HomeScreen extends StatefulWidget {
     this.isPremium = false,
     this.savedWordsCount = 0,
     this.totalXp = 0,
+    this.avatarVersion = 0,
     this.onLearnNewWordsTap,
     this.onSavedWordsTap,
     this.onDictionaryTap,
@@ -43,6 +47,7 @@ class HomeScreen extends StatefulWidget {
   final int savedWordsCount;
   /// Kullanıcının toplam XP'si (Quick Actions barları için).
   final int totalXp;
+  final int? avatarVersion;
   /// Learn New Words kartına tıklanınca — Learn sekmesine geçip Word Practice açılır.
   final VoidCallback? onLearnNewWordsTap;
   /// Saved Words kartına tıklanınca — Learn sekmesine geçip Saved Word sayfası açılır.
@@ -72,27 +77,32 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedLanguageId = 'english';
   bool _hasSyncedLocaleFromContext = false;
   File? _avatarFile;
-
-  static const String _keyProfileAvatar = 'profile_avatar_path';
+  WordPracticeProgressSnapshot? _wordPracticeProgress;
 
   @override
   void initState() {
     super.initState();
     _loadAvatar();
+    _loadWordPracticeProgress();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadAvatar();
+    _loadWordPracticeProgress();
   }
 
   Future<void> _loadAvatar() async {
-    final prefs = await SharedPreferences.getInstance();
-    final path = prefs.getString(_keyProfileAvatar);
-    File? file;
-    if (path != null && path.isNotEmpty) {
-      final f = File(path);
-      if (await f.exists()) {
-        file = f;
-      }
-    }
+    final file = await ProfileAvatarStorage.loadAvatarFile();
     if (!mounted) return;
     setState(() => _avatarFile = file);
+  }
+
+  Future<void> _loadWordPracticeProgress() async {
+    final progress = await WordPracticeProgressStore.getCurrentProgress();
+    if (!mounted) return;
+    setState(() => _wordPracticeProgress = progress);
   }
 
   /// Dil id (english, german, ...) → locale kodu (en, de, ...)
@@ -129,103 +139,25 @@ class _HomeScreenState extends State<HomeScreen> {
   static const double _continueLessonMaxWidth = 370;
 
   double get _levelProgress {
-    const xpForFullBar = 500; // 500 XP'de bar %100 olsun
-    if (widget.totalXp <= 0) return 0;
-    final v = widget.totalXp / xpForFullBar;
-    return v.clamp(0.0, 1.0);
+    final progress = _wordPracticeProgress;
+    if (progress == null) return 0;
+    return WordPracticeProgressStore.combinedProgress(
+      snapshot: progress,
+      totalXp: widget.totalXp,
+    );
   }
 
-  int get _levelPercent => (_levelProgress * 100).round();
+  int get _levelPercent {
+    final progress = _wordPracticeProgress;
+    if (progress == null) return 0;
+    return WordPracticeProgressStore.combinedProgressPercent(
+      snapshot: progress,
+      totalXp: widget.totalXp,
+    );
+  }
 
   double get _continueLessonProgress => _levelProgress;
   int get _continueLessonPercent => _levelPercent;
-
-  void _showLanguageSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) => Container(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.6),
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: AppSpacing.md),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.surfaceVariant,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 0, AppSpacing.xl, AppSpacing.xxl),
-                itemCount: _languages.length,
-                itemBuilder: (ctx, i) {
-                  final lang = _languages[i];
-                  return Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () async {
-                        final localeCode = _languageIdToLocale(lang.id);
-                        if (localeCode != null) {
-                          await ctx.setLocale(Locale(localeCode));
-                          if (!mounted) return;
-                          setState(() => _selectedLanguageId = lang.id);
-                        }
-                        if (ctx.mounted) Navigator.pop(ctx);
-                      },
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 40,
-                              height: 30,
-                              child: lang.flagAsset.toLowerCase().endsWith('.png')
-                                  ? Image.asset(lang.flagAsset, width: 40, height: 30, fit: BoxFit.contain)
-                                  : SvgPicture.asset(
-                                      lang.flagAsset,
-                                      width: 40,
-                                      height: 30,
-                                      fit: BoxFit.contain,
-                                    ),
-                            ),
-                            const SizedBox(width: AppSpacing.lg),
-                            Expanded(
-                              child: Text(
-                                'languages.${lang.id}'.tr(),
-                                style: AppTypography.labelLarge.copyWith(
-                                  color: AppColors.onSurface,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -533,6 +465,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLevelCard() {
+    final currentLevel = _wordPracticeProgress?.currentLevel ?? 'a1';
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: _contentMaxWidth),
@@ -541,7 +474,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'home.level_beginner'.tr(),
+                        context.tr('profile_settings.level_$currentLevel'),
                         style: AppTypography.title.copyWith(
                           fontWeight: FontWeight.w700,
                           color: AppColors.onSurface,

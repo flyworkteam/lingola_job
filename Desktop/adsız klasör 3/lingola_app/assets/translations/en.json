@@ -213,5 +213,82 @@
     "a9": "Yes. Content is tailored to meetings, emails and business communication.",
     "q10": "Is Lingola Job free?",
     "a10": "The app can be used for free; premium options are available for advanced content."
+  },
+  "onboarding": {
+    "welcome": "Welcome",
+    "login_subtitle": "I am happy to see you. You can\ncontinue where you left off by logging in",
+    "legal_prefix": "By signing up for swipe, you agree to our ",
+    "terms_of_service": "Terms of Service",
+    "legal_middle": ". Learn how we process your data in our ",
+    "privacy_policy": "Privacy Policy",
+    "legal_and": " and ",
+    "cookies_policy": "Cookies Policy",
+    "guest": "Guest",
+    "google": "Google",
+    "apple": "Apple",
+    "profession_title": "What is your profession?",
+    "profession_search_hint": "Search for a profession...",
+    "profession_description_title": "Describe your profession in three words.",
+    "profession_description_hint": "UI/UX Designer",
+    "language_title": "Which language would\nyou like to learn?",
+    "level_title": "What is your current\nlanguage level?",
+    "goal_title": "Set Your Daily Goal",
+    "goal_subtitle": "Choose a pace that fits your schedule",
+    "processing_title": "A personalized learning plan\nis being created for you.",
+    "processing": "Processing",
+    "get_started": "Get Started",
+    "profession_descriptions": {
+      "legal": "Learn terminology for international trade",
+      "tech": "Learn terminology for international trade",
+      "medicine": "Communicate effectively in clinical settings",
+      "finance": "Understand global financial markets",
+      "marketing": "Develop campaigns for global audiences",
+      "engineering": "Collaborate on complex technical projects",
+      "education": "Teachers, students, academic life",
+      "tourism": "Hotels, travel, guest communication",
+      "sales": "Negotiation, persuasion, customer handling",
+      "support": "Solve issues, handle complaints",
+      "hr": "Recruitment, interviews, feedback",
+      "entrepreneurship": "Startup, pitch, product thinking",
+      "logistics": "Import/export, supply chain",
+      "it": "Software, AI, data science, cybersecurity and digital design"
+    },
+    "level_descriptions": {
+      "a1": "Can understand and use familiar everyday expressions.",
+      "a2": "Can communicate in simple and routine tasks.",
+      "b1": "Can deal with most situations likely to arise while traveling.",
+      "b2": "Can lead business meetings comfortably.",
+      "c1": "Can express ideas fluently and spontaneously.",
+      "c2": "Can understand with ease virtually everything heard or read."
+    },
+    "goals": {
+      "casual": {
+        "title": "Casual",
+        "subtitle": "5 Min / day"
+      },
+      "steady": {
+        "title": "Steady",
+        "subtitle": "15 Min / day"
+      },
+      "serious": {
+        "title": "Serious",
+        "subtitle": "30 Min / day"
+      }
+    }
+  },
+  "intro": {
+    "get_started": "Get Started",
+    "slide1": {
+      "title": "English is no longer\ndifficult when traveling",
+      "description": "Learn the most commonly used words at the\nairport, hotel, restaurant, and for transportation."
+    },
+    "slide2": {
+      "title": "Real travel\nscenarios",
+      "description": "Practice with words and phrases you'll actually need while traveling."
+    },
+    "slide3": {
+      "title": "Learn on the go, travel\ncomfortably",
+      "description": "Learn English words in just a few minutes, focus\non your trip."
+    }
   }
 }

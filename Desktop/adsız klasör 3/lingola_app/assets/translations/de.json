@@ -213,5 +213,67 @@
     "a9": "Ja. Die Inhalte sind auf Meetings, E-Mails und Geschäftskommunikation zugeschnitten.",
     "q10": "Ist Lingola Job kostenlos?",
     "a10": "Die App kann kostenlos genutzt werden; für erweiterte Inhalte gibt es Premium."
+  },
+  "onboarding": {
+    "welcome": "Willkommen",
+    "login_subtitle": "Schön, dich zu sehen. Du kannst\nnach dem Login dort weitermachen, wo du aufgehört hast",
+    "legal_prefix": "Mit der Registrierung bei Swipe stimmst du unseren ",
+    "terms_of_service": "Nutzungsbedingungen",
+    "legal_middle": " zu. Erfahre in unserer ",
+    "privacy_policy": "Datenschutzerklärung",
+    "legal_and": " und ",
+    "cookies_policy": "Cookie-Richtlinie",
+    "guest": "Gast",
+    "google": "Google",
+    "apple": "Apple",
+    "profession_title": "Was ist dein Beruf?",
+    "profession_search_hint": "Beruf suchen...",
+    "profession_description_title": "Beschreibe deinen Beruf in drei Wörtern.",
+    "profession_description_hint": "UI/UX Designer",
+    "language_title": "Welche Sprache\nmöchtest du lernen?",
+    "level_title": "Wie ist dein aktuelles\nSprachniveau?",
+    "goal_title": "Setze dein Tagesziel",
+    "goal_subtitle": "Wähle ein Tempo, das zu deinem Alltag passt",
+    "processing_title": "Ein personalisierter Lernplan\nwird für dich erstellt.",
+    "processing": "Wird verarbeitet",
+    "get_started": "Loslegen",
+    "profession_descriptions": {
+      "legal": "Lerne Fachbegriffe für internationalen Handel",
+      "tech": "Lerne Fachbegriffe für internationalen Handel",
+      "medicine": "Kommuniziere sicher im klinischen Umfeld",
+      "finance": "Verstehe globale Finanzmärkte",
+      "marketing": "Entwickle Kampagnen für internationale Zielgruppen",
+      "engineering": "Arbeite an komplexen technischen Projekten zusammen",
+      "education": "Lehrkräfte, Schüler, akademisches Leben",
+      "tourism": "Hotels, Reisen, Gästekommunikation",
+      "sales": "Verhandlung, Überzeugung, Kundenumgang",
+      "support": "Löse Probleme und bearbeite Beschwerden",
+      "hr": "Recruiting, Interviews, Feedback",
+      "entrepreneurship": "Startup, Pitch, Produktdenken",
+      "logistics": "Import/Export, Lieferkette",
+      "it": "Software, KI, Data Science, Cybersicherheit und digitales Design"
+    },
+    "level_descriptions": {
+      "a1": "Kann vertraute alltägliche Ausdrücke verstehen und verwenden.",
+      "a2": "Kann sich in einfachen und routinemäßigen Situationen verständigen.",
+      "b1": "Kann die meisten Situationen auf Reisen bewältigen.",
+      "b2": "Kann Geschäftstreffen sicher führen.",
+      "c1": "Kann sich fließend und spontan ausdrücken.",
+      "c2": "Kann nahezu alles Gehörte oder Gelesene mühelos verstehen."
+    },
+    "goals": {
+      "casual": {
+        "title": "Locker",
+        "subtitle": "5 Min / Tag"
+      },
+      "steady": {
+        "title": "Beständig",
+        "subtitle": "15 Min / Tag"
+      },
+      "serious": {
+        "title": "Intensiv",
+        "subtitle": "30 Min / Tag"
+      }
+    }
   }
 }

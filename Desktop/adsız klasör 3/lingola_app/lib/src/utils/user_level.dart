@@ -23,6 +23,15 @@ abstract final class UserLevel {
     return s.isEmpty ? null : s;
   }
 
+  /// Bir sonraki seviye. C2 sonrası null döner.
+  static String? nextLevel(String? level) {
+    final normalized = normalizedLevel(level);
+    if (normalized == null) return null;
+    final index = orderedLevels.indexOf(normalized);
+    if (index < 0 || index + 1 >= orderedLevels.length) return null;
+    return orderedLevels[index + 1];
+  }
+
   /// [wordLevel] kullanıcının [userLevel] seviyesine göre gösterilebilir mi?
   static bool isAllowedForUser(dynamic wordLevel, String? userLevel) {
     final allowed = allowedLevelsFor(userLevel);

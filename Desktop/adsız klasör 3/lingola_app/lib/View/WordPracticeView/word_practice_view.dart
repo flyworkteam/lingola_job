@@ -1,9 +1,7 @@
-import 'dart:io' show Platform;
 import 'dart:math' as math;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,13 +11,12 @@ import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
 import 'package:lingola_app/Services/word_database_service.dart';
 import 'package:lingola_app/Services/word_services.dart';
 import 'package:lingola_app/src/state/practice_words_store.dart';
-import 'package:lingola_app/src/state/saved_words_store.dart';
+import 'package:lingola_app/src/state/word_practice_progress_store.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/utils/user_level.dart';
 import 'package:lingola_app/src/widgets/word_card.dart';
-import 'package:lingola_app/src/widgets/word_card_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Word Practice sayfası — Learn sekmesindeki Word Practice kartına tıklanınca açılır.
@@ -44,6 +41,7 @@ class WordPracticeScreen extends ConsumerStatefulWidget {
 class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
   OverlayEntry? _tutorialOverlay;
 
+  List<WordItem>? _wordItems;
   List<WordCardData>? _cards;
   bool _loading = true;
   String? _errorMessage;
@@ -54,6 +52,8 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
   final Set<String> _exampleRequested = {};
   FlutterTts? _flutterTts;
   bool _ttsInitialized = false;
+  static const String _keyWordPracticeWordIdPrefix = 'word_practice_current_word_id';
+  static const String _keyWordPracticeIndexPrefix = 'word_practice_current_index';
 
   @override
   void initState() {
@@ -121,15 +121,18 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
         .where((w) => UserLevel.isAllowedForUser(w.level, userLevel))
         .toList();
     final cards = filtered.map((w) => WordCardData.fromWordItem(w)).toList();
+    final restoredIndex = await _restoreWordPracticeIndex(filtered, userLevel);
 
     if (!mounted) return;
     final showError = cards.isEmpty && rawList.isEmpty;
     setState(() {
+      _wordItems = filtered;
       _cards = cards;
       _loading = false;
       _errorMessage = showError ? 'word_practice.words_load_error' : null;
-      _currentCardIndex = 0;
+      _currentCardIndex = restoredIndex;
     });
+    await _saveWordPracticeProgress(filtered);
   }
 
   void _reportTrackAccess() {
@@ -198,19 +201,123 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
   void _goNextCard() {
     final cards = _cards;
     if (cards == null || cards.isEmpty) return;
+    final completedWord = _currentWordItem;
     setState(() {
       _lastSwipeDirection = 1;
       _currentCardIndex = (_currentCardIndex + 1) % cards.length;
     });
+    _saveWordPracticeProgress();
+    _markWordCompleted(completedWord);
   }
 
   void _goPrevCard() {
     final cards = _cards;
     if (cards == null || cards.isEmpty) return;
+    final completedWord = _currentWordItem;
     setState(() {
       _lastSwipeDirection = -1;
       _currentCardIndex = (_currentCardIndex - 1) < 0 ? (cards.length - 1) : (_currentCardIndex - 1);
     });
+    _saveWordPracticeProgress();
+    _markWordCompleted(completedWord);
+  }
+
+  String get _wordPracticeProgressKeySuffix => widget.trackId?.toString() ?? 'general';
+
+  String get _wordPracticeWordIdKey =>
+      '${_keyWordPracticeWordIdPrefix}_$_wordPracticeProgressKeySuffix';
+
+  String get _wordPracticeIndexKey =>
+      '${_keyWordPracticeIndexPrefix}_$_wordPracticeProgressKeySuffix';
+
+  Future<int> _restoreWordPracticeIndex(
+    List<WordItem> items,
+    String? currentLevel,
+  ) async {
+    if (items.isEmpty) return 0;
+
+    final prefs = await SharedPreferences.getInstance();
+    final normalizedCurrentLevel = UserLevel.normalizedLevel(currentLevel);
+    final savedWordId = prefs.getInt(_wordPracticeWordIdKey);
+    if (savedWordId != null) {
+      final savedIndex = items.indexWhere(
+        (item) =>
+            item.id == savedWordId &&
+            (normalizedCurrentLevel == null ||
+                UserLevel.normalizedLevel(item.level) == normalizedCurrentLevel),
+      );
+      if (savedIndex >= 0) {
+        return savedIndex;
+      }
+    }
+
+    final savedIndex = prefs.getInt(_wordPracticeIndexKey);
+    if (savedIndex != null) {
+      final clampedIndex = savedIndex.clamp(0, items.length - 1);
+      final savedItem = items[clampedIndex];
+      if (normalizedCurrentLevel == null ||
+          UserLevel.normalizedLevel(savedItem.level) == normalizedCurrentLevel) {
+        return clampedIndex;
+      }
+    }
+
+    if (normalizedCurrentLevel != null) {
+      final firstCurrentLevelIndex = items.indexWhere(
+        (item) => UserLevel.normalizedLevel(item.level) == normalizedCurrentLevel,
+      );
+      if (firstCurrentLevelIndex >= 0) {
+        return firstCurrentLevelIndex;
+      }
+    }
+
+    return 0;
+  }
+
+  Future<void> _markWordCompleted(WordItem? word) async {
+    if (word == null) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final previousLevel = UserLevel.normalizedLevel(
+      prefs.getString(_keyProfileLevel),
+    );
+    final snapshot = await WordPracticeProgressStore.markWordCompleted(word);
+
+    if (!mounted) return;
+    if (previousLevel != null && previousLevel != snapshot.currentLevel) {
+      await _loadWords();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            context.tr('profile_settings.level_${snapshot.currentLevel}'),
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    setState(() {});
+  }
+
+  WordItem? get _currentWordItem {
+    final items = _wordItems;
+    if (items == null || items.isEmpty) return null;
+    return items[_currentCardIndex.clamp(0, items.length - 1)];
+  }
+
+  Future<void> _saveWordPracticeProgress([List<WordItem>? itemsOverride]) async {
+    final items = itemsOverride ?? _wordItems;
+
+    if (items == null || items.isEmpty) return;
+
+    final index = _currentCardIndex.clamp(0, items.length - 1);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_wordPracticeIndexKey, index);
+    final savedWord = items[index];
+    if (savedWord.id != 0) {
+      await prefs.setInt(_wordPracticeWordIdKey, savedWord.id);
+    }
   }
 
   Future<void> _fetchTranslationForCurrentCard() async {
@@ -289,6 +396,65 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
         ...cards.sublist(idx + 1),
       ];
     });
+  }
+
+  Future<void> _showHintDialog() async {
+    final card = _currentCard;
+    if (card == null || !mounted) return;
+
+    final translation = card.translations.trim().isEmpty ? '—' : card.translations.trim();
+    final exampleEn = card.exampleEn.trim().isEmpty ? '—' : card.exampleEn.trim();
+    final exampleTr = card.exampleTr.trim().isEmpty ? '—' : card.exampleTr.trim();
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text(
+            card.word.trim().isEmpty ? 'word_practice.title'.tr() : card.word.trim(),
+            style: AppTypography.titleLarge.copyWith(
+              color: AppColors.onSurface,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                translation,
+                style: AppTypography.bodyMedium.copyWith(
+                  color: AppColors.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                exampleEn,
+                style: AppTypography.bodyMedium.copyWith(
+                  color: AppColors.onSurface,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                exampleTr,
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text('common.ok'.tr()),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   WordCardData? get _currentCard {
@@ -374,7 +540,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
       child: WordCardBody(
         data: card,
         onSaveWord: () async {
-          final notifier = ref.read(savedWordsProvider);
+          final notifier = ref.read(savedWordsProvider.notifier);
           await notifier.add(SavedWordItem(
             word: card.word,
             phonetic: card.phonetic,
@@ -391,7 +557,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
           );
         },
         onListen: _speakCurrentWord,
-        onHint: () {},
+        onHint: _showHintDialog,
       ),
     );
   }
@@ -400,7 +566,7 @@ class _WordPracticeScreenState extends ConsumerState<WordPracticeScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) _handleBack();
       },
       child: Scaffold(

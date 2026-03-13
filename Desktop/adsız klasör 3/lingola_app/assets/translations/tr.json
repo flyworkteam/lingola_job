@@ -213,5 +213,82 @@
     "a9": "Evet. İçerikler doğrudan toplantı, e-posta ve iş iletişimine uyarlanmıştır.",
     "q10": "Lingola Job ücretsiz mi?",
     "a10": "Uygulama ücretsiz olarak kullanılabilir, gelişmiş içerikler için premium seçenekler sunulur."
+  },
+  "onboarding": {
+    "welcome": "Hoş geldin",
+    "login_subtitle": "Seni gördüğüme sevindim.\nGiriş yaparak kaldığın yerden devam edebilirsin",
+    "legal_prefix": "Kaydolarak ",
+    "terms_of_service": "Hizmet Şartları",
+    "legal_middle": "'nı kabul etmiş olursun. Verilerini nasıl işlediğimizi ",
+    "privacy_policy": "Gizlilik Politikası",
+    "legal_and": " ve ",
+    "cookies_policy": "Çerez Politikası",
+    "guest": "Misafir",
+    "google": "Google",
+    "apple": "Apple",
+    "profession_title": "Mesleğin nedir?",
+    "profession_search_hint": "Bir meslek ara...",
+    "profession_description_title": "Mesleğini üç kelimeyle tanımla.",
+    "profession_description_hint": "UI/UX Tasarımcı",
+    "language_title": "Hangi dili\nöğrenmek istiyorsun?",
+    "level_title": "Mevcut dil seviyen\nnedir?",
+    "goal_title": "Günlük hedefini belirle",
+    "goal_subtitle": "Programına uygun bir tempo seç",
+    "processing_title": "Sana özel bir öğrenme planı\noluşturuluyor.",
+    "processing": "Hazırlanıyor",
+    "get_started": "Başla",
+    "profession_descriptions": {
+      "legal": "Uluslararası ticaret için terminoloji öğren",
+      "tech": "Teknoloji dünyasına uygun terimler öğren",
+      "medicine": "Klinik ortamlarda etkili iletişim kur",
+      "finance": "Küresel finans piyasalarını daha iyi anla",
+      "marketing": "Global kitlelere yönelik kampanyalar geliştir",
+      "engineering": "Karmaşık teknik projelerde iş birliği kur",
+      "education": "Öğretmenlik, öğrencilik ve akademik yaşam",
+      "tourism": "Otel, seyahat ve misafir iletişimi",
+      "sales": "Müzakere, ikna ve müşteri yönetimi",
+      "support": "Sorun çözme ve şikayet yönetimi",
+      "hr": "İşe alım, mülakat ve geri bildirim süreçleri",
+      "entrepreneurship": "Girişim, sunum ve ürün odaklı düşünme",
+      "logistics": "İthalat/ihracat ve tedarik zinciri",
+      "it": "Yazılım, yapay zekâ, veri bilimi, siber güvenlik ve dijital tasarım"
+    },
+    "level_descriptions": {
+      "a1": "Günlük ifadeleri anlayabilir ve kullanabilir.",
+      "a2": "Basit ve rutin görevlerde iletişim kurabilir.",
+      "b1": "Seyahat sırasında karşılaşabileceği çoğu durumla başa çıkabilir.",
+      "b2": "İş toplantılarını rahatça yönetebilir.",
+      "c1": "Fikirlerini akıcı ve kendiliğinden ifade edebilir.",
+      "c2": "Duyduğu ya da okuduğu hemen her şeyi kolaylıkla anlayabilir."
+    },
+    "goals": {
+      "casual": {
+        "title": "Rahat",
+        "subtitle": "Günde 5 dk"
+      },
+      "steady": {
+        "title": "Düzenli",
+        "subtitle": "Günde 15 dk"
+      },
+      "serious": {
+        "title": "Yoğun",
+        "subtitle": "Günde 30 dk"
+      }
+    }
+  },
+  "intro": {
+    "get_started": "Başla",
+    "slide1": {
+      "title": "Seyahat ederken İngilizce\nartık zor değil",
+      "description": "Havalimanı, otel, restoran ve ulaşımda\nen sık kullanılan kelimeleri öğren."
+    },
+    "slide2": {
+      "title": "Gerçek seyahat\nsenaryoları",
+      "description": "Seyahat sırasında gerçekten ihtiyacın olacak kelime ve kalıplarla pratik yap."
+    },
+    "slide3": {
+      "title": "Yolda öğren,\nrahat seyahat et",
+      "description": "Sadece birkaç dakikada İngilizce kelimeler öğren,\nseyahatine odaklan."
+    }
   }
 }

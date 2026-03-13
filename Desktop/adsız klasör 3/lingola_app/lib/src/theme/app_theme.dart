@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'colors.dart';
-import 'radius.dart';
-import 'spacing.dart';
 import 'typography.dart';
 
 export 'colors.dart';

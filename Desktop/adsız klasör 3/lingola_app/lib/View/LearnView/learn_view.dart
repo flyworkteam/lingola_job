@@ -4,13 +4,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/src/navigation/app_routes.dart';
+import 'package:lingola_app/src/state/word_practice_progress_store.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/src/utils/profile_avatar_storage.dart';
 
 /// Learn sekmesi: header (geri + başlık + selamlama + avatar) + Learning Content kartları.
 /// Header kaydırma ile küçülür (SliverAppBar).
@@ -19,11 +20,15 @@ class LearnScreen extends StatefulWidget {
     super.key,
     this.userName = 'Jhon Doe',
     this.savedWordsCount = 255,
+    this.totalXp = 0,
+    this.avatarVersion = 0,
     this.onBackTap,
   });
 
   final String userName;
   final int savedWordsCount;
+  final int totalXp;
+  final int? avatarVersion;
   final VoidCallback? onBackTap;
 
   @override
@@ -36,26 +41,40 @@ class _LearnScreenState extends State<LearnScreen> {
   static const double _headerExpandedHeight = 150;
 
   File? _avatarFile;
-  static const String _keyProfileAvatar = 'profile_avatar_path';
+  WordPracticeProgressSnapshot? _wordPracticeProgress;
 
   @override
   void initState() {
     super.initState();
     _loadAvatar();
+    _loadWordPracticeProgress();
+  }
+
+  @override
+  void didUpdateWidget(covariant LearnScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadAvatar();
+    _loadWordPracticeProgress();
   }
 
   Future<void> _loadAvatar() async {
-    final prefs = await SharedPreferences.getInstance();
-    final path = prefs.getString(_keyProfileAvatar);
-    File? file;
-    if (path != null && path.isNotEmpty) {
-      final f = File(path);
-      if (await f.exists()) {
-        file = f;
-      }
-    }
+    final file = await ProfileAvatarStorage.loadAvatarFile();
     if (!mounted) return;
     setState(() => _avatarFile = file);
+  }
+
+  Future<void> _loadWordPracticeProgress() async {
+    final progress = await WordPracticeProgressStore.getCurrentProgress();
+    if (!mounted) return;
+    setState(() => _wordPracticeProgress = progress);
+  }
+
+  Future<void> _openWordPractice() async {
+    await Navigator.of(context).pushNamed(
+      '/word_practice',
+      arguments: const LearnWordPracticeArgs(),
+    );
+    await _loadWordPracticeProgress();
   }
 
   @override
@@ -234,8 +253,22 @@ class _LearnScreenState extends State<LearnScreen> {
 
   /// Word Practice: mavi gradient, 20.000+ Words, progress %20, sağ altta ok butonu.
   Widget _buildWordPracticeCard(BuildContext context) {
+    final progress = _wordPracticeProgress;
+    final progressValue = progress == null
+        ? 0.0
+        : WordPracticeProgressStore.combinedProgress(
+            snapshot: progress,
+            totalXp: widget.totalXp,
+          );
+    final progressPercent = progress == null
+        ? 0
+        : WordPracticeProgressStore.combinedProgressPercent(
+            snapshot: progress,
+            totalXp: widget.totalXp,
+          );
+
     return GestureDetector(
-      onTap: () => Navigator.of(context).pushNamed('/word_practice', arguments: const LearnWordPracticeArgs()),
+      onTap: _openWordPractice,
       child: Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -302,7 +335,7 @@ class _LearnScreenState extends State<LearnScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '%20',
+                      '%$progressPercent',
                       style: AppTypography.caption.copyWith(
                         color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 12,
@@ -312,7 +345,7 @@ class _LearnScreenState extends State<LearnScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: 0.2,
+                        value: progressValue,
                         backgroundColor: Colors.white.withValues(alpha: 0.3),
                         valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                         minHeight: 9,
@@ -327,7 +360,7 @@ class _LearnScreenState extends State<LearnScreen> {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () => Navigator.of(context).pushNamed('/word_practice', arguments: const LearnWordPracticeArgs()),
+                    onTap: _openWordPractice,
                     borderRadius: BorderRadius.circular(24),
                     child: Padding(
                       padding: const EdgeInsets.all(6),

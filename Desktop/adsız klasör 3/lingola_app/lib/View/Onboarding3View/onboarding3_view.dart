@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -5,7 +6,6 @@ import 'package:lingola_app/View/Onboarding2View/onboarding2_view.dart';
 import 'package:lingola_app/src/navigation/app_routes.dart';
 import 'package:lingola_app/src/navigation/route_transitions.dart';
 import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/dismiss_keyboard.dart';
@@ -55,7 +55,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                     _buildProgressIndicator(1),
                     SizedBox(height: AppSpacing.xxl),
                     Text(
-                      'Describe your profession in three words.',
+                      context.tr('onboarding.profession_description_title'),
                       style: AppTypography.onboardingTitle.copyWith(
                         fontSize: 28,
                         color: AppColors.onboardingText,
@@ -66,33 +66,37 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                     SizedBox(
                       width: double.infinity,
                       child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.md,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceVariant.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.surfaceVariant),
-                      ),
-                      child: TextField(
-                        controller: _controller,
-                        decoration: InputDecoration(
-                          hintText: 'Ui/Ux Designer',
-                          hintStyle: AppTypography.body.copyWith(
-                            color: AppColors.outline,
-                            fontSize: 16,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg,
+                          vertical: AppSpacing.md,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceVariant.withValues(
+                            alpha: 0.5,
                           ),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.surfaceVariant),
                         ),
-                        style: AppTypography.body.copyWith(
-                          fontSize: 16,
-                          color: AppColors.onboardingText,
+                        child: TextField(
+                          controller: _controller,
+                          decoration: InputDecoration(
+                            hintText: context.tr(
+                              'onboarding.profession_description_hint',
+                            ),
+                            hintStyle: AppTypography.body.copyWith(
+                              color: AppColors.outline,
+                              fontSize: 16,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          style: AppTypography.body.copyWith(
+                            fontSize: 16,
+                            color: AppColors.onboardingText,
+                          ),
                         ),
                       ),
-                    ),
                     ),
                   ],
                 ),
@@ -114,7 +118,9 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                         const Onboarding2Screen(),
                       ),
                       style: OutlinedButton.styleFrom(
-                        backgroundColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                        backgroundColor: AppColors.surfaceVariant.withValues(
+                          alpha: 0.5,
+                        ),
                         foregroundColor: AppColors.onSurface,
                         side: BorderSide(color: AppColors.surfaceVariant),
                         padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
@@ -123,7 +129,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                         ),
                       ),
                       child: Text(
-                        'Back',
+                        context.tr('common.back'),
                         style: AppTypography.labelLarge.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -146,10 +152,12 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
                                 : null,
                             borderRadius: BorderRadius.circular(50),
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppSpacing.lg,
+                              ),
                               alignment: Alignment.center,
                               child: Text(
-                                'Next',
+                                context.tr('common.next'),
                                 style: AppTypography.labelLarge.copyWith(
                                   color: AppColors.onPrimary,
                                   fontSize: 20,
@@ -167,7 +175,7 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
             ),
           ],
         ),
-    ),
+      ),
     );
   }
 
@@ -180,7 +188,9 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
             margin: EdgeInsets.only(right: index < 4 ? AppSpacing.xs : 0),
             height: 3,
             decoration: BoxDecoration(
-              color: isActive ? AppColors.primaryBrand : AppColors.surfaceVariant,
+              color: isActive
+                  ? AppColors.primaryBrand
+                  : AppColors.surfaceVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -189,4 +199,3 @@ class _Onboarding3ScreenState extends State<Onboarding3Screen> {
     );
   }
 }
-

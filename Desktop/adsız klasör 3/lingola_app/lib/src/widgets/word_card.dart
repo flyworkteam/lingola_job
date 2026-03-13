@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/Models/word_item.dart';
 import 'package:lingola_app/Services/word_services.dart';
-import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/word_card_buttons.dart';
 
 /// Ortak 3D mavi kelime kartı boyutları ve renkleri.
@@ -17,7 +16,7 @@ abstract final class WordCardTheme {
   /// Kart metinleri (çeviri, okunuş, örnek cümle) — font/renk değiştirilmesin.
   static const Color cardTextWhite = Color(0xFFFFFFFF);
   static const double width = 330;
-  static const double height = 421;
+  static const double height = 450;
   static const double radius = 30;
   static const double layerOffset = 10;
 }
@@ -312,7 +311,12 @@ class WordCardBody extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            WordService.ipaToPlain(data.phonetic),
+            data.phonetic.trim().isEmpty
+                ? ''
+                : '/${WordService.ipaToPlain(
+                    data.phonetic,
+                    localeCode: context.locale.languageCode,
+                  )}/',
             textAlign: TextAlign.center,
             style: savedWordStyle
                 ? GoogleFonts.nunitoSans(
@@ -343,42 +347,53 @@ class WordCardBody extends StatelessWidget {
                   ),
           ),
           const SizedBox(height: 12),
-          Center(
-            child: Text(
-              '\u201C',
-              style: GoogleFonts.quicksand(
-                color: WordCardTheme.cardTextWhite,
-                fontSize: 48,
-                height: 1,
-                fontWeight: FontWeight.w700,
-              ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    '\u201C',
+                    style: GoogleFonts.quicksand(
+                      color: WordCardTheme.cardTextWhite,
+                      fontSize: 48,
+                      height: 1,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  data.exampleEn.trim().isEmpty
+                      ? '—'
+                      : '\u201C${_capitalizeFirst(data.exampleEn)}\u201D',
+                  textAlign: TextAlign.center,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.quicksand(
+                    fontWeight: FontWeight.w600,
+                    color: WordCardTheme.cardTextWhite,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  data.exampleTr.trim().isEmpty
+                      ? '—'
+                      : _capitalizeFirst(data.exampleTr),
+                  textAlign: TextAlign.center,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.quicksand(
+                    fontWeight: FontWeight.w400,
+                    color: WordCardTheme.cardTextWhite,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            data.exampleEn.trim().isEmpty
-                ? '—'
-                : '\u201C${_capitalizeFirst(data.exampleEn)}\u201D',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontWeight: FontWeight.w600,
-              color: WordCardTheme.cardTextWhite,
-              fontSize: 15,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            data.exampleTr.trim().isEmpty
-                ? '—'
-                : _capitalizeFirst(data.exampleTr),
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(
-              fontWeight: FontWeight.w400,
-              color: WordCardTheme.cardTextWhite,
-              fontSize: 14,
-            ),
-          ),
-          const Spacer(),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -404,9 +419,45 @@ class WordCardReadingTestBody extends StatelessWidget {
     required this.translation,
   });
 
+  static const Map<String, String> _flagAssetByLocaleCode = {
+    'en': 'assets/bayrak/flag_english.svg',
+    'de': 'assets/bayrak/flag_german.svg',
+    'it': 'assets/bayrak/flag_italian.svg',
+    'fr': 'assets/bayrak/flag_french.svg',
+    'ja': 'assets/bayrak/flag_japanese.svg',
+    'es': 'assets/bayrak/Spain.png',
+    'ru': 'assets/bayrak/flag_russian.svg',
+    'tr': 'assets/bayrak/flag_turkish.svg',
+    'ko': 'assets/bayrak/flag_korean.svg',
+    'hi': 'assets/bayrak/flag_hindi.svg',
+    'pt': 'assets/bayrak/flag_portuguese.svg',
+  };
+
   final String word;
   final String phonetic;
   final String translation;
+
+  Widget _buildSelectedLanguageFlag(BuildContext context) {
+    final localeCode = context.locale.languageCode.toLowerCase();
+    final assetPath =
+        _flagAssetByLocaleCode[localeCode] ?? _flagAssetByLocaleCode['tr']!;
+
+    if (assetPath.toLowerCase().endsWith('.png')) {
+      return Image.asset(
+        assetPath,
+        width: 32,
+        height: 24,
+        fit: BoxFit.contain,
+      );
+    }
+
+    return SvgPicture.asset(
+      assetPath,
+      width: 32,
+      height: 24,
+      fit: BoxFit.contain,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -428,7 +479,12 @@ class WordCardReadingTestBody extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            WordService.ipaToPlain(phonetic),
+            phonetic.trim().isEmpty
+                ? ''
+                : '/${WordService.ipaToPlain(
+                    phonetic,
+                    localeCode: context.locale.languageCode,
+                  )}/',
             textAlign: TextAlign.center,
             style: GoogleFonts.nunitoSans(
               fontWeight: FontWeight.w400,
@@ -450,12 +506,7 @@ class WordCardReadingTestBody extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: SvgPicture.asset(
-                  'assets/bayrak/flag_turkish.svg',
-                  width: 32,
-                  height: 24,
-                  fit: BoxFit.contain,
-                ),
+                child: _buildSelectedLanguageFlag(context),
               ),
               Expanded(
                 child: Container(

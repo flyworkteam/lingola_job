@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lingola_app/src/navigation/app_routes.dart';
 import 'package:lingola_app/Services/auth_service.dart';
 import 'package:lingola_app/Repositories/user_repository.dart';
+import 'package:lingola_app/View/LegalDocumentView/legal_document_view.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
@@ -24,6 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   AnimationController? _controller;
   Animation<double>? _fade;
   Animation<Offset>? _slide;
+  bool _isAppleLoading = false;
   bool _isGoogleLoading = false;
   bool _isFacebookLoading = false;
 
@@ -37,17 +40,19 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     await prefs.setString(_keyProfileName, name.trim());
   }
 
-  Future<void> _onGoogleSignInPressed(BuildContext context) async {
+  Future<void> _onGoogleSignInPressed() async {
     if (_isGoogleLoading) return;
     setState(() => _isGoogleLoading = true);
     final error = await AuthService.instance.signInWithGoogle();
     if (!mounted) return;
     setState(() => _isGoogleLoading = false);
-    if (error == AuthService.signInCancelled) return; // Vazgeç'e basıldı, ileri gitme
+    if (error == AuthService.signInCancelled) {
+      return; // Vazgeç'e basıldı, ileri gitme
+    }
     if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Giriş başarısız: $error')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Giriş başarısız: $error')));
       return;
     }
     await _persistUserDisplayNameIfAvailable();
@@ -57,7 +62,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     context.go(AppPaths.onboarding2);
   }
 
-  Future<void> _onFacebookSignInPressed(BuildContext context) async {
+  Future<void> _onFacebookSignInPressed() async {
     if (_isFacebookLoading) return;
     setState(() => _isFacebookLoading = true);
     final error = await AuthService.instance.signInWithFacebook();
@@ -76,6 +81,37 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     context.go(AppPaths.onboarding2);
   }
 
+  Future<void> _onAppleSignInPressed() async {
+    if (_isAppleLoading) return;
+    setState(() => _isAppleLoading = true);
+    final error = await AuthService.instance.signInWithApple();
+    if (!mounted) return;
+    setState(() => _isAppleLoading = false);
+    if (error == AuthService.signInCancelled) return;
+    if (error != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Apple girişi başarısız: $error')));
+      return;
+    }
+    await _persistUserDisplayNameIfAvailable();
+    await UserRepository().testBackend();
+    if (!mounted) return;
+    context.go(AppPaths.onboarding2);
+  }
+
+  Future<void> _openLegalDocument(
+    BuildContext context, {
+    required String title,
+    required String assetPath,
+  }) {
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LegalDocumentScreen(title: title, assetPath: assetPath),
+      ),
+    );
+  }
+
   void _ensureAnimations() {
     if (_controller != null) return;
     _controller = AnimationController(
@@ -85,10 +121,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     _fade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller!, curve: Curves.easeOutCubic),
     );
-    _slide = Tween<Offset>(
-      begin: const Offset(0, 0.12),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller!, curve: Curves.easeOutCubic));
+    _slide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _controller!, curve: Curves.easeOutCubic),
+        );
     _controller!.forward();
   }
 
@@ -116,122 +152,164 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         left: false,
         right: false,
         child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Column(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.lg),
-                child: SizedBox(
-                  width: size.width,
-                  height: imageHeight,
-                  child: Image.asset(
-                    'assets/onboard/onboard.png',
-                    fit: BoxFit.cover,
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.lg),
+                  child: SizedBox(
+                    width: size.width,
+                    height: imageHeight,
+                    child: Image.asset(
+                      'assets/onboard/onboard.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              const Spacer(),
-            ],
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: imageHeight - 50,
-            child: FadeTransition(
-              opacity: _fade!,
-              child: SlideTransition(
-                position: _slide!,
-                child: Container(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.xl,
-                AppSpacing.md,
-                AppSpacing.xl,
-                AppSpacing.xl + MediaQuery.paddingOf(context).bottom,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(AppRadius.xl),
-                  topRight: Radius.circular(AppRadius.xl),
-                ),
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.sizeOf(context).height * 0.55,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: AppTitle(
-                          'Welcome',
-                          style: AppTypography.onboardingTitle,
-                          textAlign: TextAlign.left,
-                        ),
+                const Spacer(),
+              ],
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              top: imageHeight - 50,
+              child: FadeTransition(
+                opacity: _fade!,
+                child: SlideTransition(
+                  position: _slide!,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(
+                      AppSpacing.xl,
+                      AppSpacing.md,
+                      AppSpacing.xl,
+                      AppSpacing.xl + MediaQuery.paddingOf(context).bottom,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(AppRadius.xl),
+                        topRight: Radius.circular(AppRadius.xl),
                       ),
-                      SizedBox(height: AppSpacing.md),
-                      SizedBox(
-                        width: double.infinity,
-                        child: AppBody(
-                          'I am happy to see you. You can\ncontinue where you left off by logging in',
-                          style: AppTypography.onboardingDescription,
-                          textAlign: TextAlign.left,
-                        ),
+                    ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.sizeOf(context).height * 0.55,
                       ),
-                      SizedBox(height: AppSpacing.xl),
-                      ..._buildLoginButtons(context),
-                      SizedBox(height: AppSpacing.xl),
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: AppTypography.onboardingDescription.copyWith(
-                            color: AppColors.onboardingText,
-                            fontSize: 12,
-                          ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const TextSpan(text: 'By signing up for swipe, you agree to our '),
-                            TextSpan(
-                              text: 'Terms of Service',
-                              style: TextStyle(
-                                color: AppColors.onboardingText,
-                                fontSize: 12,
-                                decoration: TextDecoration.underline,
+                            SizedBox(
+                              width: double.infinity,
+                              child: AppTitle(
+                                context.tr('onboarding.welcome'),
+                                style: AppTypography.onboardingTitle,
+                                textAlign: TextAlign.left,
                               ),
                             ),
-                            const TextSpan(text: '. Learn how we process your data in our '),
-                            TextSpan(
-                              text: 'Privacy Policy',
-                              style: TextStyle(
-                                color: AppColors.onboardingText,
-                                fontSize: 12,
-                                decoration: TextDecoration.underline,
+                            SizedBox(height: AppSpacing.md),
+                            SizedBox(
+                              width: double.infinity,
+                              child: AppBody(
+                                context.tr('onboarding.login_subtitle'),
+                                style: AppTypography.onboardingDescription,
+                                textAlign: TextAlign.left,
                               ),
                             ),
-                            const TextSpan(text: ' and '),
-                            TextSpan(
-                              text: 'Cookies Policy',
-                              style: TextStyle(
-                                color: AppColors.onboardingText,
-                                fontSize: 12,
-                                decoration: TextDecoration.underline,
-                              ),
+                            SizedBox(height: AppSpacing.xl),
+                            ..._buildLoginButtons(context),
+                            SizedBox(height: AppSpacing.xl),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              children: [
+                                Text(
+                                  context.tr('onboarding.legal_prefix'),
+                                  style: AppTypography.onboardingDescription
+                                      .copyWith(
+                                        color: AppColors.onboardingText,
+                                        fontSize: 12,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                _InlineLegalLink(
+                                  label: context.tr(
+                                    'onboarding.terms_of_service',
+                                  ),
+                                  onTap: () => _openLegalDocument(
+                                    context,
+                                    title: context.tr(
+                                      'onboarding.terms_of_service',
+                                    ),
+                                    assetPath:
+                                        'assets/legal/terms_of_service.txt',
+                                  ),
+                                ),
+                                Text(
+                                  context.tr('onboarding.legal_middle'),
+                                  style: AppTypography.onboardingDescription
+                                      .copyWith(
+                                        color: AppColors.onboardingText,
+                                        fontSize: 12,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                _InlineLegalLink(
+                                  label: context.tr(
+                                    'onboarding.privacy_policy',
+                                  ),
+                                  onTap: () => _openLegalDocument(
+                                    context,
+                                    title: context.tr(
+                                      'onboarding.privacy_policy',
+                                    ),
+                                    assetPath:
+                                        'assets/legal/privacy_policy.txt',
+                                  ),
+                                ),
+                                Text(
+                                  context.tr('onboarding.legal_and'),
+                                  style: AppTypography.onboardingDescription
+                                      .copyWith(
+                                        color: AppColors.onboardingText,
+                                        fontSize: 12,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                _InlineLegalLink(
+                                  label: context.tr(
+                                    'onboarding.cookies_policy',
+                                  ),
+                                  onTap: () => _openLegalDocument(
+                                    context,
+                                    title: context.tr(
+                                      'onboarding.cookies_policy',
+                                    ),
+                                    assetPath:
+                                        'assets/legal/cookies_policy.txt',
+                                  ),
+                                ),
+                                Text(
+                                  '.',
+                                  style: AppTypography.onboardingDescription
+                                      .copyWith(
+                                        color: AppColors.onboardingText,
+                                        fontSize: 12,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-              ),
-            ),
-          ),
-        ],
+          ],
         ),
       ),
     );
@@ -247,15 +325,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           width: 20,
           height: 20,
         ),
-        label: _isFacebookLoading ? 'Giriş yapılıyor...' : 'Facebook',
-        onPressed: _isFacebookLoading ? () {} : () => _onFacebookSignInPressed(context),
+        label: 'Facebook',
+        onPressed: _isFacebookLoading ? () {} : _onFacebookSignInPressed,
       ),
     );
 
     final guestButton = Expanded(
       child: _SocialButton(
         icon: Icon(Icons.person_outline, color: Colors.black, size: 20),
-        label: 'Guest',
+        label: context.tr('onboarding.guest'),
         onPressed: () => context.go(AppPaths.onboarding2),
       ),
     );
@@ -270,8 +348,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               width: 20,
               height: 20,
             ),
-            label: 'Apple',
-            onPressed: () => context.go(AppPaths.onboarding2),
+            label: context.tr('onboarding.apple'),
+            onPressed: _isAppleLoading ? () {} : _onAppleSignInPressed,
           ),
         ),
         SizedBox(height: AppSpacing.md),
@@ -284,8 +362,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   width: 20,
                   height: 20,
                 ),
-                label: _isGoogleLoading ? 'Giriş yapılıyor...' : 'Google',
-                onPressed: _isGoogleLoading ? () {} : () => _onGoogleSignInPressed(context),
+                label: context.tr('onboarding.google'),
+                onPressed: _isGoogleLoading ? () {} : _onGoogleSignInPressed,
               ),
             ),
             SizedBox(width: AppSpacing.md),
@@ -305,8 +383,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               width: 20,
               height: 20,
             ),
-            label: _isGoogleLoading ? 'Giriş yapılıyor...' : 'Google',
-            onPressed: _isGoogleLoading ? () {} : () => _onGoogleSignInPressed(context),
+            label: context.tr('onboarding.google'),
+            onPressed: _isGoogleLoading ? () {} : _onGoogleSignInPressed,
           ),
         ),
         SizedBox(height: AppSpacing.md),
@@ -319,8 +397,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   width: 20,
                   height: 20,
                 ),
-                label: 'Apple',
-                onPressed: () => context.go(AppPaths.onboarding2),
+                label: context.tr('onboarding.apple'),
+                onPressed: _isAppleLoading ? () {} : _onAppleSignInPressed,
               ),
             ),
             SizedBox(width: AppSpacing.md),
@@ -380,3 +458,26 @@ class _SocialButton extends StatelessWidget {
   }
 }
 
+class _InlineLegalLink extends StatelessWidget {
+  const _InlineLegalLink({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Text(
+        label,
+        style: AppTypography.onboardingDescription.copyWith(
+          color: AppColors.onboardingText,
+          fontSize: 12,
+          decoration: TextDecoration.underline,
+          fontWeight: FontWeight.w600,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}

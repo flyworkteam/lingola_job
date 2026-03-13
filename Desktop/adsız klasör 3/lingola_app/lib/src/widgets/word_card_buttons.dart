@@ -232,7 +232,12 @@ class WordCardListenButton extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.volume_up, color: Color(0xFF0575E6), size: 28),
+                            SvgPicture.asset(
+                              'assets/icons/icon_word_practice_speaker.svg',
+                              width: 24,
+                              height: 23,
+                              fit: BoxFit.contain,
+                            ),
                             const SizedBox(width: 10),
                             Text(
                               'word_practice.listen'.tr(),

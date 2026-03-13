@@ -20,8 +20,15 @@ class DailyTestQuestion {
   final int correctOptionIndex;
 
   /// Kelime listesinden en az 4 kelime ile soru listesi üretir (boşluk doldurma).
-  static List<DailyTestQuestion> fromWords(List<WordItem> words, {int maxQuestions = 10}) {
-    final list = List<WordItem>.from(words)..shuffle();
+  static List<DailyTestQuestion> fromWords(
+    List<WordItem> words, {
+    int maxQuestions = 10,
+    bool shuffleWords = true,
+  }) {
+    final list = List<WordItem>.from(words);
+    if (shuffleWords) {
+      list.shuffle();
+    }
     if (list.length < 4) return [];
     final take = list.length < maxQuestions ? list.length : maxQuestions;
     final selected = list.take(take).toList();

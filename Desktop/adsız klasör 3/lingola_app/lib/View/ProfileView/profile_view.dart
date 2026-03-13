@@ -4,16 +4,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/Repositories/user_repository.dart';
 import 'package:lingola_app/Services/auth_service.dart';
 import 'package:lingola_app/src/config/app_prefs.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/src/utils/profile_avatar_storage.dart';
 import 'package:lingola_app/src/widgets/app_icon_button.dart';
 
 /// Profil sayfası: header, avatar, ayar listesi, versiyon.
@@ -25,6 +24,7 @@ class ProfileScreen extends StatefulWidget {
     this.totalXp = 0,
     this.isPremium = false,
     this.onUserNameChanged,
+    this.onAvatarChanged,
     this.onBackTap,
     this.onNotificationsTap,
   });
@@ -35,6 +35,7 @@ class ProfileScreen extends StatefulWidget {
   final bool isPremium;
   /// Profil ayarlarından ad güncellendiğinde MainScreen state'ini güncellemek için.
   final ValueChanged<String>? onUserNameChanged;
+  final VoidCallback? onAvatarChanged;
   final VoidCallback? onBackTap;
   final VoidCallback? onNotificationsTap;
 
@@ -45,10 +46,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _notificationsEnabled = true;
   late String _userName;
-  final UserRepository _userRepository = UserRepository();
   File? _avatarFile;
-
-  static const String _keyProfileAvatar = 'profile_avatar_path';
 
   @override
   void initState() {
@@ -64,15 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadAvatar() async {
-    final prefs = await SharedPreferences.getInstance();
-    final path = prefs.getString(_keyProfileAvatar);
-    File? file;
-    if (path != null && path.isNotEmpty) {
-      final f = File(path);
-      if (await f.exists()) {
-        file = f;
-      }
-    }
+    final file = await ProfileAvatarStorage.loadAvatarFile();
     if (!mounted) return;
     setState(() => _avatarFile = file);
   }
@@ -310,50 +300,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<void> _testBackend(BuildContext context) async {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => Center(
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 16),
-                Text(context.tr('profile.backend_testing')),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-    final result = await _userRepository.testBackend();
-    if (!context.mounted) return;
-    Navigator.of(context).pop();
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(result.isOk ? context.tr('profile.backend_ok') : context.tr('profile.backend_error')),
-        content: SingleChildScrollView(
-          child: Text(
-            result.isOk
-                ? (result.data ?? '')
-                : (result.error ?? context.tr('profile.unknown_error')),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(context.tr('common.ok')),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMenuList(BuildContext context) {
     return Column(
       children: [
@@ -375,6 +321,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               widget.onUserNameChanged?.call(result.name);
               // Profil fotoğrafı değişmiş olabilir; tekrar yükle.
               await _loadAvatar();
+              widget.onAvatarChanged?.call();
             }
           },
         ),
@@ -403,11 +350,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           iconAsset: 'assets/icons/icon_rate.svg',
           label: context.tr('profile.rate_us'),
           onTap: () {},
-        ),
-        _ProfileMenuItem(
-          iconAsset: 'assets/icons/icon_faq.svg',
-          label: context.tr('profile.backend_test'),
-          onTap: () => _testBackend(context),
         ),
         Divider(
           height: 1,
@@ -601,18 +543,16 @@ class _ProfileMenuItemWithSwitch extends StatelessWidget {
     required this.label,
     required this.value,
     required this.onChanged,
-    this.iconColor,
   });
 
   final String iconAsset;
   final String label;
   final bool value;
   final ValueChanged<bool> onChanged;
-  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
-    final color = iconColor ?? AppColors.onSurfaceVariant;
+    const color = AppColors.onSurfaceVariant;
     final useNativeColor = iconAsset.contains('icon_notifications_list');
     return Padding(
       padding: const EdgeInsets.symmetric(

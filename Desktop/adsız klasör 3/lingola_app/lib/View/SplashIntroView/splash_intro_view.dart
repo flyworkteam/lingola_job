@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -82,14 +83,10 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> {
                 pageCount: _pageCount,
                 imageTopPadding: 0,
                 imagePath: 'assets/splash/splash1.png',
-                titleLines: const [
-                  'English is no longer',
-                  'difficult when traveling',
-                ],
-                descriptionLines: const [
-                  'Learn the most commonly used words at the',
-                  'airport, hotel, restaurant, and for transportation.',
-                ],
+                titleLines: context.tr('intro.slide1.title').split('\n'),
+                descriptionLines: context
+                    .tr('intro.slide1.description')
+                    .split('\n'),
                 isLastPage: false,
                 onNext: () => _pageController.nextPage(
                   duration: const Duration(milliseconds: 400),
@@ -101,13 +98,10 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> {
                 currentPage: _currentPage,
                 pageCount: _pageCount,
                 imagePath: 'assets/splash/splash2.png',
-                titleLines: const [
-                  'Real travel',
-                  'scenarios',
-                ],
-                descriptionLines: const [
-                  "Practice with words and phrases you'll actually need while traveling.",
-                ],
+                titleLines: context.tr('intro.slide2.title').split('\n'),
+                descriptionLines: context
+                    .tr('intro.slide2.description')
+                    .split('\n'),
                 isLastPage: false,
                 onNext: () => _pageController.nextPage(
                   duration: const Duration(milliseconds: 400),
@@ -119,14 +113,10 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> {
                 currentPage: _currentPage,
                 pageCount: _pageCount,
                 imagePath: 'assets/splash/splash3.png',
-                titleLines: const [
-                  'Learn on the go, travel',
-                  'comfortably',
-                ],
-                descriptionLines: const [
-                  'Learn English words in just a few minutes, focus',
-                  'on your trip.',
-                ],
+                titleLines: context.tr('intro.slide3.title').split('\n'),
+                descriptionLines: context
+                    .tr('intro.slide3.description')
+                    .split('\n'),
                 isLastPage: true,
                 onNext: null,
                 onGetStarted: _goToOnboarding,
@@ -196,10 +186,7 @@ class _IntroSlide extends StatelessWidget {
               child: SizedBox(
                 width: size.width,
                 height: imageHeight,
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset(imagePath, fit: BoxFit.cover),
               ),
             ),
             const Spacer(),
@@ -237,8 +224,7 @@ class _IntroSlide extends StatelessWidget {
                       height: 4,
                       decoration: BoxDecoration(
                         color: AppColors.surfaceVariant,
-                        borderRadius:
-                            BorderRadius.circular(AppRadius.full),
+                        borderRadius: BorderRadius.circular(AppRadius.full),
                       ),
                     ),
                     SizedBox(height: AppSpacing.lg + 20),
@@ -247,7 +233,9 @@ class _IntroSlide extends StatelessWidget {
                       children: List.generate(
                         pageCount,
                         (index) => Padding(
-                          padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm / 2),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm / 2,
+                          ),
                           child: _PageDot(active: index == currentPage),
                         ),
                       ),
@@ -282,13 +270,13 @@ class _IntroSlide extends StatelessWidget {
                     SizedBox(height: AppSpacing.xxl + 48),
                     if (isLastPage)
                       AppPrimaryButton(
-                        label: 'Get Started',
+                        label: context.tr('intro.get_started'),
                         onPressed: onGetStarted,
                         borderRadius: 10,
                       )
                     else
                       AppPrimaryButton(
-                        label: 'Get Started',
+                        label: context.tr('common.next'),
                         onPressed: onNext ?? () {},
                         borderRadius: 10,
                       ),
@@ -302,4 +290,3 @@ class _IntroSlide extends StatelessWidget {
     );
   }
 }
-

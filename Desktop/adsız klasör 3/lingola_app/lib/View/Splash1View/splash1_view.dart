@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -75,8 +76,7 @@ class Splash1Screen extends StatelessWidget {
                         height: 4,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceVariant,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full),
+                          borderRadius: BorderRadius.circular(AppRadius.full),
                         ),
                       ),
                       SizedBox(height: AppSpacing.lg + 20),
@@ -94,7 +94,7 @@ class Splash1Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppTitle(
-                          'English is no longer',
+                          context.tr('intro.slide1.title').split('\n').first,
                           style: AppTypography.onboardingTitle,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -103,7 +103,7 @@ class Splash1Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppTitle(
-                          'difficult when traveling',
+                          context.tr('intro.slide1.title').split('\n').last,
                           style: AppTypography.onboardingTitle,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -113,7 +113,10 @@ class Splash1Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppBody(
-                          'Learn the most commonly used words at the',
+                          context
+                              .tr('intro.slide1.description')
+                              .split('\n')
+                              .first,
                           style: AppTypography.onboardingDescription,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -122,7 +125,10 @@ class Splash1Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppBody(
-                          'airport, hotel, restaurant, and for transportation.',
+                          context
+                              .tr('intro.slide1.description')
+                              .split('\n')
+                              .last,
                           style: AppTypography.onboardingDescription,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -130,9 +136,8 @@ class Splash1Screen extends StatelessWidget {
                       ),
                       SizedBox(height: AppSpacing.xxl + 56),
                       AppPrimaryButton(
-                        label: 'Get Started',
-                        onPressed: () =>
-                            context.go(AppPaths.splash2),
+                        label: context.tr('intro.get_started'),
+                        onPressed: () => context.go(AppPaths.splash2),
                         borderRadius: 10,
                       ),
                     ],
@@ -164,4 +169,3 @@ class _PageDot extends StatelessWidget {
     );
   }
 }
-

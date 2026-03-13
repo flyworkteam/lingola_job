@@ -46,6 +46,8 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
   final Set<String> _phoneticRequested = {};
 
   static const String _keyProfileLevel = 'profile_level';
+  static const String _keyReadingTestWordId = 'reading_test_current_word_id';
+  static const String _keyReadingTestIndex = 'reading_test_current_index';
 
   @override
   void initState() {
@@ -88,6 +90,7 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
         (a, b) => a.word.toLowerCase().compareTo(b.word.toLowerCase()),
       );
       final cards = filtered.map((w) => WordCardData.fromWordItem(w)).toList();
+      final restoredIndex = await _restoreReadingTestIndex(filtered);
 
       if (!mounted) return;
       setState(() {
@@ -95,8 +98,9 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
         _cards = cards;
         _loading = false;
         _errorMessage = cards.isEmpty ? 'word_practice.words_load_error' : null;
-        _currentCardIndex = 0;
+        _currentCardIndex = restoredIndex;
       });
+      await _saveReadingTestProgress();
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -170,6 +174,33 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
     });
   }
 
+  Future<int> _restoreReadingTestIndex(List<WordItem> items) async {
+    if (items.isEmpty) return 0;
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedWordId = prefs.getInt(_keyReadingTestWordId);
+    if (savedWordId != null) {
+      final savedIndex = items.indexWhere((item) => item.id == savedWordId);
+      if (savedIndex >= 0) {
+        return savedIndex;
+      }
+    }
+
+    final savedIndex = prefs.getInt(_keyReadingTestIndex);
+    if (savedIndex == null) return 0;
+    return savedIndex.clamp(0, items.length - 1);
+  }
+
+  Future<void> _saveReadingTestProgress() async {
+    final items = _wordItems;
+    if (items == null || items.isEmpty) return;
+
+    final index = _currentCardIndex.clamp(0, items.length - 1);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyReadingTestIndex, index);
+    await prefs.setInt(_keyReadingTestWordId, items[index].id);
+  }
+
   /// Ampul (Hint) butonuna basılınca: karttaki kelimeyi İngilizce seslendir.
   Future<void> _speakCurrentWord() async {
     final card = _currentCard;
@@ -198,6 +229,7 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
       _lastSwipeDirection = 1;
       _currentCardIndex = (_currentCardIndex + 1) % cards.length;
     });
+    _saveReadingTestProgress();
   }
 
   void _goPrevCard() {
@@ -209,6 +241,7 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
           ? (cards.length - 1)
           : (_currentCardIndex - 1);
     });
+    _saveReadingTestProgress();
   }
 
   Future<void> _toggleListening() async {
@@ -281,7 +314,7 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
 
     if (isCorrect) {
       // XP ekle
-      ref.read(xpProvider).addXp(_xpPerCorrect);
+      ref.read(xpProvider.notifier).addXp(_xpPerCorrect);
       // Backend'e user_answers kaydı gönder (mümkünse).
       final wordId = wordItem?.id;
       if (wordId != null) {
@@ -298,8 +331,8 @@ class _ReadingTestScreenState extends ConsumerState<ReadingTestScreen> {
       SnackBar(
         content: Text(
           isCorrect
-              ? 'Harika, \"$targetWord\" kelimesini doğru okudun! +$_xpPerCorrect XP'
-              : 'Duyduğumuz: \"$_recognizedText\". Karttaki kelime: \"$targetWord\"',
+              ? 'Harika, "$targetWord" kelimesini doğru okudun! +$_xpPerCorrect XP'
+              : 'Duyduğumuz: "$_recognizedText". Karttaki kelime: "$targetWord"',
         ),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),

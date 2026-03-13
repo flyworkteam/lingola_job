@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -22,9 +23,9 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
   String? _selectedGoal;
 
   static const _goals = [
-    _Goal(id: 'casual', title: 'Casual', subtitle: '5 Min / day'),
-    _Goal(id: 'steady', title: 'Steady', subtitle: '15 Min / day'),
-    _Goal(id: 'serious', title: 'Serious', subtitle: '30 Min / day'),
+    _Goal(id: 'casual'),
+    _Goal(id: 'steady'),
+    _Goal(id: 'serious'),
   ];
 
   @override
@@ -32,108 +33,112 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
-                  AppSpacing.xl + MediaQuery.paddingOf(context).top,
-                  AppSpacing.xl,
-                  AppSpacing.lg,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildProgressIndicator(4),
-                    SizedBox(height: AppSpacing.xxl),
-                    Text(
-                      'Set Your Daily Goal',
-                      style: AppTypography.onboardingTitle.copyWith(
-                        fontSize: 28,
-                        color: AppColors.onboardingText,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: AppSpacing.sm),
-                    Text(
-                      'Choose a pace that fits your schedule',
-                      style: AppTypography.body.copyWith(
-                        fontSize: 16,
-                        color: AppColors.outline,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: AppSpacing.xl),
-                    ..._goals.map((goal) => Padding(
-                          padding: EdgeInsets.only(bottom: AppSpacing.md),
-                          child: _GoalCard(
-                            goal: goal,
-                            isSelected: _selectedGoal == goal.id,
-                            onTap: () =>
-                                setState(() => _selectedGoal = goal.id),
-                          ),
-                        )),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
                 AppSpacing.xl,
-                AppSpacing.lg,
+                AppSpacing.xl + MediaQuery.paddingOf(context).top,
                 AppSpacing.xl,
-                AppSpacing.xxxl,
+                AppSpacing.lg,
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => pushReplacementWithBackAnimation(
-                        context,
-                        const Onboarding5Screen(),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
-                        foregroundColor: AppColors.onSurface,
-                        side: BorderSide(color: AppColors.surfaceVariant),
-                        padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Text(
-                        'Back',
-                        style: AppTypography.labelLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
+                  _buildProgressIndicator(4),
+                  SizedBox(height: AppSpacing.xxl),
+                  Text(
+                    context.tr('onboarding.goal_title'),
+                    style: AppTypography.onboardingTitle.copyWith(
+                      fontSize: 28,
+                      color: AppColors.onboardingText,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: AppSpacing.sm),
+                  Text(
+                    context.tr('onboarding.goal_subtitle'),
+                    style: AppTypography.body.copyWith(
+                      fontSize: 16,
+                      color: AppColors.outline,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: AppSpacing.xl),
+                  ..._goals.map(
+                    (goal) => Padding(
+                      padding: EdgeInsets.only(bottom: AppSpacing.md),
+                      child: _GoalCard(
+                        goal: goal,
+                        isSelected: _selectedGoal == goal.id,
+                        onTap: () => setState(() => _selectedGoal = goal.id),
                       ),
                     ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.xl,
+              AppSpacing.xxxl,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => pushReplacementWithBackAnimation(
+                      context,
+                      const Onboarding5Screen(),
                     ),
-                    SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                    child: Opacity(
-                      opacity: _selectedGoal != null ? 1.0 : 0.5,
-                      child: IgnorePointer(
-                        ignoring: _selectedGoal == null,
-                        child: Material(
-                          color: AppColors.primaryBrand,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: AppColors.surfaceVariant.withValues(
+                        alpha: 0.5,
+                      ),
+                      foregroundColor: AppColors.onSurface,
+                      side: BorderSide(color: AppColors.surfaceVariant),
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    child: Text(
+                      context.tr('common.back'),
+                      style: AppTypography.labelLarge.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Opacity(
+                    opacity: _selectedGoal != null ? 1.0 : 0.5,
+                    child: IgnorePointer(
+                      ignoring: _selectedGoal == null,
+                      child: Material(
+                        color: AppColors.primaryBrand,
+                        borderRadius: BorderRadius.circular(50),
+                        child: InkWell(
+                          onTap: _selectedGoal != null
+                              ? () => context.go(AppPaths.onboarding7)
+                              : null,
                           borderRadius: BorderRadius.circular(50),
-                          child: InkWell(
-                            onTap: _selectedGoal != null
-                                ? () => context.go(AppPaths.onboarding7)
-                                : null,
-                            borderRadius: BorderRadius.circular(50),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Next',
-                                style: AppTypography.labelLarge.copyWith(
-                                  color: AppColors.onPrimary,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppSpacing.lg,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              context.tr('common.next'),
+                              style: AppTypography.labelLarge.copyWith(
+                                color: AppColors.onPrimary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -141,11 +146,12 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -158,7 +164,9 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
             margin: EdgeInsets.only(right: index < 4 ? AppSpacing.xs : 0),
             height: 3,
             decoration: BoxDecoration(
-              color: isActive ? AppColors.primaryBrand : AppColors.surfaceVariant,
+              color: isActive
+                  ? AppColors.primaryBrand
+                  : AppColors.surfaceVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -169,14 +177,8 @@ class _Onboarding6ScreenState extends State<Onboarding6Screen> {
 }
 
 class _Goal {
-  const _Goal({
-    required this.id,
-    required this.title,
-    required this.subtitle,
-  });
+  const _Goal({required this.id});
   final String id;
-  final String title;
-  final String subtitle;
 }
 
 class _GoalCard extends StatelessWidget {
@@ -204,7 +206,9 @@ class _GoalCard extends StatelessWidget {
           color: AppColors.surfaceVariant.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-            color: isSelected ? AppColors.primaryBrand : AppColors.surfaceVariant,
+            color: isSelected
+                ? AppColors.primaryBrand
+                : AppColors.surfaceVariant,
             width: 2,
           ),
         ),
@@ -235,47 +239,47 @@ class _GoalCard extends StatelessWidget {
                         ],
                       )
                     : goal.id == 'steady'
-                        ? Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/seviye/rectangle_165.svg',
-                                width: 44,
-                                height: 44,
-                                fit: BoxFit.contain,
-                              ),
-                              SvgPicture.asset(
-                                'assets/seviye/time_fast.svg',
-                                width: 24,
-                                height: 24,
-                                fit: BoxFit.contain,
-                              ),
-                            ],
-                          )
-                        : goal.id == 'serious'
-                            ? Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/seviye/rectangle_165.svg',
-                                    width: 44,
-                                    height: 44,
-                                    fit: BoxFit.contain,
-                                  ),
-                                  SvgPicture.asset(
-                                    'assets/seviye/vector_12.svg',
-                                    width: 24,
-                                    height: 24,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ],
-                              )
-                            : SvgPicture.asset(
-                                'assets/seviye/rectangle_165.svg',
-                                width: 44,
-                                height: 44,
-                                fit: BoxFit.contain,
-                              ),
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/seviye/rectangle_165.svg',
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.contain,
+                          ),
+                          SvgPicture.asset(
+                            'assets/seviye/time_fast.svg',
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      )
+                    : goal.id == 'serious'
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/seviye/rectangle_165.svg',
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.contain,
+                          ),
+                          SvgPicture.asset(
+                            'assets/seviye/vector_12.svg',
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      )
+                    : SvgPicture.asset(
+                        'assets/seviye/rectangle_165.svg',
+                        width: 44,
+                        height: 44,
+                        fit: BoxFit.contain,
+                      ),
               ),
             ),
             SizedBox(width: AppSpacing.lg),
@@ -284,18 +288,22 @@ class _GoalCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    goal.title,
+                    context.tr('onboarding.goals.${goal.id}.title'),
                     style: AppTypography.labelLarge.copyWith(
-                      color: isSelected ? AppColors.primaryBrand : AppColors.onboardingText,
+                      color: isSelected
+                          ? AppColors.primaryBrand
+                          : AppColors.onboardingText,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
                   ),
                   SizedBox(height: AppSpacing.xs),
                   Text(
-                    goal.subtitle,
+                    context.tr('onboarding.goals.${goal.id}.subtitle'),
                     style: AppTypography.body.copyWith(
-                      color: isSelected ? AppColors.primaryBrand : AppColors.onboardingText,
+                      color: isSelected
+                          ? AppColors.primaryBrand
+                          : AppColors.onboardingText,
                       fontSize: 14,
                     ),
                   ),
@@ -308,4 +316,3 @@ class _GoalCard extends StatelessWidget {
     );
   }
 }
-

@@ -1,44 +1,35 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String _kXpKey = 'user_xp';
 
 /// Kullanıcının toplam XP'sini tutar (testlerden, vb. kazanılan).
-/// SharedPreferences ile kalıcı; değişince dinleyicileri bilgilendirir.
-class XpNotifier extends ChangeNotifier {
-  XpNotifier() {
+/// SharedPreferences ile kalıcı; Riverpod StateNotifier ile reaktif.
+class XpNotifier extends StateNotifier<int> {
+  XpNotifier() : super(0) {
     _load();
   }
-
-  int _totalXp = 0;
-  bool _loaded = false;
-
-  int get totalXp => _totalXp;
 
   Future<void> _load() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      _totalXp = prefs.getInt(_kXpKey) ?? 0;
+      state = prefs.getInt(_kXpKey) ?? 0;
     } catch (_) {
-      _totalXp = 0;
-    } finally {
-      _loaded = true;
-      notifyListeners();
+      state = 0;
     }
   }
 
   Future<void> _save() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt(_kXpKey, _totalXp);
+      await prefs.setInt(_kXpKey, state);
     } catch (_) {}
   }
 
   /// Puan ekler (test doğruları vb.). Negatif değer verilirse 0'ın altına düşmez.
   Future<void> addXp(int amount) async {
     if (amount <= 0) return;
-    _totalXp += amount;
+    state = (state + amount).clamp(0, 1 << 31);
     await _save();
-    notifyListeners();
   }
 }

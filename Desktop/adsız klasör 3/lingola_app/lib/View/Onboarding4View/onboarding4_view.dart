@@ -25,131 +25,126 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
   String? _selectedLanguage;
 
   static const String _keyProfileLanguage = 'profile_language';
-  static const String _keyProfileAppLanguage = 'profile_app_language';
-
-  /// Dil id → locale kodu (onboarding seçimi anasayfa ile aynı davransın)
-  static String? _languageIdToLocale(String id) {
-    const m = {
-      'english': 'en', 'german': 'de', 'italian': 'it', 'french': 'fr',
-      'japanese': 'ja', 'spanish': 'es', 'russian': 'ru', 'turkish': 'tr',
-      'korean': 'ko', 'hindi': 'hi', 'portuguese': 'pt',
-    };
-    return m[id];
-  }
 
   static const _languages = [
-    _Language(id: 'english', title: 'English', flagAsset: 'assets/bayrak/flag_english.svg'),
-    _Language(id: 'german', title: 'German', flagAsset: 'assets/bayrak/flag_german.svg'),
-    _Language(id: 'italian', title: 'Italian', flagAsset: 'assets/bayrak/flag_italian.svg'),
-    _Language(id: 'french', title: 'French', flagAsset: 'assets/bayrak/flag_french.svg'),
-    _Language(id: 'japanese', title: 'Japanese', flagAsset: 'assets/bayrak/flag_japanese.svg'),
-    _Language(id: 'spanish', title: 'Spanish', flagAsset: 'assets/bayrak/Spain.png'),
-    _Language(id: 'russian', title: 'Russian', flagAsset: 'assets/bayrak/flag_russian.svg'),
-    _Language(id: 'turkish', title: 'Turkish', flagAsset: 'assets/bayrak/flag_turkish.svg'),
-    _Language(id: 'korean', title: 'Korean', flagAsset: 'assets/bayrak/flag_korean.svg'),
-    _Language(id: 'hindi', title: 'Hindi', flagAsset: 'assets/bayrak/flag_hindi.svg'),
-    _Language(id: 'portuguese', title: 'Portuguese', flagAsset: 'assets/bayrak/flag_portuguese.svg'),
+    _Language(id: 'english', flagAsset: 'assets/bayrak/flag_english.svg'),
+    _Language(id: 'german', flagAsset: 'assets/bayrak/flag_german.svg'),
+    _Language(id: 'italian', flagAsset: 'assets/bayrak/flag_italian.svg'),
+    _Language(id: 'french', flagAsset: 'assets/bayrak/flag_french.svg'),
+    _Language(id: 'japanese', flagAsset: 'assets/bayrak/flag_japanese.svg'),
+    _Language(id: 'spanish', flagAsset: 'assets/bayrak/Spain.png'),
+    _Language(id: 'russian', flagAsset: 'assets/bayrak/flag_russian.svg'),
+    _Language(id: 'turkish', flagAsset: 'assets/bayrak/flag_turkish.svg'),
+    _Language(id: 'korean', flagAsset: 'assets/bayrak/flag_korean.svg'),
+    _Language(id: 'hindi', flagAsset: 'assets/bayrak/flag_hindi.svg'),
+    _Language(id: 'portuguese', flagAsset: 'assets/bayrak/flag_portuguese.svg'),
   ];
+
+  Future<void> _handleNext() async {
+    final selectedId = _selectedLanguage;
+    if (selectedId == null) return;
+
+    OnboardingState.selectedLanguageId = selectedId;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyProfileLanguage, selectedId);
+    if (!mounted) return;
+    context.go(AppPaths.onboarding5);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
-                  AppSpacing.xl + MediaQuery.paddingOf(context).top,
-                  AppSpacing.xl,
-                  AppSpacing.xxxl,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildProgressIndicator(2),
-                    SizedBox(height: AppSpacing.xxl),
-                    Text(
-                      'Which language would\nyou like to learn?',
-                      style: AppTypography.onboardingTitle.copyWith(
-                        fontSize: 28,
-                        color: AppColors.onboardingText,
-                      ),
-                      textAlign: TextAlign.center,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.xl + MediaQuery.paddingOf(context).top,
+                AppSpacing.xl,
+                AppSpacing.xxxl,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildProgressIndicator(2),
+                  SizedBox(height: AppSpacing.xxl),
+                  Text(
+                    context.tr('onboarding.language_title'),
+                    style: AppTypography.onboardingTitle.copyWith(
+                      fontSize: 28,
+                      color: AppColors.onboardingText,
                     ),
-                    SizedBox(height: AppSpacing.xl),
-                    ..._languages.map((lang) => Padding(
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: AppSpacing.xl),
+                  ..._languages.map(
+                    (lang) => Padding(
                       padding: EdgeInsets.only(bottom: AppSpacing.md),
                       child: _LanguageCard(
                         language: lang,
                         isSelected: _selectedLanguage == lang.id,
-                        onTap: () => setState(() => _selectedLanguage = lang.id),
+                        onTap: () =>
+                            setState(() => _selectedLanguage = lang.id),
                       ),
-                    )),
-                    SizedBox(height: AppSpacing.xl),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => pushReplacementWithBackAnimation(
-                              context,
-                              const Onboarding3Screen(),
+                    ),
+                  ),
+                  SizedBox(height: AppSpacing.xl),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => pushReplacementWithBackAnimation(
+                            context,
+                            const Onboarding3Screen(),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: AppColors.surfaceVariant
+                                .withValues(alpha: 0.5),
+                            foregroundColor: AppColors.onSurface,
+                            side: BorderSide(color: AppColors.surfaceVariant),
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppSpacing.lg,
                             ),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
-                              foregroundColor: AppColors.onSurface,
-                              side: BorderSide(color: AppColors.surfaceVariant),
-                              padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
                             ),
-                            child: Text(
-                              'Back',
-                              style: AppTypography.labelLarge.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
+                          ),
+                          child: Text(
+                            context.tr('common.back'),
+                            style: AppTypography.labelLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
                             ),
                           ),
                         ),
-                        SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: Opacity(
-                            opacity: _selectedLanguage != null ? 1.0 : 0.5,
-                            child: IgnorePointer(
-                              ignoring: _selectedLanguage == null,
-                              child: Material(
-                                color: AppColors.primaryBrand,
+                      ),
+                      SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Opacity(
+                          opacity: _selectedLanguage != null ? 1.0 : 0.5,
+                          child: IgnorePointer(
+                            ignoring: _selectedLanguage == null,
+                            child: Material(
+                              color: AppColors.primaryBrand,
+                              borderRadius: BorderRadius.circular(50),
+                              child: InkWell(
+                                onTap: _selectedLanguage != null
+                                    ? _handleNext
+                                    : null,
                                 borderRadius: BorderRadius.circular(50),
-                                child: InkWell(
-                                  onTap: _selectedLanguage != null
-                                      ? () async {
-                                          OnboardingState.selectedLanguageId = _selectedLanguage;
-                                          final localeCode = _languageIdToLocale(_selectedLanguage!);
-                                          final prefs = await SharedPreferences.getInstance();
-                                          final selectedId = _selectedLanguage!;
-                                          await prefs.setString(_keyProfileLanguage, selectedId);
-                                          await prefs.setString(_keyProfileAppLanguage, selectedId);
-                                          if (localeCode != null) {
-                                            await context.setLocale(Locale(localeCode));
-                                          }
-                                          if (!context.mounted) return;
-                                          context.go(AppPaths.onboarding5);
-                                        }
-                                      : null,
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Next',
-                                      style: AppTypography.labelLarge.copyWith(
-                                        color: AppColors.onPrimary,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: AppSpacing.lg,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    context.tr('common.next'),
+                                    style: AppTypography.labelLarge.copyWith(
+                                      color: AppColors.onPrimary,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -157,14 +152,15 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -177,7 +173,9 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
             margin: EdgeInsets.only(right: index < 4 ? AppSpacing.xs : 0),
             height: 3,
             decoration: BoxDecoration(
-              color: isActive ? AppColors.primaryBrand : AppColors.surfaceVariant,
+              color: isActive
+                  ? AppColors.primaryBrand
+                  : AppColors.surfaceVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -188,13 +186,8 @@ class _Onboarding4ScreenState extends State<Onboarding4Screen> {
 }
 
 class _Language {
-  const _Language({
-    required this.id,
-    required this.title,
-    this.flagAsset,
-  });
+  const _Language({required this.id, this.flagAsset});
   final String id;
-  final String title;
   final String? flagAsset;
 }
 
@@ -222,7 +215,9 @@ class _LanguageCard extends StatelessWidget {
           color: AppColors.surfaceVariant.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-            color: isSelected ? AppColors.primaryBrand : AppColors.surfaceVariant,
+            color: isSelected
+                ? AppColors.primaryBrand
+                : AppColors.surfaceVariant,
             width: 2,
           ),
         ),
@@ -233,24 +228,24 @@ class _LanguageCard extends StatelessWidget {
               height: 30,
               child: language.flagAsset != null
                   ? language.flagAsset!.toLowerCase().endsWith('.png')
-                      ? Image.asset(
-                          language.flagAsset!,
-                          width: 40,
-                          height: 30,
-                          fit: BoxFit.contain,
-                        )
-                      : SvgPicture.asset(
-                          language.flagAsset!,
-                          width: 40,
-                          height: 30,
-                          fit: BoxFit.contain,
-                        )
+                        ? Image.asset(
+                            language.flagAsset!,
+                            width: 40,
+                            height: 30,
+                            fit: BoxFit.contain,
+                          )
+                        : SvgPicture.asset(
+                            language.flagAsset!,
+                            width: 40,
+                            height: 30,
+                            fit: BoxFit.contain,
+                          )
                   : const SizedBox(),
             ),
             SizedBox(width: AppSpacing.lg),
             Expanded(
               child: Text(
-                language.title,
+                context.tr('languages.${language.id}'),
                 style: AppTypography.labelLarge.copyWith(
                   color: AppColors.onboardingText,
                   fontWeight: FontWeight.w600,
@@ -264,4 +259,3 @@ class _LanguageCard extends StatelessWidget {
     );
   }
 }
-

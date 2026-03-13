@@ -14,6 +14,8 @@ class LearnTab extends StatefulWidget {
     super.key,
     this.userName = 'Jhon Doe',
     this.savedWordsCount = 0,
+    this.totalXp = 0,
+    this.avatarVersion = 0,
     this.onBackTap,
     this.pendingRoute,
     this.onPendingRouteHandled,
@@ -21,6 +23,8 @@ class LearnTab extends StatefulWidget {
 
   final String userName;
   final int savedWordsCount;
+  final int totalXp;
+  final int? avatarVersion;
   final VoidCallback? onBackTap;
   /// Ana sayfadan (Home) Learn New Words ile geldiğinde açılacak route.
   final String? pendingRoute;
@@ -61,7 +65,7 @@ class _LearnTabState extends State<LearnTab> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         final nav = _navigatorKey.currentState;
         if (nav != null && nav.canPop()) {
@@ -81,6 +85,8 @@ class _LearnTabState extends State<LearnTab> {
                 builder: (_) => LearnScreen(
                   userName: widget.userName,
                   savedWordsCount: widget.savedWordsCount,
+                  totalXp: widget.totalXp,
+                  avatarVersion: widget.avatarVersion,
                   onBackTap: widget.onBackTap,
                 ),
               );
@@ -129,6 +135,8 @@ class _LearnTabState extends State<LearnTab> {
                 builder: (_) => LearnScreen(
                   userName: widget.userName,
                   savedWordsCount: widget.savedWordsCount,
+                  totalXp: widget.totalXp,
+                  avatarVersion: widget.avatarVersion,
                   onBackTap: widget.onBackTap,
                 ),
               );

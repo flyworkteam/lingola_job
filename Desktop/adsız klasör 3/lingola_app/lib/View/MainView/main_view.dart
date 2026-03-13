@@ -9,8 +9,6 @@ import 'package:lingola_app/View/LearnTabView/learn_tab_view.dart';
 import 'package:lingola_app/View/LibraryView/library_view.dart';
 import 'package:lingola_app/View/ProfileView/profile_view.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/app_bottom_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,6 +33,7 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
   String _userName = 'Jhon Doe';
   String? _pendingLearnRoute;
   int? _pendingLibraryTabIndex;
+  int _avatarVersion = 0;
 
   static const List<AppNavItem> _navItems = [
     AppNavItem(iconAsset: 'assets/icons/nav_home.svg', label: 'nav.home'),
@@ -67,8 +66,8 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
     }
   }
 
-  int get _savedWordsCount => ref.watch(savedWordsProvider).count;
-  int get _totalXp => ref.watch(xpProvider).totalXp;
+  int get _savedWordsCount => ref.watch(savedWordsProvider).length;
+  int get _totalXp => ref.watch(xpProvider);
 
   Future<void> _loadSavedProfileName() async {
     final prefs = await SharedPreferences.getInstance();
@@ -95,6 +94,7 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
                   isPremium: isPremium,
                   savedWordsCount: _savedWordsCount,
                   totalXp: _totalXp,
+                  avatarVersion: _avatarVersion,
                   onLearnNewWordsTap: () => setState(() {
                     _currentIndex = 1;
                     _pendingLearnRoute = '/word_practice';
@@ -111,6 +111,8 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
                 LearnTab(
                   userName: _userName,
                   savedWordsCount: _savedWordsCount,
+                  totalXp: _totalXp,
+                  avatarVersion: _avatarVersion,
                   onBackTap: () => setState(() => _currentIndex = 0),
                   pendingRoute: _pendingLearnRoute,
                   onPendingRouteHandled: () => setState(() => _pendingLearnRoute = null),
@@ -125,6 +127,7 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
                   totalXp: _totalXp,
                   isPremium: isPremium,
                   onUserNameChanged: (name) => setState(() => _userName = name),
+                  onAvatarChanged: () => setState(() => _avatarVersion++),
                   onBackTap: () => setState(() => _currentIndex = 0),
                   onNotificationsTap: () {
                     context.push(
@@ -152,26 +155,3 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
     );
   }
 }
-
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF2F5FC),
-      body: Center(
-        child: Text(
-          title,
-          style: AppTypography.titleLarge.copyWith(
-            color: AppColors.onSurfaceVariant,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-}
-

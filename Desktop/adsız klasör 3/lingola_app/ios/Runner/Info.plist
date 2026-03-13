@@ -10,6 +10,8 @@
 	<string>Profil fotoğrafınızı çekebilmek için kameraya ihtiyacımız var.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Profil fotoğrafınızı seçebilmek için fotoğraf albümüne erişmemiz gerekiyor.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Facebook ile giriş ve kişiselleştirilmiş deneyim için kullanılır.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

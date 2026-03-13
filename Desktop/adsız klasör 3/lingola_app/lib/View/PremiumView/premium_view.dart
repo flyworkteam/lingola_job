@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
+import 'package:lingola_app/Services/revenuecat_service.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
@@ -20,6 +21,8 @@ class PremiumBenefitsScreen extends ConsumerStatefulWidget {
 }
 
 class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
+  static const String _revenueCatUnavailableMessage =
+      'Premium ayarlari henuz yapilandirilmadi.';
   static const _benefits = <String>[
     'Sınırsız mesleki kelime öğrenme ve tekrar erişimi',
     'Sınırsız kelime kaydetme',
@@ -47,6 +50,15 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
       _loadingOfferings = true;
       _offeringsError = null;
     });
+    if (!RevenueCatService.isConfiguredForCurrentPlatform) {
+      if (!mounted) return;
+      setState(() {
+        _packages = [];
+        _loadingOfferings = false;
+        _offeringsError = _revenueCatUnavailableMessage;
+      });
+      return;
+    }
     try {
       final offerings = await Purchases.getOfferings();
       final current = offerings.current;
@@ -75,6 +87,15 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
 
   Future<void> _purchase(Package package) async {
     if (_purchasing) return;
+    if (!RevenueCatService.isConfiguredForCurrentPlatform) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(_revenueCatUnavailableMessage),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
     setState(() => _purchasing = true);
     try {
       await Purchases.purchase(PurchaseParams.package(package));
@@ -107,6 +128,15 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
 
   Future<void> _restore() async {
     if (_restoring) return;
+    if (!RevenueCatService.isConfiguredForCurrentPlatform) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(_revenueCatUnavailableMessage),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
     setState(() => _restoring = true);
     try {
       await Purchases.restorePurchases();
@@ -145,7 +175,8 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final canPurchase = _packages.isNotEmpty && !_purchasing;
+    final revenueCatReady = RevenueCatService.isConfiguredForCurrentPlatform;
+    final canPurchase = revenueCatReady && _packages.isNotEmpty && !_purchasing;
     final isLoading = _loadingOfferings || _purchasing;
 
     return Scaffold(
@@ -298,7 +329,7 @@ class _PremiumBenefitsScreenState extends ConsumerState<PremiumBenefitsScreen> {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     TextButton(
-                      onPressed: (_restoring || _loadingOfferings)
+                      onPressed: (_restoring || _loadingOfferings || !revenueCatReady)
                           ? null
                           : _restore,
                       child: _restoring

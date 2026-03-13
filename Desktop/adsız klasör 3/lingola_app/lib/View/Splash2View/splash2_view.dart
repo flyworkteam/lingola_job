@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -74,8 +75,7 @@ class Splash2Screen extends StatelessWidget {
                         height: 4,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceVariant,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full),
+                          borderRadius: BorderRadius.circular(AppRadius.full),
                         ),
                       ),
                       SizedBox(height: AppSpacing.lg + 20),
@@ -93,7 +93,7 @@ class Splash2Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppTitle(
-                          'Real travel',
+                          context.tr('intro.slide2.title').split('\n').first,
                           style: AppTypography.onboardingTitle,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -102,7 +102,7 @@ class Splash2Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppTitle(
-                          'scenarios',
+                          context.tr('intro.slide2.title').split('\n').last,
                           style: AppTypography.onboardingTitle,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -112,7 +112,7 @@ class Splash2Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppBody(
-                          "Practice with words and phrases you'll actually need while traveling.",
+                          context.tr('intro.slide2.description'),
                           style: AppTypography.onboardingDescription,
                           textAlign: TextAlign.center,
                           maxLines: 2,
@@ -120,9 +120,8 @@ class Splash2Screen extends StatelessWidget {
                       ),
                       SizedBox(height: AppSpacing.xxl + 56),
                       AppPrimaryButton(
-                        label: 'Get Started',
-                        onPressed: () =>
-                            context.go(AppPaths.splash3),
+                        label: context.tr('intro.get_started'),
+                        onPressed: () => context.go(AppPaths.splash3),
                         borderRadius: 10,
                       ),
                     ],
@@ -154,4 +153,3 @@ class _PageDot extends StatelessWidget {
     );
   }
 }
-

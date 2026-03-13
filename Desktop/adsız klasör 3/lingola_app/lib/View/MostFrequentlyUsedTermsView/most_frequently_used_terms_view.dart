@@ -19,7 +19,6 @@ import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/app_bottom_nav_bar.dart';
 import 'package:lingola_app/src/widgets/word_card.dart';
-import 'package:lingola_app/src/widgets/word_card_buttons.dart';
 
 /// Most Frequently Used Terms — mesleki kelimeler (professional_words) ile Learn New Words
 /// mantığında: üstte kelime, altında okunuş, çeviri, örnek cümle; swipe ile ilerleme.
@@ -45,7 +44,6 @@ class _MostFrequentlyUsedTermsScreenState
   final Set<String> _exampleRequested = {};
   FlutterTts? _flutterTts;
   bool _ttsInitialized = false;
-  int _navIndex = 0;
 
   static const List<AppNavItem> _navItems = [
     AppNavItem(iconAsset: 'assets/icons/nav_home.svg', label: 'nav.home'),
@@ -242,7 +240,9 @@ class _MostFrequentlyUsedTermsScreenState
     final localeCode = context.locale.languageCode;
     final result = await WordService.getExampleForWord(card.word, localeCode);
     if (!mounted ||
-        (result.exampleEn.isEmpty && result.exampleTr.isEmpty)) return;
+        (result.exampleEn.isEmpty && result.exampleTr.isEmpty)) {
+      return;
+    }
     final exampleTr =
         result.exampleTr.isNotEmpty ? result.exampleTr : result.exampleEn;
     await WordDatabaseService.updateProfessionalWordExampleByWord(
@@ -342,7 +342,6 @@ class _MostFrequentlyUsedTermsScreenState
       WidgetsBinding.instance.addPostFrameCallback(
           (_) => _fetchExampleForCurrentCard());
     }
-    final cards = _cards!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -354,7 +353,7 @@ class _MostFrequentlyUsedTermsScreenState
           child: WordCardBody(
             data: card,
             onSaveWord: () async {
-              final notifier = ref.read(savedWordsProvider);
+              final notifier = ref.read(savedWordsProvider.notifier);
               await notifier.add(SavedWordItem(
                 word: card.word,
                 phonetic: card.phonetic,
@@ -444,7 +443,7 @@ class _MostFrequentlyUsedTermsScreenState
             bottom: 0,
             child: AppBottomNavBar(
               items: _navItems,
-              currentIndex: _navIndex,
+              currentIndex: 0,
               onTap: _onNavTap,
             ),
           ),

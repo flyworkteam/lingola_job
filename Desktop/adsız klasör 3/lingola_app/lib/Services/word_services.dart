@@ -5,9 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
-/// Kelime paketi (words.json) asset'ten yükler.
-/// Seviye ataması: sıralı indekse göre A1 → C2.
-/// Çeviri: her dil için word_translations_<lang>.json (tr, en, de, fr, es, it, pt, ru, ja, ko, hi) + disk cache.
+/// Kelime paketi (`words.json`) asset'ten yükler.
+/// Seviye ataması: sıralı indekse göre A1 -> C2.
+/// Çeviri: her dil için `word_translations_<lang>.json`
+/// (`tr`, `en`, `de`, `fr`, `es`, `it`, `pt`, `ru`, `ja`, `ko`, `hi`) ve disk cache kullanır.
 class WordService {
   WordService._();
 
@@ -44,22 +45,14 @@ class WordService {
     }
   }
 
-  static Future<void> _saveTranslationCache() async {
-    final cache = _translationCache;
-    if (cache == null || cache.isEmpty) return;
-    try {
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/$_cacheFileName');
-      await file.writeAsString(jsonEncode(cache));
-    } catch (_) {}
-  }
-
-  /// Tüm çeviri kaynaklarını birleştirir: asset sözlük + disk cache (locale yok, geriye dönük uyumluluk).
+  /// Tüm çeviri kaynaklarını birleştirir: asset sözlük ve disk cache
+  /// (locale yok, geriye dönük uyumluluk).
   static Future<Map<String, String>> _getFullTranslationMap() async {
     return _getFullTranslationMapForLocale('tr');
   }
 
-  /// Verilen dil için çeviri map'i: word_translations_<lang>.json + o dildeki disk cache (key: "word|lang").
+  /// Verilen dil için çeviri map'i: `word_translations_<lang>.json`
+  /// ve o dildeki disk cache (`word|lang` anahtarı).
   static Future<Map<String, String>> _getFullTranslationMapForLocale(String lang) async {
     final localeMap = await _loadTranslationMapForLocale(lang);
     final cache = await _loadTranslationCache();
@@ -247,29 +240,145 @@ class WordService {
     return {...staticMap, ...cacheMap};
   }
 
-  /// IPA metnini normal alfabeye çevirir. Okunuşta nokta kullanılmaz.
-  static String ipaToPlain(String s) {
+  static String _replaceAllFromMap(String input, Map<String, String> replacements) {
+    var output = input;
+    for (final entry in replacements.entries) {
+      output = output.replaceAll(entry.key, entry.value);
+    }
+    return output;
+  }
+
+  static String _applyLocalePhoneticStyle(String input, String localeCode) {
+    switch (localeCode.toLowerCase()) {
+      case 'tr':
+        return _replaceAllFromMap(input, const {
+          'jh': 'c',
+          'sh': 'ş',
+          'zh': 'j',
+          'ch': 'ç',
+          'dh': 'd',
+          'th': 't',
+          'y': 'y',
+          'w': 'v',
+        });
+      case 'de':
+        return _replaceAllFromMap(input, const {
+          'jh': 'dsch',
+          'sh': 'sch',
+          'zh': 'j',
+          'ch': 'tsch',
+          'dh': 'd',
+          'th': 't',
+          'y': 'j',
+          'w': 'w',
+        });
+      case 'fr':
+        return _replaceAllFromMap(input, const {
+          'jh': 'dj',
+          'sh': 'ch',
+          'zh': 'j',
+          'ch': 'tch',
+          'dh': 'd',
+          'th': 't',
+          'y': 'y',
+          'w': 'ou',
+        });
+      case 'es':
+        return _replaceAllFromMap(input, const {
+          'jh': 'y',
+          'sh': 'sh',
+          'zh': 'y',
+          'ch': 'ch',
+          'dh': 'd',
+          'th': 't',
+          'y': 'y',
+          'w': 'u',
+        });
+      case 'it':
+        return _replaceAllFromMap(input, const {
+          'jh': 'g',
+          'sh': 'sc',
+          'zh': 'gi',
+          'ch': 'c',
+          'dh': 'd',
+          'th': 't',
+          'y': 'i',
+          'w': 'u',
+        });
+      case 'pt':
+        return _replaceAllFromMap(input, const {
+          'jh': 'dj',
+          'sh': 'x',
+          'zh': 'j',
+          'ch': 'tch',
+          'dh': 'd',
+          'th': 't',
+          'y': 'i',
+          'w': 'u',
+        });
+      default:
+        return _replaceAllFromMap(input, const {
+          'jh': 'j',
+          'sh': 'sh',
+          'zh': 'zh',
+          'ch': 'ch',
+          'dh': 'd',
+          'th': 'th',
+          'y': 'y',
+          'w': 'w',
+        });
+    }
+  }
+
+  /// IPA metnini seçili dile göre sade bir okunuşa çevirir.
+  static String ipaToPlain(
+    String s, {
+    String localeCode = 'tr',
+  }) {
     if (s.isEmpty) return s;
-    return s
-        .replaceAll('ð', 'th')
+    final normalized = s
+        .toLowerCase()
+        .replaceAll('/', '')
+        .replaceAll('tʃ', 'ch')
+        .replaceAll('dʒ', 'jh')
+        .replaceAll('eɪ', 'ey')
+        .replaceAll('aɪ', 'ay')
+        .replaceAll('ɔɪ', 'oy')
+        .replaceAll('aʊ', 'av')
+        .replaceAll('oʊ', 'ou')
+        .replaceAll('əʊ', 'ou')
+        .replaceAll('juː', 'yu')
+        .replaceAll('iː', 'ii')
+        .replaceAll('uː', 'uu')
+        .replaceAll('ɑː', 'aa')
+        .replaceAll('ɔː', 'oo')
+        .replaceAll('ɜː', 'ör')
+        .replaceAll('ɚ', 'ır')
+        .replaceAll('ɝ', 'ır')
+        .replaceAll('ər', 'ır')
+        .replaceAll('ð', 'dh')
         .replaceAll('θ', 'th')
         .replaceAll('æ', 'a')
-        .replaceAll('ə', 'uh')
+        .replaceAll('ə', 'e')
         .replaceAll('ɛ', 'e')
+        .replaceAll('ɜ', 'ö')
         .replaceAll('ɹ', 'r')
         .replaceAll('ʃ', 'sh')
         .replaceAll('ʒ', 'zh')
         .replaceAll('ŋ', 'ng')
-        .replaceAll('ɜ', 'er')
         .replaceAll('ɡ', 'g')
+        .replaceAll('g', 'g')
         .replaceAll('ɔ', 'o')
         .replaceAll('ɑ', 'a')
         .replaceAll('ɪ', 'i')
+        .replaceAll('i', 'i')
         .replaceAll('ʊ', 'u')
-        .replaceAll('ʌ', 'u')
+        .replaceAll('ʌ', 'a')
         .replaceAll('ɒ', 'o')
         .replaceAll('ɫ', 'l')
         .replaceAll('ɾ', 'r')
+        .replaceAll('j', 'y')
+        .replaceAll('w', 'w')
         .replaceAll('ʔ', '')
         .replaceAll('ʰ', 'h')
         .replaceAll('ː', '')
@@ -278,24 +387,32 @@ class WordService {
         .replaceAll('́', '')
         .replaceAll('̃', '')
         .replaceAll('̈', '')
-        .replaceAll('.', '');
+        .replaceAll('.', '')
+        .replaceAll(' ', '');
+
+    final localized = _applyLocalePhoneticStyle(normalized, localeCode);
+
+    return localized
+        .replaceAll(RegExp(r'[^a-zçğıöşü]'), '')
+        .trim();
   }
 
   /// Okunuşu önce yerel kaynaklardan (word_phonetics.json + disk cache) döner; yoksa Free Dictionary API ile çekip cache'ler.
+  /// Dönen değer ham fonetik metindir; ekranda [ipaToPlain] ile locale'e göre gösterilir.
   static Future<String> fetchAndCachePhonetic(String word) async {
     final w = word.trim();
     if (w.isEmpty) return '';
     final key = w.toLowerCase();
     final full = await _getFullPhoneticsMap();
     var text = full[key];
-    if (text != null && text.isNotEmpty) return ipaToPlain(text);
+    if (text != null && text.isNotEmpty) return text;
     try {
       final api = await _fetchFromDictionaryApi(w);
       if (api.phonetic != null && api.phonetic!.isNotEmpty) {
         _phoneticCache ??= await _loadPhoneticCache();
         _phoneticCache![key] = api.phonetic!;
         await _savePhoneticCache();
-        return ipaToPlain(api.phonetic!);
+        return api.phonetic!;
       }
     } catch (_) {}
     return '';
@@ -308,6 +425,23 @@ class WordService {
     final key = w.toLowerCase();
     final existing = _exampleCache?[key] ?? (await _loadExampleCache())[key];
     return existing ?? '';
+  }
+
+  static Future<String> _fetchAndCacheDictionaryExample(String word) async {
+    final w = word.trim();
+    if (w.isEmpty) return '';
+    final key = w.toLowerCase();
+    _exampleCache ??= await _loadExampleCache();
+    final cached = _exampleCache![key]?.trim() ?? '';
+    if (cached.isNotEmpty) return cached;
+
+    final api = await _fetchFromDictionaryApi(w);
+    final example = api.exampleEn?.trim() ?? '';
+    if (example.isEmpty) return '';
+
+    _exampleCache![key] = example;
+    await _saveExampleCache();
+    return example;
   }
 
   /// Cümle çevirisini yalnızca yerel cache'den döner. İnternet çağrısı yok.
@@ -343,7 +477,8 @@ class WordService {
   static Future<Map<String, String>> getTranslationMapForLocale(String lang) =>
       _getFullTranslationMapForLocale(lang.toLowerCase());
 
-  /// 11 dil için yerel çeviri asset'ini yükler (assets/word_translations_<lang>.json).
+  /// 11 dil için yerel çeviri asset'ini yükler
+  /// (`assets/word_translations_<lang>.json`).
   /// en için boş map (kelime aynen gösterilir). Dosya yoksa boş map döner.
   static Future<Map<String, String>> _loadTranslationMapForLocale(String lang) async {
     if (lang == 'en') return {};
@@ -359,7 +494,8 @@ class WordService {
     }
   }
 
-  /// Çeviriyi yalnızca yerel kaynaklardan döner (word_translations.json + disk cache). İnternet çağrısı yok.
+  /// Çeviriyi yalnızca yerel kaynaklardan döner
+  /// (`word_translations.json` ve disk cache). İnternet çağrısı yok.
   static Future<String> fetchAndCacheTranslation(String word) async {
     final w = word.trim();
     if (w.isEmpty) return '';
@@ -369,7 +505,8 @@ class WordService {
     return result.isNotEmpty ? result : w;
   }
 
-  /// Seçilen uygulama diline göre çeviriyi döner: sadece o dildeki asset (word_translations_<lang>.json) + cache.
+  /// Seçilen uygulama diline göre çeviriyi döner: sadece o dildeki asset
+  /// (`word_translations_<lang>.json`) ve cache kullanılır.
   /// Yoksa İngilizce kelimenin kendisi döner (çeviri yok demek).
   static Future<String> fetchAndCacheTranslationForLocale(
     String word,
@@ -387,7 +524,8 @@ class WordService {
     return result.isNotEmpty ? result : w;
   }
 
-  /// word_examples.json (kelime -> { en, tr, de, ... }) yükler. Her çağrıda asset'ten okur (güncel örnek cümleler için cache yok).
+  /// `word_examples.json` dosyasını yükler
+  /// (kelime -> `en`, `tr`, `de`, ...). Her çağrıda asset'ten okur.
   static Future<Map<String, Map<String, String>>> _loadExamplesMap() async {
     try {
       final jsonString = await rootBundle.loadString(_examplesPath);
@@ -412,19 +550,62 @@ class WordService {
     }
   }
 
-  /// Mesleki terimler için kullanılan şablon örnek cümleler (word_examples.json'da yoksa).
-  static const List<(String, String)> _professionalExampleTemplates = [
-    (r'This term is commonly used in professional contexts.', r'Bu terim mesleki bağlamda yaygın kullanılır.'),
-    (r'The word {w} appears in formal documents.', r'{w} kelimesi resmi belgelerde geçer.'),
-    (r'You will encounter {w} in business communication.', r'İş iletişiminde {w} ile karşılaşacaksınız.'),
-    (r'{w} is an important term in this field.', r'{w} bu alanda önemli bir terimdir.'),
-    (r'Please use {w} in your report.', r'Lütfen raporunuzda {w} kullanın.'),
-    (r'She explained the meaning of {w}.', r'{w} kelimesinin anlamını açıkladı.'),
-    (r'We need to define {w} clearly.', r'{w} terimini net tanımlamalıyız.'),
-    (r'This sentence uses the word {w}.', r'Bu cümlede {w} kelimesi kullanılıyor.'),
-    (r'{w} is often used in legal documents.', r'{w} hukuki belgelerde sık kullanılır.'),
-    (r'Understanding {w} is essential here.', r'{w} terimini anlamak burada gereklidir.'),
+  /// Yerel örnek yoksa kullanılan, kelime öğrenmeye daha uygun fallback şablonları.
+  static const List<(String, String)> _fallbackExampleTemplates = [
+    (
+      r'I learned the word {w_en} today.',
+      r'Bugün {w_local} kelimesini öğrendim.',
+    ),
+    (
+      r'My teacher explained the word {w_en}.',
+      r'Öğretmenim {w_local} kelimesini açıkladı.',
+    ),
+    (
+      r'I wrote {w_en} in my notebook.',
+      r'{w_local} kelimesini defterime yazdım.',
+    ),
+    (
+      r'This lesson includes the word {w_en}.',
+      r'Bu derste {w_local} kelimesi geçiyor.',
+    ),
+    (
+      r'I want to practice the word {w_en} again.',
+      r'{w_local} kelimesini tekrar çalışmak istiyorum.',
+    ),
+    (
+      r'Please use {w_en} in a sentence.',
+      r'Lütfen {w_local} kelimesini bir cümlede kullan.',
+    ),
+    (
+      r'I can remember the word {w_en} now.',
+      r'Artık {w_local} kelimesini hatırlayabiliyorum.',
+    ),
+    (
+      r'The meaning of {w_en} is easy to remember.',
+      r'{w_local} kelimesinin anlamını hatırlamak kolaydır.',
+    ),
   ];
+
+  static String _replaceWordInLocalizedSentence({
+    required String sentence,
+    required String sourceWord,
+    required String localizedWord,
+  }) {
+    final baseSentence = sentence.trim();
+    final englishWord = sourceWord.trim();
+    final translatedWord = localizedWord.trim();
+    if (baseSentence.isEmpty ||
+        englishWord.isEmpty ||
+        translatedWord.isEmpty ||
+        englishWord.toLowerCase() == translatedWord.toLowerCase()) {
+      return baseSentence;
+    }
+    final pattern = RegExp(
+      '\\b${RegExp.escape(englishWord)}\\b',
+      caseSensitive: false,
+    );
+    return baseSentence.replaceAll(pattern, translatedWord);
+  }
 
   /// Kelime için örnek cümle. word_examples.json'da seçili dil yoksa cümle API ile çevrilir ve cache'lenir.
   static Future<({String exampleEn, String exampleTr})> getExampleForWord(
@@ -435,6 +616,7 @@ class WordService {
     if (w.isEmpty) return (exampleEn: '', exampleTr: '');
     final key = w.toLowerCase();
     final lang = localeCode.toLowerCase();
+    final localizedWord = await fetchAndCacheTranslationForLocale(w, lang);
     final map = await _loadExamplesMap();
     final entry = map[key];
     String exampleEn;
@@ -450,13 +632,37 @@ class WordService {
         exampleTr = await translateAndCacheSentence(exampleEn, lang);
         if (exampleTr.isEmpty) exampleTr = exampleEn;
       }
+      exampleTr = _replaceWordInLocalizedSentence(
+        sentence: exampleTr,
+        sourceWord: w,
+        localizedWord: localizedWord,
+      );
       return (exampleEn: exampleEn, exampleTr: exampleTr);
     }
-    final idx = key.hashCode.abs() % _professionalExampleTemplates.length;
-    final t = _professionalExampleTemplates[idx];
-    final en = t.$1.contains('{w}') ? t.$1.replaceAll('{w}', w) : t.$1;
+
+    final apiExample = await _fetchAndCacheDictionaryExample(w);
+    if (apiExample.isNotEmpty) {
+      exampleEn = apiExample;
+      if (lang == 'en') {
+        exampleTr = exampleEn;
+      } else {
+        exampleTr = await translateAndCacheSentence(exampleEn, lang);
+        if (exampleTr.isEmpty) exampleTr = exampleEn;
+      }
+      exampleTr = _replaceWordInLocalizedSentence(
+        sentence: exampleTr,
+        sourceWord: w,
+        localizedWord: localizedWord,
+      );
+      return (exampleEn: exampleEn, exampleTr: exampleTr);
+    }
+
+    final idx = key.hashCode.abs() % _fallbackExampleTemplates.length;
+    final t = _fallbackExampleTemplates[idx];
+    final localizedFallbackWord = localizedWord.trim().isEmpty ? w : localizedWord;
+    final en = t.$1.replaceAll('{w_en}', w);
     if (lang == 'tr') {
-      final tr = t.$2.contains('{w}') ? t.$2.replaceAll('{w}', w) : t.$2;
+      final tr = t.$2.replaceAll('{w_local}', localizedFallbackWord);
       return (exampleEn: en, exampleTr: tr);
     }
     if (lang == 'en') {
@@ -464,7 +670,13 @@ class WordService {
     }
     // Diğer diller: İngilizce cümleyi API ile çevir.
     exampleTr = await translateAndCacheSentence(en, lang);
-    return (exampleEn: en, exampleTr: exampleTr.isEmpty ? en : exampleTr);
+    if (exampleTr.isEmpty) exampleTr = en;
+    exampleTr = _replaceWordInLocalizedSentence(
+      sentence: exampleTr,
+      sourceWord: w,
+      localizedWord: localizedFallbackWord,
+    );
+    return (exampleEn: en, exampleTr: exampleTr);
   }
 
   /// Önce [assets/words.json], yoksa [assets/words/words.json] dener.
@@ -528,7 +740,7 @@ class WordService {
   }
 
   /// Verilen kelime listesinde çeviri, okunuş ve örnek cümle boş olanları sözlükten doldurur.
-  /// Çeviri seçilen dildeki word_translations_<locale>.json dosyasından doldurulur.
+  /// Çeviri seçilen dildeki `word_translations_<locale>.json` dosyasından doldurulur.
   static Future<List<Map<String, dynamic>>> enrichWordsWithTranslations(
     List<Map<String, dynamic>> words, {
     String? localeCode,

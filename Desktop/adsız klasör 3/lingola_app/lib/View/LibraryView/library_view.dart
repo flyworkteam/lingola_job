@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:lingola_app/Models/saved_word_item.dart';
 import 'package:lingola_app/Riverpod/Controllers/all_controllers.dart';
+import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
 import 'package:lingola_app/Services/word_database_service.dart';
 import 'package:lingola_app/Services/word_services.dart';
 import 'package:lingola_app/src/theme/colors.dart';
@@ -38,33 +40,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
   List<Map<String, dynamic>>? _professionalWordsLoaded;
   bool _dictionaryLoading = true;
-  String? _selectedLanguageId;
-
-  static String _languageIdToLocale(String id) {
-    const m = {
-      'english': 'en',
-      'german': 'de',
-      'italian': 'it',
-      'french': 'fr',
-      'japanese': 'ja',
-      'spanish': 'es',
-      'russian': 'ru',
-      'turkish': 'tr',
-      'korean': 'ko',
-      'hindi': 'hi',
-      'portuguese': 'pt',
-    };
-    return m[id] ?? 'tr';
-  }
+  FlutterTts? _flutterTts;
+  bool _ttsInitialized = false;
 
   Future<void> _loadDictionaryWords() async {
+    // Sözlük ve kütüphane çevirileri uygulamanın aktif diline göre gösterilsin.
+    final localeCode = context.locale.languageCode.toLowerCase();
     final raw = await WordDatabaseService.getProfessionalWords();
-
-    // Kullanıcının seçtiği öğrenme dilini oku
-    final prefs = await SharedPreferences.getInstance();
-    final storedLangId = prefs.getString('profile_language');
-    final langId = storedLangId?.isNotEmpty == true ? storedLangId! : 'english';
-    final localeCode = _languageIdToLocale(langId);
 
     // Seçilen dile göre çeviri map'ini al
     final translationMap =
@@ -77,48 +59,107 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       final word = ((m['word'] as String?) ?? '').trim();
       final key = word.toLowerCase();
       final translated = (translationMap[key] ?? '').trim();
+      final existingTranslation = ((m['translation'] as String?) ?? '').trim();
       final updated = Map<String, dynamic>.from(m);
-      if (translated.isNotEmpty) {
-        updated['translation'] = translated;
-      }
+      updated['translation'] = localeCode == 'en'
+          ? word
+          : (translated.isNotEmpty
+              ? translated
+              : (existingTranslation.isNotEmpty ? existingTranslation : word));
       return updated;
     }).toList();
 
     if (!mounted) return;
     setState(() {
       _professionalWordsLoaded = processed;
-      _selectedLanguageId = langId;
       _dictionaryLoading = false;
     });
   }
 
-  List<_LibraryWordItem> get _libraryWordsFromLoaded {
+  bool _wordMatches(String left, String right) =>
+      left.trim().toLowerCase() == right.trim().toLowerCase();
+
+  Map<String, dynamic>? _dictionaryEntryForWord(String word) {
     final list = _professionalWordsLoaded;
-    if (list == null) return const [];
-    return list
-        .map((m) => _LibraryWordItem(
-              word: (m['word'] as String?)?.trim() ?? '',
-              category: (m['category'] as String?)?.trim().isNotEmpty == true
-                  ? (m['category'] as String).trim()
-                  : 'Other',
-              translation: (m['translation'] as String?)?.trim() ?? '',
-              exampleEn: (m['example'] as String?)?.trim() ?? '',
-              exampleTr: (m['example_translation'] as String?)?.trim() ?? '',
-            ))
-        .toList();
+    if (list == null) return null;
+    for (final entry in list) {
+      final candidate = (entry['word'] as String?)?.trim() ?? '';
+      if (_wordMatches(candidate, word)) {
+        return entry;
+      }
+    }
+    return null;
   }
 
-  List<_DictionaryWordItem> get _dictionaryWords {
-    final list = _professionalWordsLoaded;
-    if (list == null) return const [];
-    return list
-        .map((m) => _DictionaryWordItem(
-              word: (m['word'] as String?)?.trim() ?? '',
-              translation: (m['translation'] as String?)?.trim() ?? '',
-              exampleEn: (m['example'] as String?)?.trim() ?? '',
-              exampleTr: (m['example_translation'] as String?)?.trim() ?? '',
-            ))
-        .toList();
+  String _categoryForWord(String word) {
+    final entry = _dictionaryEntryForWord(word);
+    final category = (entry?['category'] as String?)?.trim() ?? '';
+    return category.isEmpty ? 'Other' : category;
+  }
+
+  bool _isSavedWord(List<SavedWordItem> items, String word) {
+    return items.any((item) => _wordMatches(item.word, word));
+  }
+
+  Future<void> _toggleSavedWord(_DictionaryWordItem item) async {
+    final notifier = ref.read(savedWordsProvider.notifier);
+    final currentItems = ref.read(savedWordsProvider);
+    final isSaved = _isSavedWord(currentItems, item.word);
+    if (isSaved) {
+      await notifier.remove(item.word);
+      return;
+    }
+
+    await notifier.add(
+      SavedWordItem(
+        word: item.word,
+        phonetic: item.phonetic,
+        translations: item.translation,
+        exampleEn: item.exampleEn,
+        exampleTr: item.exampleTr,
+      ),
+    );
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('word_practice.saved'.tr()),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> _initTts() async {
+    if (_ttsInitialized) return;
+    _flutterTts ??= FlutterTts();
+    await _flutterTts!.awaitSpeakCompletion(true);
+    _flutterTts!.setErrorHandler((msg) {
+      if (mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(
+            content: Text('Ses hatası: $msg'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
+    _ttsInitialized = true;
+  }
+
+  Future<void> _speakWord(String word) async {
+    if (word.trim().isEmpty) return;
+    await _initTts();
+    if (_flutterTts == null) return;
+    await _flutterTts!.setVolume(1.0);
+    await _flutterTts!.setSpeechRate(0.5);
+    try {
+      await _flutterTts!.setLanguage('en-US');
+    } catch (_) {
+      try {
+        await _flutterTts!.setLanguage('en');
+      } catch (_) {}
+    }
+    await _flutterTts!.speak(word.trim());
   }
 
   @override
@@ -147,10 +188,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     super.didUpdateWidget(oldWidget);
     if (widget.initialTabIndex != null &&
         widget.initialTabIndex != oldWidget.initialTabIndex) {
-      ref
-          .read(libraryControllerProvider.notifier)
-          .setTab(widget.initialTabIndex!);
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref
+              .read(libraryControllerProvider.notifier)
+              .setTab(widget.initialTabIndex!);
+        }
         widget.onInitialTabHandled?.call();
       });
     }
@@ -158,6 +201,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
   @override
   void dispose() {
+    _flutterTts?.stop();
     _searchController.dispose();
     super.dispose();
   }
@@ -260,37 +304,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               color: AppColors.onSurface,
             ),
           ),
-          const Spacer(),
-          if (_selectedLanguageId != null)
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.primaryBrand.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.language,
-                    size: 16,
-                    color: AppColors.primaryBrand,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    context.tr('languages.${_selectedLanguageId!}'),
-                    style: AppTypography.caption.copyWith(
-                      color: AppColors.primaryBrand,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );
@@ -451,28 +464,43 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
-  List<_LibraryWordItem> _filteredWords(LibraryState state) {
-    final libraryWords = _libraryWordsFromLoaded;
-    final fromStatic = state.selectedFilterIds.isEmpty
-        ? libraryWords
-        : libraryWords
-            .where((item) => state.selectedFilterIds.contains(item.category))
-            .toList();
-    final showSaved = state.selectedFilterIds.isEmpty ||
-        state.selectedFilterIds.contains('Saved');
-    if (!showSaved) return fromStatic;
-    final fromDictionary = state.favoritedDictionaryWords.map((word) {
-      final match = _dictionaryWords.where((e) => e.word == word).toList();
-      final first = match.isEmpty ? null : match.first;
+  List<_LibraryWordItem> _filteredWords(
+    LibraryState state,
+    List<SavedWordItem> savedWords,
+  ) {
+    var filtered = savedWords.map((item) {
+      final entry = _dictionaryEntryForWord(item.word);
       return _LibraryWordItem(
-        word: word,
-        category: 'Saved',
-        translation: first?.translation ?? '',
-        exampleEn: first?.exampleEn ?? '',
-        exampleTr: first?.exampleTr ?? '',
+        word: item.word,
+        category: _categoryForWord(item.word),
+        translation: item.translations.trim().isNotEmpty
+            ? item.translations
+            : (entry?['translation'] as String?)?.trim() ?? '',
+        exampleEn: item.exampleEn.trim().isNotEmpty
+            ? item.exampleEn
+            : (entry?['example'] as String?)?.trim() ?? '',
+        exampleTr: item.exampleTr.trim().isNotEmpty
+            ? item.exampleTr
+            : (entry?['example_translation'] as String?)?.trim() ?? '',
       );
     }).toList();
-    return [...fromStatic, ...fromDictionary];
+
+    if (state.selectedFilterIds.isNotEmpty) {
+      filtered = filtered
+          .where((item) => state.selectedFilterIds.contains(item.category))
+          .toList();
+    }
+
+    final q = state.searchQuery.trim().toLowerCase();
+    if (q.isNotEmpty) {
+      filtered = filtered.where((item) {
+        return item.word.toLowerCase().contains(q) ||
+            item.translation.toLowerCase().contains(q) ||
+            item.category.toLowerCase().contains(q);
+      }).toList();
+    }
+
+    return filtered;
   }
 
   Widget _buildLibrarySliverList(LibraryState state) {
@@ -482,20 +510,40 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    final words = _filteredWords(state);
+    final savedWords = ref.watch(savedWordsProvider);
+    final words = _filteredWords(state, savedWords);
+    if (words.isEmpty) {
+      final hasSavedWords = savedWords.isNotEmpty;
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            child: Text(
+              hasSavedWords
+                  ? context.tr('library.no_results')
+                  : context.tr('saved_word.empty_title'),
+              textAlign: TextAlign.center,
+              style: AppTypography.bodySmall.copyWith(
+                fontSize: 14,
+                color: AppColors.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
     return SliverList(
       delegate: SliverChildListDelegate([
         ...words.map((item) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: _LibraryWordCard(
               item: item,
-              isFavorited:
-                  state.favoritedDictionaryWords.contains(item.word),
-              onStarTap: state.favoritedDictionaryWords.contains(item.word)
+              isFavorited: _isSavedWord(savedWords, item.word),
+              onListenTap: () => _speakWord(item.word),
+              onStarTap: _isSavedWord(savedWords, item.word)
                   ? () {
-                      ref
-                          .read(libraryControllerProvider.notifier)
-                          .toggleFavorite(item.word);
+                      ref.read(savedWordsProvider.notifier).remove(item.word);
                     }
                   : null,
             ),
@@ -528,6 +576,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     return filtered
         .map((m) => _DictionaryWordItem(
               word: (m['word'] as String?)?.trim() ?? '',
+              phonetic: (m['phonetic'] as String?)?.trim() ?? '',
               translation: (m['translation'] as String?)?.trim() ?? '',
               exampleEn: (m['example'] as String?)?.trim() ?? '',
               exampleTr: (m['example_translation'] as String?)?.trim() ?? '',
@@ -542,6 +591,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         child: Center(child: CircularProgressIndicator()),
       );
     }
+    final savedWords = ref.watch(savedWordsProvider);
     final words = _filteredDictionaryWords(state);
     return SliverList(
       delegate: SliverChildListDelegate([
@@ -549,12 +599,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           padding: const EdgeInsets.only(bottom: AppSpacing.md),
           child: _DictionaryWordCard(
             item: item,
-            isFavorited:
-                state.favoritedDictionaryWords.contains(item.word),
-            onStarTap: () {
-              ref
-                  .read(libraryControllerProvider.notifier)
-                  .toggleFavorite(item.word);
+            isFavorited: _isSavedWord(savedWords, item.word),
+            onListenTap: () => _speakWord(item.word),
+            onStarTap: () async {
+              await _toggleSavedWord(item);
             },
           ),
         )),
@@ -567,14 +615,35 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 class _DictionaryWordItem {
   const _DictionaryWordItem({
     required this.word,
+    required this.phonetic,
     required this.translation,
     this.exampleEn = '',
     this.exampleTr = '',
   });
   final String word;
+  final String phonetic;
   final String translation;
   final String exampleEn;
   final String exampleTr;
+}
+
+const Map<String, String> _libraryCategoryTranslationKeys = {
+  'Academic': 'library.filter_academic',
+  'Psychology': 'library.filter_psychology',
+  'Business': 'library.filter_business',
+  'Finance': 'library.filter_finance',
+  'Technology': 'library.filter_technology',
+  'Marketing': 'library.filter_marketing',
+  'Engineering': 'library.filter_engineering',
+  'Medicine': 'library.filter_medicine',
+  'Legal': 'library.filter_legal',
+  'Other': 'library.other',
+};
+
+String _localizedLibraryCategory(BuildContext context, String category) {
+  final key = _libraryCategoryTranslationKeys[category];
+  if (key == null) return category;
+  return context.tr(key);
 }
 
 class _LibraryWordItem {
@@ -597,11 +666,13 @@ class _LibraryWordCard extends StatelessWidget {
   const _LibraryWordCard({
     required this.item,
     this.isFavorited = false,
+    this.onListenTap,
     this.onStarTap,
   });
 
   final _LibraryWordItem item;
   final bool isFavorited;
+  final VoidCallback? onListenTap;
   final VoidCallback? onStarTap;
 
   @override
@@ -655,7 +726,7 @@ class _LibraryWordCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        item.category == 'Other' ? context.tr('library.other') : item.category,
+                        _localizedLibraryCategory(context, item.category),
                         style: AppTypography.label.copyWith(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -706,7 +777,7 @@ class _LibraryWordCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: onListenTap,
                 icon: SvgPicture.asset(
                   'assets/icons/ses.svg',
                   width: 24,
@@ -740,11 +811,13 @@ class _DictionaryWordCard extends StatelessWidget {
   const _DictionaryWordCard({
     required this.item,
     required this.isFavorited,
+    required this.onListenTap,
     required this.onStarTap,
   });
 
   final _DictionaryWordItem item;
   final bool isFavorited;
+  final VoidCallback onListenTap;
   final VoidCallback onStarTap;
 
   @override
@@ -813,7 +886,7 @@ class _DictionaryWordCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: onListenTap,
                 icon: SvgPicture.asset(
                   'assets/icons/ses.svg',
                   width: 24,
@@ -929,6 +1002,8 @@ class _LibraryFilterBottomSheetState extends State<_LibraryFilterBottomSheet> {
               const SizedBox(height: AppSpacing.xl),
               // Pill etiketler
               Wrap(
+                alignment: WrapAlignment.center,
+                runAlignment: WrapAlignment.center,
                 spacing: AppSpacing.sm,
                 runSpacing: AppSpacing.sm,
                 children: _filterCategories.map((category) {

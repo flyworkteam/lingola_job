@@ -9,10 +9,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/Models/saved_word_item.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
-import 'package:lingola_app/src/state/saved_words_store.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
 import 'package:lingola_app/src/widgets/word_card.dart';
 import 'package:lingola_app/src/widgets/word_card_buttons.dart';
 
@@ -40,7 +38,7 @@ class _SavedWordScreenState extends ConsumerState<SavedWordScreen> {
   bool _ttsInitialized = false;
 
   List<SavedWordItem> _cards(WidgetRef ref) {
-    return ref.watch(savedWordsProvider).items;
+    return ref.watch(savedWordsProvider);
   }
 
   void _goNext(List<SavedWordItem> cards) {
@@ -118,7 +116,7 @@ class _SavedWordScreenState extends ConsumerState<SavedWordScreen> {
     if (cards.isEmpty) {
       return PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (!didPop) _handleBack();
         },
         child: Scaffold(
@@ -138,7 +136,7 @@ class _SavedWordScreenState extends ConsumerState<SavedWordScreen> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) _handleBack();
       },
       child: Scaffold(

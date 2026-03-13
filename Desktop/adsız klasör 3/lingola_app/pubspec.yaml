@@ -52,6 +52,8 @@ dependencies:
   speech_to_text: ^6.6.0
   purchases_flutter: ^9.13.1
   image_picker: ^1.2.1
+  sign_in_with_apple: ^7.0.1
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +77,7 @@ flutter:
 
   assets:
     - assets/translations/
+    - assets/legal/
     - assets/app_icon.png
     - assets/splash/Layer_1.png
     - assets/splash/splash1.png
@@ -158,6 +161,7 @@ flutter:
     - assets/icons/icon_filter_button.svg
     - assets/icons/icon_hint.svg
     - assets/icons/icon_heart_save.svg
+    - assets/icons/icon_word_practice_speaker.svg
     - assets/icons/icon_tutorial_hand.svg
     - assets/icons/icon_tutorial_arrow_prev.svg
     - assets/icons/icon_tutorial_arrow_next.svg

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -25,20 +26,23 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
   String _searchQuery = '';
 
   static const _professions = [
-    _Profession(id: 'legal', title: 'Legal', description: 'Learn terminology for international trade', iconAsset: 'assets/icons/legal.svg'),
-    _Profession(id: 'tech', title: 'Tech', description: 'Learn terminology for international trade', iconAsset: 'assets/icons/tech.svg'),
-    _Profession(id: 'medicine', title: 'Medicine', description: 'Communicate effectively in clinical settings', iconAsset: 'assets/icons/medicine.svg'),
-    _Profession(id: 'finance', title: 'Finance', description: 'Understand global financial markets', iconAsset: 'assets/icons/chart-histogram.svg'),
-    _Profession(id: 'marketing', title: 'Marketing', description: 'Develop campaigns for global audiences', iconAsset: 'assets/icons/megaphone.svg'),
-    _Profession(id: 'engineering', title: 'Engineering', description: 'Collaborate on complex technical projects', iconAsset: 'assets/icons/engineering.svg'),
-    _Profession(id: 'education', title: 'Education', description: 'Teachers, students, academic life', iconAsset: 'assets/icons/education.svg'),
-    _Profession(id: 'tourism', title: 'Tourism & Hospitality', description: 'Hotels, travel, guest communication', iconAsset: 'assets/icons/tourism.svg'),
-    _Profession(id: 'sales', title: 'Sales', description: 'Negotiation, persuasion, customer handling', iconAsset: 'assets/icons/sales.svg'),
-    _Profession(id: 'support', title: 'Customer Support', description: 'Solve issues, handle complaints', iconAsset: 'assets/icons/customer-support.svg'),
-    _Profession(id: 'hr', title: 'Human Resources', description: 'Recruitment, Interviews, feedback', iconAsset: 'assets/icons/hr.svg'),
-    _Profession(id: 'entrepreneurship', title: 'Entrepreneurship', description: 'Startup, pitch, product thinking', iconAsset: 'assets/icons/entrepreneurship.svg'),
-    _Profession(id: 'logistics', title: 'Logistic & Trade', description: 'Import/export, supply chain', iconAsset: 'assets/icons/truck.svg'),
-    _Profession(id: 'it', title: 'Information Technology Fields', description: 'Software, Ai, data science, cybersecurity and digital design', iconAsset: 'assets/icons/data.svg'),
+    _Profession(id: 'legal', iconAsset: 'assets/icons/legal.svg'),
+    _Profession(id: 'tech', iconAsset: 'assets/icons/tech.svg'),
+    _Profession(id: 'medicine', iconAsset: 'assets/icons/medicine.svg'),
+    _Profession(id: 'finance', iconAsset: 'assets/icons/chart-histogram.svg'),
+    _Profession(id: 'marketing', iconAsset: 'assets/icons/megaphone.svg'),
+    _Profession(id: 'engineering', iconAsset: 'assets/icons/engineering.svg'),
+    _Profession(id: 'education', iconAsset: 'assets/icons/education.svg'),
+    _Profession(id: 'tourism', iconAsset: 'assets/icons/tourism.svg'),
+    _Profession(id: 'sales', iconAsset: 'assets/icons/sales.svg'),
+    _Profession(id: 'support', iconAsset: 'assets/icons/customer-support.svg'),
+    _Profession(id: 'hr', iconAsset: 'assets/icons/hr.svg'),
+    _Profession(
+      id: 'entrepreneurship',
+      iconAsset: 'assets/icons/entrepreneurship.svg',
+    ),
+    _Profession(id: 'logistics', iconAsset: 'assets/icons/truck.svg'),
+    _Profession(id: 'it', iconAsset: 'assets/icons/data.svg'),
   ];
 
   @override
@@ -55,12 +59,17 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
     super.dispose();
   }
 
-  List<_Profession> get _filteredProfessions {
+  List<_Profession> _filteredProfessions(BuildContext context) {
     if (_searchQuery.isEmpty) return _professions;
-    return _professions.where((p) =>
-      p.title.toLowerCase().contains(_searchQuery) ||
-      p.description.toLowerCase().contains(_searchQuery),
-    ).toList();
+    return _professions.where((p) {
+      final title = context
+          .tr('profile_settings.profession_${p.id}')
+          .toLowerCase();
+      final description = context
+          .tr('onboarding.profession_descriptions.${p.id}')
+          .toLowerCase();
+      return title.contains(_searchQuery) || description.contains(_searchQuery);
+    }).toList();
   }
 
   @override
@@ -84,7 +93,7 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                     _ProgressIndicator(activeIndex: 0),
                     SizedBox(height: AppSpacing.xl),
                     Text(
-                      'What is your profession?',
+                      context.tr('onboarding.profession_title'),
                       style: AppTypography.onboardingPageTitle,
                     ),
                     SizedBox(height: AppSpacing.xl),
@@ -98,10 +107,15 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                       offset: const Offset(0, -33),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
-                          const gap = AppSpacing.lg; // 16px — kartlar arası boşluk
-                          const maxCellSize = 160.0; // kartlar dar ve kısa (max 130x130)
+                          const gap =
+                              AppSpacing.lg; // 16px — kartlar arası boşluk
+                          const maxCellSize =
+                              160.0; // kartlar dar ve kısa (max 130x130)
                           final w = constraints.maxWidth;
-                          final cellSize = ((w - gap) / 2).clamp(0.0, maxCellSize);
+                          final cellSize = ((w - gap) / 2).clamp(
+                            0.0,
+                            maxCellSize,
+                          );
                           final gridWidth = 2 * cellSize + gap;
                           return Center(
                             child: SizedBox(
@@ -109,20 +123,26 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                               child: GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: gap,
-                                  mainAxisSpacing: gap,
-                                  mainAxisExtent: cellSize,
-                                ),
-                                itemCount: _filteredProfessions.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: gap,
+                                      mainAxisSpacing: gap,
+                                      mainAxisExtent: cellSize,
+                                    ),
+                                itemCount: _filteredProfessions(context).length,
                                 itemBuilder: (context, index) {
-                                  final p = _filteredProfessions[index];
-                                  final isSelected = _selectedProfession == p.id;
+                                  final p = _filteredProfessions(
+                                    context,
+                                  )[index];
+                                  final isSelected =
+                                      _selectedProfession == p.id;
                                   return _ProfessionCard(
                                     profession: p,
                                     isSelected: isSelected,
-                                    onTap: () => setState(() => _selectedProfession = p.id),
+                                    onTap: () => setState(
+                                      () => _selectedProfession = p.id,
+                                    ),
                                   );
                                 },
                               ),
@@ -137,11 +157,12 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                       child: IgnorePointer(
                         ignoring: _selectedProfession == null,
                         child: AppPrimaryButton(
-                          label: 'Next',
+                          label: context.tr('common.next'),
                           onPressed: () async {
                             final id = _selectedProfession;
                             if (id != null && id.isNotEmpty) {
-                              final prefs = await SharedPreferences.getInstance();
+                              final prefs =
+                                  await SharedPreferences.getInstance();
                               await prefs.setString('profile_profession', id);
                             }
                             if (!context.mounted) return;
@@ -162,16 +183,9 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
 }
 
 class _Profession {
-  const _Profession({
-    required this.id,
-    required this.title,
-    required this.description,
-    this.iconAsset,
-    this.icon,
-  }) : assert(iconAsset != null || icon != null);
+  const _Profession({required this.id, this.iconAsset, this.icon})
+    : assert(iconAsset != null || icon != null);
   final String id;
-  final String title;
-  final String description;
   final String? iconAsset;
   final IconData? icon;
 }
@@ -192,7 +206,9 @@ class _ProgressIndicator extends StatelessWidget {
             margin: EdgeInsets.only(right: index < 4 ? AppSpacing.xs : 0),
             height: 3,
             decoration: BoxDecoration(
-              color: isActive ? AppColors.primaryBrand : AppColors.surfaceVariant,
+              color: isActive
+                  ? AppColors.primaryBrand
+                  : AppColors.surfaceVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -227,7 +243,7 @@ class _SearchBar extends StatelessWidget {
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
-                hintText: 'Search for a profession...',
+                hintText: context.tr('onboarding.profession_search_hint'),
                 hintStyle: AppTypography.body.copyWith(
                   color: AppColors.outline,
                   fontSize: 14,
@@ -264,12 +280,19 @@ class _ProfessionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.fromLTRB(AppSpacing.sm, 6, AppSpacing.sm, AppSpacing.sm),
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.sm,
+          6,
+          AppSpacing.sm,
+          AppSpacing.sm,
+        ),
         decoration: BoxDecoration(
           color: AppColors.surfaceVariant.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
-            color: isSelected ? AppColors.primaryBrand : AppColors.surfaceVariant,
+            color: isSelected
+                ? AppColors.primaryBrand
+                : AppColors.surfaceVariant,
             width: 2,
           ),
         ),
@@ -301,7 +324,7 @@ class _ProfessionCard extends StatelessWidget {
             ),
             SizedBox(height: profession.id == 'it' ? 0 : 6),
             Text(
-              profession.title,
+              context.tr('profile_settings.profession_${profession.id}'),
               style: AppTypography.professionCardTitle,
               textAlign: TextAlign.left,
               maxLines: 3,
@@ -309,7 +332,7 @@ class _ProfessionCard extends StatelessWidget {
             ),
             SizedBox(height: 2),
             Text(
-              profession.description,
+              context.tr('onboarding.profession_descriptions.${profession.id}'),
               style: TextStyle(
                 fontFamily: AppTypography.fontFamily,
                 fontWeight: FontWeight.w400,
@@ -327,4 +350,3 @@ class _ProfessionCard extends StatelessWidget {
     );
   }
 }
-

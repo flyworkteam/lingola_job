@@ -107,10 +107,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 actions: [
                   PopupMenuButton<String>(
                     position: PopupMenuPosition.under,
+                    offset: const Offset(-25, 14),
+                    color: const Color(0xFFFFFFFF),
                     constraints: const BoxConstraints(
-                      minWidth: 200,
-                      maxWidth: 280,
-                      minHeight: 52,
+                      minWidth: 110,
+                      maxWidth: 117,
+                      minHeight: 44,
                     ),
                     padding: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
@@ -130,8 +132,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     itemBuilder: (context) => [
                       PopupMenuItem<String>(
                         value: 'delete_all',
-                        height: 52,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        height: 44,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         child: SizedBox(
                           width: double.infinity,
                           child: Row(
@@ -140,22 +142,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             children: [
                               SvgPicture.asset(
                                 'assets/icons/icon_delete.svg',
-                                width: 18,
-                                height: 20,
+                                width: 16,
+                                height: 18,
                                 colorFilter: const ColorFilter.mode(
                                   Color(0xFFF00000),
                                   BlendMode.srcIn,
                                 ),
                                 fit: BoxFit.contain,
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   context.tr('notifications.delete_all'),
                                   style: AppTypography.labelLarge.copyWith(
                                     color: const Color(0xFFF00000),
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14,
+                                    fontSize: 13,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
@@ -170,7 +172,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ],
               ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, 100),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.sm, AppSpacing.xl, 100),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
               if (!widget.isPremium) ...[

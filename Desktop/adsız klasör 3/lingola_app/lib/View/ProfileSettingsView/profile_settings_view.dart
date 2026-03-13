@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/src/navigation/app_routes.dart';
@@ -15,6 +14,7 @@ import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
 import 'package:lingola_app/src/theme/spacing.dart';
 import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/src/utils/profile_avatar_storage.dart';
 import 'package:lingola_app/src/widgets/dismiss_keyboard.dart';
 
 /// Profil ayarları sayfası: avatar, ad, e-posta alanları.
@@ -31,6 +31,8 @@ class ProfileSettingsScreen extends StatefulWidget {
 }
 
 class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
+  static const int _maxProfileNameLength = 25;
+
   late TextEditingController _nameController;
   final GlobalKey _cameraButtonKey = GlobalKey();
 
@@ -55,6 +57,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     _ProfileLanguage(id: 'hindi', title: 'Hindi', flagAsset: 'assets/bayrak/flag_hindi.svg'),
     _ProfileLanguage(id: 'portuguese', title: 'Portuguese', flagAsset: 'assets/bayrak/flag_portuguese.svg'),
   ];
+
+  static const Map<String, Locale> _languageIdToLocale = {
+    'turkish': Locale('tr'),
+    'english': Locale('en'),
+    'german': Locale('de'),
+    'french': Locale('fr'),
+    'spanish': Locale('es'),
+    'italian': Locale('it'),
+    'portuguese': Locale('pt'),
+    'russian': Locale('ru'),
+    'japanese': Locale('ja'),
+    'korean': Locale('ko'),
+    'hindi': Locale('hi'),
+  };
 
   static const List<_ProfileLevel> _levels = [
     _ProfileLevel(id: 'a1', title: 'A1 Beginner'),
@@ -85,20 +101,15 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.initialName);
+    _nameController = TextEditingController(
+      text: _sanitizeProfileName(widget.initialName),
+    );
     _loadSavedProfile();
   }
 
   Future<void> _loadSavedProfile() async {
     final prefs = await SharedPreferences.getInstance();
-    final avatarPath = prefs.getString(_keyProfileAvatar);
-    File? avatarFile;
-    if (avatarPath != null && avatarPath.isNotEmpty) {
-      final file = File(avatarPath);
-      if (await file.exists()) {
-        avatarFile = file;
-      }
-    }
+    final avatarFile = await ProfileAvatarStorage.loadAvatarFile();
     if (!mounted) return;
     setState(() {
       _selectedLevel = prefs.getString(_keyProfileLevel);
@@ -116,7 +127,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   static const double _headerHeight = 110;
-  static const double _avatarSize = 100;
   static const double _avatarOverlap = 50; // avatar'ın header altına taşan kısmı
 
   Widget _buildGradientHeader(BuildContext context) {
@@ -223,14 +233,16 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       context: context,
                       label: context.tr('profile_settings.select_language'),
                       value: _languageTitle(context, _selectedLanguage),
-                      onTap: () => _showLanguageSheet(context, (id) => setState(() => _selectedLanguage = id)),
+                      onTap: () => _showLanguageSheet(context, (id) async {
+                        setState(() => _selectedLanguage = id);
+                      }),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     _buildSelectRow(
                       context: context,
                       label: context.tr('profile_settings.select_app_language'),
                       value: _languageTitle(context, _selectedAppLanguage),
-                      onTap: () => _showLanguageSheet(context, (id) => setState(() => _selectedAppLanguage = id)),
+                      onTap: () => _showLanguageSheet(context, _onAppLanguageSelected),
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     _buildSelectRow(
@@ -547,7 +559,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  void _showLanguageSheet(BuildContext context, ValueChanged<String> onSelected) {
+  Future<void> _onAppLanguageSelected(String id) async {
+    setState(() => _selectedAppLanguage = id);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyProfileAppLanguage, id);
+    final locale = _languageIdToLocale[id];
+    if (locale == null || !mounted) return;
+    if (context.locale.languageCode == locale.languageCode) return;
+    await context.setLocale(locale);
+  }
+
+  void _showLanguageSheet(
+    BuildContext context,
+    Future<void> Function(String id) onSelected,
+  ) {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -584,9 +609,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   return Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () {
-                        onSelected(lang.id);
+                      onTap: () async {
                         Navigator.pop(ctx);
+                        await onSelected(lang.id);
                       },
                       borderRadius: BorderRadius.circular(AppRadius.lg),
                       child: Padding(
@@ -772,6 +797,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         TextField(
           controller: controller,
           keyboardType: keyboardType,
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(_maxProfileNameLength),
+          ],
           style: AppTypography.body.copyWith(
             color: AppColors.onSurface,
           ),
@@ -914,10 +942,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   static const String _keyProfileAppLanguage = 'profile_app_language';
   static const String _keyProfileLevel = 'profile_level';
   static const String _keyProfileProfession = 'profile_profession';
-  static const String _keyProfileAvatar = 'profile_avatar_path';
 
   Future<void> _onSave() async {
-    final name = _nameController.text.trim();
+    final name = _sanitizeProfileName(_nameController.text);
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -927,6 +954,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       );
       return;
     }
+    _nameController.value = _nameController.value.copyWith(
+      text: name,
+      selection: TextSelection.collapsed(offset: name.length),
+      composing: TextRange.empty,
+    );
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyProfileName, name);
     if (_selectedLanguage != null) await prefs.setString(_keyProfileLanguage, _selectedLanguage!);
@@ -954,34 +986,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         imageQuality: 85,
       );
       if (picked == null) return;
-
-      // Seçilen resmi uygulamanın kalıcı dizinine kopyala (temp path yerine).
-      final tempFile = File(picked.path);
-      if (!await tempFile.exists()) return;
-
-      final docsDir = await getApplicationDocumentsDirectory();
-      final avatarsDir = Directory(p.join(docsDir.path, 'avatars'));
-      if (!await avatarsDir.exists()) {
-        await avatarsDir.create(recursive: true);
-      }
-
-      final ext = p.extension(picked.path);
-      final fileName = 'avatar_${DateTime.now().millisecondsSinceEpoch}$ext';
-      final destPath = p.join(avatarsDir.path, fileName);
-      final savedFile = await tempFile.copy(destPath);
-
-      // Eski avatar dosyasını sil (varsa).
-      final prefs = await SharedPreferences.getInstance();
-      final oldPath = prefs.getString(_keyProfileAvatar);
-      if (oldPath != null && oldPath.isNotEmpty && oldPath != destPath) {
-        final oldFile = File(oldPath);
-        if (await oldFile.exists()) {
-          await oldFile.delete().catchError((_) {});
-        }
-      }
+      final savedFile = await ProfileAvatarStorage.savePickedAvatar(picked);
+      if (savedFile == null) return;
 
       setState(() => _avatarFile = savedFile);
-      await prefs.setString(_keyProfileAvatar, destPath);
     } catch (_) {
       // Sessizce yut; istenirse ileride loglanabilir.
     }
@@ -996,6 +1004,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         behavior: SnackBarBehavior.floating,
       ),
     );
+  }
+
+  String _sanitizeProfileName(String value) {
+    final trimmed = value.trim();
+    if (trimmed.length <= _maxProfileNameLength) {
+      return trimmed;
+    }
+    return trimmed.substring(0, _maxProfileNameLength);
   }
 }
 
@@ -1107,7 +1123,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     style: TextButton.styleFrom(
                       backgroundColor: _deleteRed,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor: _deleteRed.withOpacity(0.5),
+                      disabledBackgroundColor: _deleteRed.withValues(alpha: 0.5),
                       disabledForegroundColor: Colors.white70,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(

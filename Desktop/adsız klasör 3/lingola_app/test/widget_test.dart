@@ -17,11 +17,11 @@ void main() {
       routes: [
         GoRoute(
           path: AppPaths.splash,
-          builder: (_, __) => const SplashScreen(),
+          builder: (context, state) => const SplashScreen(),
         ),
         GoRoute(
           path: AppPaths.splashIntro,
-          builder: (_, __) => const SizedBox.shrink(),
+          builder: (context, state) => const SizedBox.shrink(),
         ),
       ],
     );

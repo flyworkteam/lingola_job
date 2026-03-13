@@ -48,55 +48,55 @@ GoRouter createAppRouter() {
     routes: [
       GoRoute(
         path: AppPaths.splash,
-        builder: (_, __) => const SplashScreen(),
+        builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: AppPaths.splashIntro,
-        builder: (_, __) => const SplashIntroScreen(),
+        builder: (context, state) => const SplashIntroScreen(),
       ),
       GoRoute(
         path: AppPaths.splash1,
-        builder: (_, __) => const Splash1Screen(),
+        builder: (context, state) => const Splash1Screen(),
       ),
       GoRoute(
         path: AppPaths.splash2,
-        builder: (_, __) => const Splash2Screen(),
+        builder: (context, state) => const Splash2Screen(),
       ),
       GoRoute(
         path: AppPaths.splash3,
-        builder: (_, __) => const Splash3Screen(),
+        builder: (context, state) => const Splash3Screen(),
       ),
       GoRoute(
         path: AppPaths.onboarding,
-        builder: (_, __) => const OnboardingScreen(),
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: AppPaths.onboarding2,
-        builder: (_, __) => const Onboarding2Screen(),
+        builder: (context, state) => const Onboarding2Screen(),
       ),
       GoRoute(
         path: AppPaths.onboarding3,
-        builder: (_, __) => const Onboarding3Screen(),
+        builder: (context, state) => const Onboarding3Screen(),
       ),
       GoRoute(
         path: AppPaths.onboarding4,
-        builder: (_, __) => const Onboarding4Screen(),
+        builder: (context, state) => const Onboarding4Screen(),
       ),
       GoRoute(
         path: AppPaths.onboarding5,
-        builder: (_, __) => const Onboarding5Screen(),
+        builder: (context, state) => const Onboarding5Screen(),
       ),
       GoRoute(
         path: AppPaths.onboarding6,
-        builder: (_, __) => const Onboarding6Screen(),
+        builder: (context, state) => const Onboarding6Screen(),
       ),
       GoRoute(
         path: AppPaths.onboarding7,
-        builder: (_, __) => const Onboarding7Screen(),
+        builder: (context, state) => const Onboarding7Screen(),
       ),
       GoRoute(
         path: AppPaths.forgotPassword,
-        builder: (_, __) => const ForgotPasswordScreen(),
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
       GoRoute(
         path: AppPaths.home,
@@ -124,15 +124,15 @@ GoRouter createAppRouter() {
       ),
       GoRoute(
         path: AppPaths.faq,
-        builder: (_, __) => const FaqScreen(),
+        builder: (context, state) => const FaqScreen(),
       ),
       GoRoute(
         path: AppPaths.mostFrequentlyUsedTerms,
-        builder: (_, __) => const MostFrequentlyUsedTermsScreen(),
+        builder: (context, state) => const MostFrequentlyUsedTermsScreen(),
       ),
       GoRoute(
         path: AppPaths.premium,
-        builder: (_, __) => const PremiumBenefitsScreen(),
+        builder: (context, state) => const PremiumBenefitsScreen(),
       ),
     ],
   );

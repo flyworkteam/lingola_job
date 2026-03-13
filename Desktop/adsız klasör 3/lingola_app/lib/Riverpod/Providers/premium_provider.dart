@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
+import 'package:lingola_app/Services/revenuecat_service.dart';
+
 /// GELİŞTİRME MODU İÇİN KISA YOL:
 /// true yaparsan uygulama her zaman premium gibi davranır (RevenueCat'e bakmadan).
 /// PROD'A ÇIKARKEN MUTLAKA false YAP.
@@ -13,6 +15,7 @@ const String kPremiumEntitlementId = 'premium';
 /// Satın alma veya restore sonrası [ref.refresh(premiumProvider)] ile güncellenir.
 final premiumProvider = FutureProvider<bool>((ref) async {
   if (kForcePremiumForDev) return true;
+  if (!RevenueCatService.isConfiguredForCurrentPlatform) return false;
   try {
     final info = await Purchases.getCustomerInfo();
     if (info.entitlements.active.containsKey(kPremiumEntitlementId)) return true;

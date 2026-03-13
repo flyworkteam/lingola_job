@@ -1,0 +1,120 @@
+Lingola Job – Gizlilik Politikası
+
+Son Güncelleme Tarihi: 2025
+
+Bu Gizlilik Politikası, Lingola Job mobil uygulamasını ("Uygulama") kullanan tüm kullanıcıların kişisel verilerinin toplanması, işlenmesi, saklanması ve korunmasına yönelik esasları belirtmektedir. Uygulamayı kullanarak bu Gizlilik Politikası'nı kabul etmiş sayılırsınız.
+
+Lingola Job, kullanıcı gizliliğini ve veri güvenliğini temel ilke olarak benimser. Tüm kişisel veriler, KVKK, GDPR ve ilgili diğer veri koruma mevzuatlarına uygun şekilde işlenir.
+
+Toplanan Bilgiler
+
+Uygulama, hizmetlerin sunulabilmesi amacıyla aşağıdaki veri türlerini toplayabilir.
+
+1.1 Kullanıcı Tarafından Sağlanan Veriler
+
+- Ad, takma ad veya profil bilgileri
+- E-posta adresi (kayıt, abonelik ve destek işlemleri için)
+- Kullanıcının uygulama içindeki mesleki kelime çalışmaları ve oluşturduğu içerikler
+- Meslek alanı, kelime tercihleri, öğrenme seviyesi ve kişiselleştirme ayarları
+- Geri bildirimler, talepler ve destek mesajları
+
+1.2 Otomatik Olarak Toplanan Veriler
+
+- Cihaz türü, işletim sistemi, model ve teknik bilgiler
+- Yaklaşık konum verisi (şehir / ülke bazında)
+- Uygulama kullanım alışkanlıkları (oturum süresi, kelime tekrarları, ekran etkileşimleri vb.)
+- Performans, hata ve çökme kayıtları
+
+1.3 Üçüncü Taraf Entegrasyonları
+
+- Kimlik doğrulama servisleri (Google, Apple vb.)
+- Analitik, performans ve uygulama mağazası ölçüm araçları
+
+Toplanan veriler, yalnızca Lingola Job'un çalışması, geliştirilmesi ve kullanıcı deneyiminin iyileştirilmesi amacıyla işlenir.
+
+Verilerin Kullanım Amaçları
+
+Toplanan kişisel veriler, aşağıdaki amaçlarla kullanılabilir:
+
+- Uygulamanın doğru ve kesintisiz çalışmasını sağlamak
+- Mesleki kelime öğrenme deneyimini kişiselleştirmek
+- Kullanıcı tercihlerini hatırlamak ve geliştirilmiş öğrenme akışı sunmak
+- Hata tespiti, performans analizi ve uygulama optimizasyonu
+- Kullanıcı taleplerine ve destek başvurularına yanıt vermek
+- Yapay zekâ ve öğrenme algoritmalarını geliştirmek (anonimleştirilmiş veri kullanımıyla)
+- Yasal yükümlülüklerin yerine getirilmesi
+
+Kullanıcı verileri hiçbir şekilde üçüncü taraflara satılmaz.
+
+Veri Saklama Süresi
+
+Kişisel veriler aşağıdaki esaslara göre saklanır:
+
+- Kullanıcı hesabı aktif olduğu sürece
+- Yasal yükümlülüklerin gerektirdiği süre boyunca
+- Destek taleplerine ilişkin kayıtlar, işlem tamamlandıktan sonra en fazla 12 ay
+- Kullanıcı hesabını sildiğinde, tüm kişisel veriler geri döndürülemez biçimde sistemden silinir
+
+Verilerin Paylaşımı
+
+Veriler yalnızca aşağıdaki durumlarda paylaşılabilir:
+
+- Yasal gereklilikler: Mahkeme kararları ve resmi kurum talepleri
+- Hizmet sağlayıcılar: Bulut altyapısı, analitik, hata ayıklama ve ödeme sistemleri
+- Kullanıcı onayı: Kullanıcının açık rızası ile yapılan paylaşımlar
+
+Paylaşılan veriler mümkün olduğunca anonimleştirilir ve minimum veri ilkesi esas alınır.
+
+Çerezler ve İzleme Teknolojileri
+
+Lingola Job, uygulama performansını ölçmek ve kullanıcı deneyimini iyileştirmek amacıyla çerezler ve benzeri izleme teknolojileri kullanabilir.
+
+Bu teknolojiler:
+
+- Hizmet sürekliliğini sağlama
+- Performans optimizasyonu
+- Kullanıcı tercihlerini hatırlama
+
+amaçlarına yöneliktir ve kişisel takip amacı taşımaz.
+
+Kullanıcı Hakları
+
+KVKK ve GDPR kapsamında kullanıcıların sahip olduğu haklar:
+
+- Kişisel verilere erişim talep etme
+- Verilerin düzeltilmesini isteme
+- Verilerin silinmesini talep etme ("unutulma hakkı")
+- Verilerin işlenmesini kısıtlama
+- Veri taşınabilirliği talep etme
+- Açık rızayı geri çekme hakkı
+
+Bu haklarınızı kullanmak için:
+support@fly-work.com
+
+Güvenlik Önlemleri
+
+Lingola Job, kullanıcı verilerini korumak amacıyla teknik ve idari güvenlik önlemleri uygular:
+
+- SSL / TLS şifreleme
+- Güvenlik duvarları ve erişim kontrol sistemleri
+- Yetkilendirilmiş erişim protokolleri
+- Düzenli güvenlik denetimleri
+
+Hiçbir sistemin tamamen güvenli olduğu garanti edilemez; ancak Lingola Job yüksek güvenlik standartlarını hedefler.
+
+Çocukların Gizliliği
+
+Lingola Job, 13 yaş altı kişilere yönelik değildir ve bu yaş grubundan bilerek veri toplamaz.
+
+Bu tür bir kullanım tespit edilirse ilgili hesap kapatılır ve veriler silinir.
+
+Politika Değişiklikleri
+
+Lingola Job, bu Gizlilik Politikası'nı güncelleyebilir.
+
+Güncellemeler uygulama içinde yayımlandığı andan itibaren yürürlüğe girer ve kullanıcılar bilgilendirilir.
+
+İletişim
+
+Gizlilik Politikası ile ilgili her türlü soru ve talep için:
+support@fly-work.com

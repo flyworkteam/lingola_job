@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/Models/saved_word_item.dart';
@@ -6,19 +6,18 @@ import 'package:lingola_app/Models/saved_word_item.dart';
 const String _kSavedWordsKey = 'saved_words';
 
 /// Reaktif kayıtlı kelimeler store'u.
-/// [SavedWordItem] listesini SharedPreferences ile kalıcı tutar; değişince dinleyicileri bilgilendirir.
-class SavedWordsNotifier extends ChangeNotifier {
-  SavedWordsNotifier() {
+/// [SavedWordItem] listesini SharedPreferences ile kalıcı tutar; Riverpod StateNotifier ile reaktif.
+class SavedWordsNotifier extends StateNotifier<List<SavedWordItem>> {
+  SavedWordsNotifier() : super(const []) {
     _load();
   }
 
-  final List<SavedWordItem> _items = [];
   bool _loaded = false;
 
   /// Yüklü liste (salt okunur). Değişiklikler [add] / [remove] ile yapılır.
-  List<SavedWordItem> get items => List.unmodifiable(_items);
+  List<SavedWordItem> get items => List.unmodifiable(state);
 
-  int get count => _items.length;
+  int get count => state.length;
 
   Future<void> _ensureLoaded() async {
     if (_loaded) return;
@@ -30,45 +29,45 @@ class SavedWordsNotifier extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_kSavedWordsKey);
       if (raw != null && raw.isNotEmpty) {
-        _items
-          ..clear()
-          ..addAll(SavedWordItem.decodeList(raw));
+        state = SavedWordItem.decodeList(raw);
+      } else {
+        state = const [];
       }
     } catch (_) {
-      _items.clear();
+      state = const [];
     } finally {
       _loaded = true;
-      notifyListeners();
     }
   }
 
   Future<void> _save() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_kSavedWordsKey, SavedWordItem.encodeList(_items));
+      await prefs.setString(_kSavedWordsKey, SavedWordItem.encodeList(state));
     } catch (_) {}
   }
 
   /// Kelime ekler; aynı [word] varsa eklemez. Diske yazar ve dinleyicileri günceller.
   Future<void> add(SavedWordItem item) async {
     await _ensureLoaded();
-    if (_items.any((e) => e.word == item.word)) return;
-    _items.add(item);
+    if (state.any((e) => e.word == item.word)) return;
+    state = [...state, item];
     await _save();
-    notifyListeners();
   }
 
   /// Kelimeyi listeden kaldırır. Diske yazar ve dinleyicileri günceller.
   Future<void> remove(String word) async {
     await _ensureLoaded();
-    _items.removeWhere((e) => e.word == word);
+    state = [
+      for (final item in state)
+        if (item.word != word) item,
+    ];
     await _save();
-    notifyListeners();
   }
 
   /// Kelimenin kayıtlı olup olmadığını döner (yükleme tamamlandıktan sonra anlamlı).
   Future<bool> contains(String word) async {
     await _ensureLoaded();
-    return _items.any((e) => e.word == word);
+    return state.any((e) => e.word == word);
   }
 }

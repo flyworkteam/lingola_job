@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -74,8 +75,7 @@ class Splash3Screen extends StatelessWidget {
                         height: 4,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceVariant,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full),
+                          borderRadius: BorderRadius.circular(AppRadius.full),
                         ),
                       ),
                       SizedBox(height: AppSpacing.lg + 20),
@@ -93,7 +93,7 @@ class Splash3Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppTitle(
-                          'Learn on the go, travel',
+                          context.tr('intro.slide3.title').split('\n').first,
                           style: AppTypography.onboardingTitle,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -102,7 +102,7 @@ class Splash3Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppTitle(
-                          'comfortably',
+                          context.tr('intro.slide3.title').split('\n').last,
                           style: AppTypography.onboardingTitle,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -112,7 +112,10 @@ class Splash3Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppBody(
-                          'Learn English words in just a few minutes, focus',
+                          context
+                              .tr('intro.slide3.description')
+                              .split('\n')
+                              .first,
                           style: AppTypography.onboardingDescription,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -121,7 +124,10 @@ class Splash3Screen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: AppBody(
-                          'on your trip.',
+                          context
+                              .tr('intro.slide3.description')
+                              .split('\n')
+                              .last,
                           style: AppTypography.onboardingDescription,
                           textAlign: TextAlign.center,
                           maxLines: 1,
@@ -129,7 +135,7 @@ class Splash3Screen extends StatelessWidget {
                       ),
                       SizedBox(height: AppSpacing.xxl + 56),
                       AppPrimaryButton(
-                        label: 'Get Started',
+                        label: context.tr('intro.get_started'),
                         borderRadius: 10,
                         onPressed: () => context.go(AppPaths.onboarding),
                       ),
@@ -162,4 +168,3 @@ class _PageDot extends StatelessWidget {
     );
   }
 }
-
