@@ -42,38 +42,58 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   bool _dictionaryLoading = true;
   FlutterTts? _flutterTts;
   bool _ttsInitialized = false;
+  String? _lastLocaleCode;
 
   Future<void> _loadDictionaryWords() async {
-    // Sözlük ve kütüphane çevirileri uygulamanın aktif diline göre gösterilsin.
-    final localeCode = context.locale.languageCode.toLowerCase();
-    final raw = await WordDatabaseService.getProfessionalWords();
+    try {
+      // Sözlük ve kütüphane çevirileri uygulamanın aktif diline göre gösterilsin.
+      final localeCode = context.locale.languageCode.toLowerCase();
+      final raw = await WordDatabaseService.getProfessionalWords();
 
-    // Seçilen dile göre çeviri map'ini al
-    final translationMap =
-        await WordService.getTranslationMapForLocale(localeCode);
+      // Seçilen dile göre çeviri map'ini al (asset + cache)
+      final translationMap =
+          await WordService.getTranslationMapForLocale(localeCode);
 
-    // Kelimeleri, seçilen dile göre çeviriyle zenginleştir
-    final processed = raw
-        .where((m) => ((m['word'] as String?) ?? '').trim().isNotEmpty)
-        .map((m) {
-      final word = ((m['word'] as String?) ?? '').trim();
-      final key = word.toLowerCase();
-      final translated = (translationMap[key] ?? '').trim();
-      final existingTranslation = ((m['translation'] as String?) ?? '').trim();
-      final updated = Map<String, dynamic>.from(m);
-      updated['translation'] = localeCode == 'en'
-          ? word
-          : (translated.isNotEmpty
+      // Kelimeleri, seçilen dile göre çeviriyle zenginleştir
+      final processed = raw
+          .where((m) => ((m['word'] as String?) ?? '').trim().isNotEmpty)
+          .map((m) {
+        final word = ((m['word'] as String?) ?? '').trim();
+        final key = word.toLowerCase();
+        final translated = (translationMap[key] ?? '').trim();
+        final existingTranslation =
+            ((m['translation'] as String?) ?? '').trim();
+        final updated = Map<String, dynamic>.from(m);
+
+        // Üstte her zaman İngilizce kelime, altta seçili dil.
+        if (localeCode == 'en') {
+          updated['translation'] = word;
+        } else if (localeCode == 'tr') {
+          // Türkçe için eski veriyle geriye dönük uyumluluk: yoksa İngilizceye düş.
+          updated['translation'] = translated.isNotEmpty
               ? translated
-              : (existingTranslation.isNotEmpty ? existingTranslation : word));
-      return updated;
-    }).toList();
+              : (existingTranslation.isNotEmpty ? existingTranslation : word);
+        } else {
+          // Diğer dillerde asla Türkçe'ye düşme; bulunamazsa İngilizce kelimeyi göster.
+          updated['translation'] =
+              translated.isNotEmpty ? translated : word;
+        }
+        return updated;
+      }).toList();
 
-    if (!mounted) return;
-    setState(() {
-      _professionalWordsLoaded = processed;
-      _dictionaryLoading = false;
-    });
+      if (!mounted) return;
+      setState(() {
+        _professionalWordsLoaded = processed;
+        _dictionaryLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        // Hata olsa bile sonsuz yüklemede kalmasın.
+        _professionalWordsLoaded = const [];
+        _dictionaryLoading = false;
+      });
+    }
   }
 
   bool _wordMatches(String left, String right) =>
@@ -170,7 +190,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           .read(libraryControllerProvider.notifier)
           .setSearchQuery(_searchController.text);
     });
-    _loadDictionaryWords();
+    // EasyLocalization context'i initState içinde tam hazır olmadığı için
+    // ilk frame'den sonra locale'e göre sözlüğü yükle.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _lastLocaleCode = context.locale.languageCode.toLowerCase();
+      _loadDictionaryWords();
+    });
     if (widget.initialTabIndex != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -196,6 +222,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         }
         widget.onInitialTabHandled?.call();
       });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Uygulama dili değiştiğinde sözlüğü yeniden yükle.
+    final currentLocaleCode = context.locale.languageCode.toLowerCase();
+    if (_lastLocaleCode != null && _lastLocaleCode != currentLocaleCode) {
+      _lastLocaleCode = currentLocaleCode;
+      _dictionaryLoading = true;
+      _professionalWordsLoaded = null;
+      _loadDictionaryWords();
     }
   }
 

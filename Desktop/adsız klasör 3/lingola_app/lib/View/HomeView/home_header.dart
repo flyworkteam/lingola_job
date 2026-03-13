@@ -32,14 +32,14 @@ extension HomeHeaderExtensions on _HomeScreenState {
               child: ListView.builder(
                 shrinkWrap: true,
                 padding: const EdgeInsets.fromLTRB(AppSpacing.xl, 0, AppSpacing.xl, AppSpacing.xxl),
-                itemCount: _languages.length,
+                itemCount: _HomeScreenState._languages.length,
                 itemBuilder: (ctx, i) {
-                  final lang = _languages[i];
+                  final lang = _HomeScreenState._languages[i];
                   return Material(
                     color: Colors.transparent,
-                    child: InkWell(
+                  child: InkWell(
                       onTap: () async {
-                        final localeCode = _languageIdToLocale(lang.id);
+                        final localeCode = _HomeScreenState._languageIdToLocale(lang.id);
                         if (localeCode != null) {
                           await ctx.setLocale(Locale(localeCode));
                           if (!mounted) return;
