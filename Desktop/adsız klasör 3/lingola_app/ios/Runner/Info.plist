@@ -2,16 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Reading test sırasında telaffuzunuzu dinlemek için mikrofona ihtiyacımız var.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Reading test sırasında söylediğiniz kelimeleri anlayabilmek için konuşma tanımaya ihtiyacımız var.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Profil fotoğrafınızı çekebilmek için kameraya ihtiyacımız var.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Profil fotoğrafınızı seçebilmek için fotoğraf albümüne erişmemiz gerekiyor.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Facebook ile giriş ve kişiselleştirilmiş deneyim için kullanılır.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -42,7 +32,6 @@
 				<string>com.googleusercontent.apps.542145601165-1dih6ekggoud6acd78102s2bpsfmeocn</string>
 			</array>
 		</dict>
-		<!-- Facebook Login: fb + App ID -->
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -52,6 +41,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FacebookAppID</key>
 	<string>2197501337662982</string>
 	<key>FacebookClientToken</key>
@@ -76,12 +67,24 @@
 		<string>fb-messenger-share-api</string>
 		<string>fbshareextension</string>
 	</array>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Profil fotoğrafınızı çekebilmek için kameraya ihtiyacımız var.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Reading test sırasında telaffuzunuzu dinlemek için mikrofona ihtiyacımız var.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Profil fotoğrafınızı seçebilmek için fotoğraf albümüne erişmemiz gerekiyor.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Reading test sırasında söylediğiniz kelimeleri anlayabilmek için konuşma tanımaya ihtiyacımız var.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Facebook ile giriş ve kişiselleştirilmiş deneyim için kullanılır.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
