@@ -9,6 +9,7 @@ import 'package:lingola_app/View/LearnTabView/learn_tab_view.dart';
 import 'package:lingola_app/View/LibraryView/library_view.dart';
 import 'package:lingola_app/View/ProfileView/profile_view.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
+import 'package:lingola_app/Services/revenuecat_service.dart';
 import 'package:lingola_app/src/widgets/app_bottom_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -107,6 +108,30 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
                     _currentIndex = 2;
                     _pendingLibraryTabIndex = 1;
                   }),
+                  onGetPremiumTap: () async {
+                    if (!RevenueCatService.isConfiguredForCurrentPlatform) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Premium bu derlemede yapılandırılmadı. REVENUECAT_APPLE_API_KEY / REVENUECAT_ANDROID_API_KEY ile çalıştırın.',
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      return;
+                    }
+                    try {
+                      await RevenueCatService.presentPaywall(displayCloseButton: true);
+                      ref.invalidate(premiumProvider);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Premium açılamadı: $e'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
                 ),
                 LearnTab(
                   userName: _userName,
@@ -135,6 +160,7 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
                       extra: NotificationsRouteArgs(isPremium: isPremium),
                     );
                   },
+                  onAfterPaywallClosed: () => ref.invalidate(premiumProvider),
                 ),
               ],
             ),

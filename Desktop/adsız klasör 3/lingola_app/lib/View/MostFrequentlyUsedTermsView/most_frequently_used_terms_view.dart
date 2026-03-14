@@ -99,7 +99,7 @@ class _MostFrequentlyUsedTermsScreenState
       category: category,
     );
 
-    // Her kelimenin çevirisini seçili uygulama diline göre doldur.
+    // Kartları hemen oluştur; çeviri/okunuş/örnek cümle görüntülenen karta göre lazy yüklenecek (ekran donmasını önler).
     final cards = <WordCardData>[];
     for (final m in rawList) {
       final word = (m['word'] as String?)?.trim() ?? '';
@@ -109,16 +109,11 @@ class _MostFrequentlyUsedTermsScreenState
       final exampleEn = (m['example'] as String?)?.trim() ?? '';
       final exampleTr = (m['example_translation'] as String?)?.trim() ?? '';
 
-      final translation = await WordService.fetchAndCacheTranslationForLocale(
-        word,
-        localeCode,
-      );
-
       cards.add(
         WordCardData(
           word: word,
           phonetic: basePhonetic,
-          translations: translation,
+          translations: '',
           exampleEn: exampleEn,
           exampleTr: exampleTr,
         ),
@@ -481,7 +476,7 @@ class _MostFrequentlyUsedTermsScreenState
                   ),
                   titleSpacing: 4,
                   title: Text(
-                    'Frequently Used Terms',
+                    'home.mfut_title'.tr(),
                     style: AppTypography.titleLarge.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -580,7 +575,7 @@ class _TutorialFullScreenOverlayState extends State<_TutorialFullScreenOverlay>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Previous',
+                          'tutorial.previous'.tr(),
                           style: AppTypography.caption.copyWith(
                             color: Colors.white,
                             fontSize: 12,
@@ -623,7 +618,7 @@ class _TutorialFullScreenOverlayState extends State<_TutorialFullScreenOverlay>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Next',
+                          'tutorial.next'.tr(),
                           style: AppTypography.caption.copyWith(
                             color: Colors.white,
                             fontSize: 12,
@@ -635,7 +630,7 @@ class _TutorialFullScreenOverlayState extends State<_TutorialFullScreenOverlay>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Swipe Finger',
+                  'tutorial.swipe_finger'.tr(),
                   style: AppTypography.title.copyWith(
                     color: Colors.white,
                     fontSize: 18,

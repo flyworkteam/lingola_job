@@ -39,6 +39,7 @@ class HomeScreen extends StatefulWidget {
     this.onLearnNewWordsTap,
     this.onSavedWordsTap,
     this.onDictionaryTap,
+    this.onGetPremiumTap,
   });
 
   final String title;
@@ -55,6 +56,8 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback? onSavedWordsTap;
   /// Dictionary kartına tıklanınca — Library sekmesine geçip Dictionary sekmesi açılır.
   final VoidCallback? onDictionaryTap;
+  /// Get Premium kartına tıklanınca — RevenueCat paywall veya /premium sayfası.
+  final VoidCallback? onGetPremiumTap;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -770,7 +773,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Center(
                           child: AppGradientButton(
                             label: 'home.get_premium'.tr(),
-                            onPressed: () {},
+                            onPressed: () => widget.onGetPremiumTap?.call(),
                           ),
                         ),
                       ],

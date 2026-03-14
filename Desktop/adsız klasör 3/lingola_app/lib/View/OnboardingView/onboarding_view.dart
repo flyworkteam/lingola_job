@@ -28,7 +28,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Animation<Offset>? _slide;
   bool _isAppleLoading = false;
   bool _isGoogleLoading = false;
-  bool _isFacebookLoading = false;
+  // bool _isFacebookLoading = false; // Facebook girişi şimdilik kapalı
 
   static const String _keyProfileName = 'profile_name';
 
@@ -62,24 +62,25 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     context.go(AppPaths.onboarding2);
   }
 
-  Future<void> _onFacebookSignInPressed() async {
-    if (_isFacebookLoading) return;
-    setState(() => _isFacebookLoading = true);
-    final error = await AuthService.instance.signInWithFacebook();
-    if (!mounted) return;
-    setState(() => _isFacebookLoading = false);
-    if (error == AuthService.signInCancelled) return;
-    if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Facebook girişi başarısız: $error')),
-      );
-      return;
-    }
-    await _persistUserDisplayNameIfAvailable();
-    await UserRepository().testBackend();
-    if (!mounted) return;
-    context.go(AppPaths.onboarding2);
-  }
+  // Facebook girişi şimdilik kapalı
+  // Future<void> _onFacebookSignInPressed() async {
+  //   if (_isFacebookLoading) return;
+  //   setState(() => _isFacebookLoading = true);
+  //   final error = await AuthService.instance.signInWithFacebook();
+  //   if (!mounted) return;
+  //   setState(() => _isFacebookLoading = false);
+  //   if (error == AuthService.signInCancelled) return;
+  //   if (error != null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Facebook girişi başarısız: $error')),
+  //     );
+  //     return;
+  //   }
+  //   await _persistUserDisplayNameIfAvailable();
+  //   await UserRepository().testBackend();
+  //   if (!mounted) return;
+  //   context.go(AppPaths.onboarding2);
+  // }
 
   Future<void> _onAppleSignInPressed() async {
     if (_isAppleLoading) return;
@@ -318,17 +319,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   List<Widget> _buildLoginButtons(BuildContext context) {
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
-    final facebookButton = Expanded(
-      child: _SocialButton(
-        icon: SvgPicture.asset(
-          'assets/icons/facebook.svg',
-          width: 20,
-          height: 20,
-        ),
-        label: 'Facebook',
-        onPressed: _isFacebookLoading ? () {} : _onFacebookSignInPressed,
-      ),
-    );
+    // Facebook girişi şimdilik kapalı
+    // final facebookButton = Expanded(
+    //   child: _SocialButton(
+    //     icon: SvgPicture.asset(
+    //       'assets/icons/facebook.svg',
+    //       width: 20,
+    //       height: 20,
+    //     ),
+    //     label: 'Facebook',
+    //     onPressed: _isFacebookLoading ? () {} : _onFacebookSignInPressed,
+    //   ),
+    // );
 
     final guestButton = Expanded(
       child: _SocialButton(
@@ -367,8 +369,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
             SizedBox(width: AppSpacing.md),
-            facebookButton,
-            SizedBox(width: AppSpacing.md),
+            // facebookButton,
             guestButton,
           ],
         ),
@@ -402,8 +403,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
             SizedBox(width: AppSpacing.md),
-            facebookButton,
-            SizedBox(width: AppSpacing.md),
+            // facebookButton,
             guestButton,
           ],
         ),

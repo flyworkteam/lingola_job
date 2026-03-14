@@ -23,7 +23,6 @@ abstract final class AppPaths {
   static const String profileSettings = '/profile_settings';
   static const String faq = '/faq';
   static const String mostFrequentlyUsedTerms = '/most_frequently_used_terms';
-  static const String premium = '/premium';
 }
 
 // --- Home (MainScreen)

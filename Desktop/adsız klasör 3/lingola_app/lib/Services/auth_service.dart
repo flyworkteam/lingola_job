@@ -4,7 +4,8 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+// Facebook girişi şimdilik kapalı
+// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -17,7 +18,7 @@ class AuthService {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FacebookAuth _facebookAuth = FacebookAuth.instance;
+  // final FacebookAuth _facebookAuth = FacebookAuth.instance;
 
   /// İptal (Vazgeç) için dönen sabit; çağıran ileri gitmemeli.
   static const String signInCancelled = 'SIGN_IN_CANCELLED';
@@ -45,62 +46,63 @@ class AuthService {
     }
   }
 
-  /// Facebook ile giriş. Başarılı: null, iptal: [signInCancelled], hata: mesaj.
-  /// iOS'ta "Bad signature" (190) önlemek için Limited Login + nonce kullanılıyor.
-  Future<String?> signInWithFacebook() async {
-    try {
-      final bool isIOS = !kIsWeb &&
-          (defaultTargetPlatform == TargetPlatform.iOS ||
-              defaultTargetPlatform == TargetPlatform.macOS);
-
-      final LoginResult result;
-      String? rawNonce;
-
-      if (isIOS) {
-        rawNonce = _generateNonce();
-        final hashedNonce = _sha256OfString(rawNonce);
-        result = await _facebookAuth.login(
-          loginTracking: LoginTracking.limited,
-          nonce: hashedNonce,
-        );
-      } else {
-        result = await _facebookAuth.login(
-          loginTracking: LoginTracking.enabled,
-        );
-      }
-
-      if (result.status != LoginStatus.success) {
-        return result.status == LoginStatus.cancelled
-            ? signInCancelled
-            : 'Facebook girişi iptal edildi.';
-      }
-      final token = result.accessToken;
-      if (token == null) return signInCancelled;
-
-      OAuthCredential credential;
-      if (token.type == AccessTokenType.limited &&
-          rawNonce != null &&
-          rawNonce.isNotEmpty) {
-        credential = OAuthProvider('facebook.com').credential(
-          idToken: token.tokenString,
-          rawNonce: rawNonce,
-        );
-      } else {
-        credential = FacebookAuthProvider.credential(token.tokenString);
-      }
-
-      await _auth.signInWithCredential(credential);
-      return null;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'account-exists-with-different-credential') {
-        return 'Bu e-posta adresi zaten Google veya Apple ile kayıtlı. Lütfen giriş yapmak için o butonu kullanın.';
-      }
-      return e.message ?? 'Facebook giriş hatası';
-    } catch (e, stack) {
-      if (kDebugMode) debugPrint('Facebook login error: $e\n$stack');
-      return e.toString();
-    }
-  }
+  // Facebook girişi şimdilik kapalı
+  // /// Facebook ile giriş. Başarılı: null, iptal: [signInCancelled], hata: mesaj.
+  // /// iOS'ta "Bad signature" (190) önlemek için Limited Login + nonce kullanılıyor.
+  // Future<String?> signInWithFacebook() async {
+  //   try {
+  //     final bool isIOS = !kIsWeb &&
+  //         (defaultTargetPlatform == TargetPlatform.iOS ||
+  //             defaultTargetPlatform == TargetPlatform.macOS);
+  //
+  //     final LoginResult result;
+  //     String? rawNonce;
+  //
+  //     if (isIOS) {
+  //       rawNonce = _generateNonce();
+  //       final hashedNonce = _sha256OfString(rawNonce);
+  //       result = await _facebookAuth.login(
+  //         loginTracking: LoginTracking.limited,
+  //         nonce: hashedNonce,
+  //       );
+  //     } else {
+  //       result = await _facebookAuth.login(
+  //         loginTracking: LoginTracking.enabled,
+  //       );
+  //     }
+  //
+  //     if (result.status != LoginStatus.success) {
+  //       return result.status == LoginStatus.cancelled
+  //           ? signInCancelled
+  //           : 'Facebook girişi iptal edildi.';
+  //     }
+  //     final token = result.accessToken;
+  //     if (token == null) return signInCancelled;
+  //
+  //     OAuthCredential credential;
+  //     if (token.type == AccessTokenType.limited &&
+  //         rawNonce != null &&
+  //         rawNonce.isNotEmpty) {
+  //       credential = OAuthProvider('facebook.com').credential(
+  //         idToken: token.tokenString,
+  //         rawNonce: rawNonce,
+  //       );
+  //     } else {
+  //       credential = FacebookAuthProvider.credential(token.tokenString);
+  //     }
+  //
+  //     await _auth.signInWithCredential(credential);
+  //     return null;
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'account-exists-with-different-credential') {
+  //       return 'Bu e-posta adresi zaten Google veya Apple ile kayıtlı. Lütfen giriş yapmak için o butonu kullanın.';
+  //     }
+  //     return e.message ?? 'Facebook giriş hatası';
+  //   } catch (e, stack) {
+  //     if (kDebugMode) debugPrint('Facebook login error: $e\n$stack');
+  //     return e.toString();
+  //   }
+  // }
 
   /// Apple ile giriş. Başarılı: null, iptal: [signInCancelled], hata: mesaj.
   Future<String?> signInWithApple() async {
@@ -190,7 +192,7 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
     await _googleSignIn.signOut();
-    await _facebookAuth.logOut();
+    // await _facebookAuth.logOut(); // Facebook girişi şimdilik kapalı
   }
 
   /// Giriş yapmış kullanıcının ID token'ını döner.

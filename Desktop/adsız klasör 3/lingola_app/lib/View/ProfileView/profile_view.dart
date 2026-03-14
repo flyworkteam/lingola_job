@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:lingola_app/src/navigation/app_routes.dart';
 import 'package:lingola_app/Services/auth_service.dart';
+import 'package:lingola_app/Services/revenuecat_service.dart';
 import 'package:lingola_app/src/config/app_prefs.dart';
 import 'package:lingola_app/src/theme/colors.dart';
 import 'package:lingola_app/src/theme/radius.dart';
@@ -27,6 +28,7 @@ class ProfileScreen extends StatefulWidget {
     this.onAvatarChanged,
     this.onBackTap,
     this.onNotificationsTap,
+    this.onAfterPaywallClosed,
   });
 
   final String userName;
@@ -38,6 +40,8 @@ class ProfileScreen extends StatefulWidget {
   final VoidCallback? onAvatarChanged;
   final VoidCallback? onBackTap;
   final VoidCallback? onNotificationsTap;
+  /// RevenueCat paywall kapandıktan sonra premium state'ini yenilemek için (ref.invalidate).
+  final VoidCallback? onAfterPaywallClosed;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -334,7 +338,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _ProfileMenuItem(
           iconAsset: 'assets/icons/icon_premium.svg',
           label: context.tr('profile.premium_menu'),
-          onTap: () => context.push(AppPaths.premium),
+          onTap: () async {
+            if (!RevenueCatService.isConfiguredForCurrentPlatform) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(context.tr('profile.premium_not_configured')),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+              return;
+            }
+            try {
+              await RevenueCatService.presentPaywall(displayCloseButton: true);
+              if (mounted) widget.onAfterPaywallClosed?.call();
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${context.tr('common.error')}: $e'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            }
+          },
         ),
         _ProfileMenuItem(
           iconAsset: 'assets/icons/icon_share.svg',
