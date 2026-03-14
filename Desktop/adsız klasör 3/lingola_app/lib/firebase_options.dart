@@ -16,19 +16,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBxWRYeCkkQLOlHlNhATayHRluKZuyVRBk',
-    appId: '1:542145601165:android:3060efea19f6f4e0ae4cc4',
-    messagingSenderId: '542145601165',
-    projectId: 'lingola-backend',
-    storageBucket: 'lingola-backend.firebasestorage.app',
+    apiKey: 'AIzaSyCrzFct8NyoI39dVhoB-WtqvfyRxSHBNzU',
+    appId: '1:524778134584:android:236deccfc32a380f351acd',
+    messagingSenderId: '524778134584',
+    projectId: 'lingola-job',
+    storageBucket: 'lingola-job.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC4YfOhl20LHIClxmAImVvwE2XnZe3SRFM',
-    appId: '1:542145601165:ios:bc59c1e30578fe76ae4cc4',
-    messagingSenderId: '542145601165',
-    projectId: 'lingola-backend',
-    storageBucket: 'lingola-backend.firebasestorage.app',
-    iosBundleId: 'com.flywork.lingolajobapp.RunnerTests',
+    apiKey: 'AIzaSyA6QnS3UFxJkPQqF9XAVaU6wTsq8f7lMsA',
+    appId: '1:524778134584:ios:24484295b1473fbb351acd',
+    messagingSenderId: '524778134584',
+    projectId: 'lingola-job',
+    storageBucket: 'lingola-job.firebasestorage.app',
+    iosBundleId: 'com.flywork.lingolajobapp',
   );
 }
