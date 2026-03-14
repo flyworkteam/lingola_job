@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>542145601165-1dih6ekggoud6acd78102s2bpsfmeocn.apps.googleusercontent.com</string>
+	<string>524778134584-cs9s76q13uv6t8ujisrquji51ja4bjaa.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.542145601165-1dih6ekggoud6acd78102s2bpsfmeocn</string>
+	<string>com.googleusercontent.apps.524778134584-cs9s76q13uv6t8ujisrquji51ja4bjaa</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>524778134584-8dumqidksdqb1egl1evfvd08tkqa47l2.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC4YfOhl20LHIClxmAImVvwE2XnZe3SRFM</string>
+	<string>AIzaSyA6QnS3UFxJkPQqF9XAVaU6wTsq8f7lMsA</string>
 	<key>GCM_SENDER_ID</key>
-	<string>542145601165</string>
+	<string>524778134584</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.flywork.lingolajobapp.RunnerTests</string>
+	<string>com.flywork.lingolajobapp</string>
 	<key>PROJECT_ID</key>
-	<string>lingola-backend</string>
+	<string>lingola-job</string>
 	<key>STORAGE_BUCKET</key>
-	<string>lingola-backend.firebasestorage.app</string>
+	<string>lingola-job.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:542145601165:ios:bc59c1e30578fe76ae4cc4</string>
+	<string>1:524778134584:ios:24484295b1473fbb351acd</string>
 </dict>
 </plist>
