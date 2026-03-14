@@ -15,6 +15,7 @@ import 'package:lingola_app/View/Onboarding6View/onboarding6_view.dart';
 import 'package:lingola_app/View/Onboarding7View/onboarding7_view.dart';
 import 'package:lingola_app/View/NotificationsView/notifications_view.dart';
 import 'package:lingola_app/View/FaqView/faq_view.dart';
+import 'package:lingola_app/View/PremiumInfoView/premium_info_view.dart';
 import 'package:lingola_app/View/MostFrequentlyUsedTermsView/most_frequently_used_terms_view.dart';
 import 'package:lingola_app/View/ProfileSettingsView/profile_settings_view.dart';
 import 'package:lingola_app/View/ForgotPasswordView/forgot_password_view.dart';
@@ -124,6 +125,10 @@ GoRouter createAppRouter() {
       GoRoute(
         path: AppPaths.faq,
         builder: (context, state) => const FaqScreen(),
+      ),
+      GoRoute(
+        path: AppPaths.premium,
+        builder: (context, state) => const PremiumInfoScreen(),
       ),
       GoRoute(
         path: AppPaths.mostFrequentlyUsedTerms,

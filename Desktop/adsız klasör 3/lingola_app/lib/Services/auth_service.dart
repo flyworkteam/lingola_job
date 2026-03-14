@@ -132,9 +132,13 @@ class AuthService {
         return 'Apple kimlik doğrulama bilgisi alınamadı.';
       }
 
-      final oauthCredential = OAuthProvider(
-        'apple.com',
-      ).credential(idToken: identityToken, rawNonce: rawNonce);
+      // Firebase Auth 5.2.0+ Apple için accessToken (authorizationCode) zorunludur;
+      // olmazsa "Invalid OAuth response from apple.com" hatası oluşur.
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: identityToken,
+        rawNonce: rawNonce,
+        accessToken: appleCredential.authorizationCode,
+      );
 
       final userCredential = await _auth.signInWithCredential(oauthCredential);
 
@@ -155,6 +159,9 @@ class AuthService {
       if (e.code == AuthorizationErrorCode.canceled) {
         return signInCancelled;
       }
+      if (_isAppleAuthError1000(e.message)) {
+        return 'Apple ile giriş bu sürümde kullanılamıyor. Lütfen Google veya Misafir ile giriş yapın.';
+      }
       return e.message.isNotEmpty ? e.message : 'Apple giriş hatası';
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
@@ -162,7 +169,11 @@ class AuthService {
       }
       return e.message ?? 'Apple giriş hatası';
     } catch (e) {
-      return e.toString();
+      final msg = e.toString();
+      if (_isAppleAuthError1000(msg)) {
+        return 'Apple ile giriş bu sürümde kullanılamıyor. Lütfen Google veya Misafir ile giriş yapın.';
+      }
+      return msg;
     }
   }
 
@@ -226,5 +237,11 @@ class AuthService {
   String _sha256OfString(String input) {
     final bytes = utf8.encode(input);
     return sha256.convert(bytes).toString();
+  }
+
+  static bool _isAppleAuthError1000(String message) {
+    return message.contains('1000') ||
+        message.contains('AuthorizationError') ||
+        message.contains('AuthenticationServices');
   }
 }

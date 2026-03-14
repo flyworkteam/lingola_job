@@ -3,11 +3,12 @@ package com.flywork.lingolajobapp
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
-class MainActivity : FlutterActivity() {
+// RevenueCat Paywalls için FlutterFragmentActivity zorunlu (Android).
+class MainActivity : FlutterFragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +22,8 @@ class MainActivity : FlutterActivity() {
     private fun printFacebookKeyHash() {
         try {
             val info = packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures) {
+            val signatures = info.signatures ?: emptyArray()
+            for (signature in signatures) {
                 val md = MessageDigest.getInstance("SHA")
                 md.update(signature.toByteArray())
                 val keyHash = Base64.encodeToString(md.digest(), Base64.NO_WRAP)

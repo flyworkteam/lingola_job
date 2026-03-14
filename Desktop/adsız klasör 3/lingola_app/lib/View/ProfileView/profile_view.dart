@@ -340,24 +340,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           label: context.tr('profile.premium_menu'),
           onTap: () async {
             if (!RevenueCatService.isConfiguredForCurrentPlatform) {
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(context.tr('profile.premium_not_configured')),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              }
+              if (mounted) context.push(AppPaths.premium);
               return;
             }
             try {
-              await RevenueCatService.presentPaywall(displayCloseButton: true);
-              if (mounted) widget.onAfterPaywallClosed?.call();
+              final shown = await RevenueCatService.tryPresentPaywallSafe(displayCloseButton: true);
+              if (mounted) {
+                if (shown) {
+                  widget.onAfterPaywallClosed?.call();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(context.tr('profile.premium_billing_unavailable')),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              }
             } catch (e) {
               if (mounted) {
+                final msgKey = RevenueCatService.getBillingUnavailableMessageKey(e);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('${context.tr('common.error')}: $e'),
+                    content: Text(msgKey != null ? context.tr(msgKey) : '${context.tr('common.error')}: $e'),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );

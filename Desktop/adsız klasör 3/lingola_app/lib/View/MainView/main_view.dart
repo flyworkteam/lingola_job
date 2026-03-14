@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -110,23 +111,29 @@ class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObse
                   }),
                   onGetPremiumTap: () async {
                     if (!RevenueCatService.isConfiguredForCurrentPlatform) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Premium bu derlemede yapılandırılmadı. REVENUECAT_APPLE_API_KEY / REVENUECAT_ANDROID_API_KEY ile çalıştırın.',
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
+                      context.push(AppPaths.premium);
                       return;
                     }
                     try {
-                      await RevenueCatService.presentPaywall(displayCloseButton: true);
-                      ref.invalidate(premiumProvider);
+                      final shown = await RevenueCatService.tryPresentPaywallSafe(displayCloseButton: true);
+                      if (shown) ref.invalidate(premiumProvider);
+                      if (!shown) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(context.tr('profile.premium_billing_unavailable')),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
                     } catch (e) {
+                      final msgKey = RevenueCatService.getBillingUnavailableMessageKey(e);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Premium açılamadı: $e'),
+                          content: Text(
+                            msgKey != null
+                                ? context.tr(msgKey)
+                                : 'Premium açılamadı: $e',
+                          ),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );

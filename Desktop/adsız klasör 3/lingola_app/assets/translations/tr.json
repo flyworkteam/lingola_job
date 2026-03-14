@@ -111,6 +111,8 @@
     "notifications": "Bildirimler",
     "premium_menu": "Premium",
     "premium_not_configured": "Premium bu sürümde yapılandırılmadı.",
+    "premium_billing_unavailable": "Satın alma bu cihazda kullanılamıyor. Lütfen gerçek cihazda veya uygun bir mağaza hesabı ile deneyin.",
+    "premium_info_unavailable": "Satın alma bu sürümde aktif değil. Uygulama mağazasından indirilen sürümde Premium satın alabilirsiniz.",
     "share_with_friend": "Arkadaşınla Paylaş",
     "faq": "S.S.S.",
     "rate_us": "Bizi Değerlendir",

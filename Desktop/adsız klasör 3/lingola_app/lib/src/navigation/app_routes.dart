@@ -22,6 +22,7 @@ abstract final class AppPaths {
   static const String notifications = '/notifications';
   static const String profileSettings = '/profile_settings';
   static const String faq = '/faq';
+  static const String premium = '/premium';
   static const String mostFrequentlyUsedTerms = '/most_frequently_used_terms';
 }
 

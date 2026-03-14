@@ -49,7 +49,8 @@ dependencies:
   sqflite: ^2.3.2
   flutter_tts: ^4.2.0
   easy_localization: ^3.0.7
-  speech_to_text: ^6.6.0
+  # GEÇİCİ: Android build hatası (Registrar API) için 7.x kullanılıyor. Eski haline getirmek için REVERT_INSTRUCTIONS.md'ye bakın.
+  speech_to_text: ^7.3.0
   purchases_flutter: ^9.13.1
   purchases_ui_flutter: ^9.13.1
   image_picker: ^1.2.1
