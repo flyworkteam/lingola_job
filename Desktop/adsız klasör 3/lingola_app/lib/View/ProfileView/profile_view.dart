@@ -370,21 +370,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           },
         ),
-        _ProfileMenuItem(
-          iconAsset: 'assets/icons/icon_share.svg',
-          label: context.tr('profile.share_with_friend'),
-          onTap: () {},
-        ),
+        // _ProfileMenuItem(
+        //   iconAsset: 'assets/icons/icon_share.svg',
+        //   label: context.tr('profile.share_with_friend'),
+        //   onTap: () {},
+        // ),
         _ProfileMenuItem(
           iconAsset: 'assets/icons/icon_faq.svg',
           label: context.tr('profile.faq'),
           onTap: () => context.push(AppPaths.faq),
         ),
-        _ProfileMenuItem(
-          iconAsset: 'assets/icons/icon_rate.svg',
-          label: context.tr('profile.rate_us'),
-          onTap: () {},
-        ),
+        // _ProfileMenuItem(
+        //   iconAsset: 'assets/icons/icon_rate.svg',
+        //   label: context.tr('profile.rate_us'),
+        //   onTap: () {},
+        // ),
         Divider(
           height: 1,
           thickness: 0.5,
