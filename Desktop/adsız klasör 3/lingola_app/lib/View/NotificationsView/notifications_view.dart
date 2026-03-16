@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/radius.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
 /// Tek bildirim öğesi (liste silindiğinde state'ten kaldırılır).
 class _NotificationItem {
   const _NotificationItem({

@@ -9,11 +9,11 @@ import 'package:lingola_app/Riverpod/Controllers/all_controllers.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
 import 'package:lingola_app/Services/word_database_service.dart';
 import 'package:lingola_app/Services/word_services.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
-import 'package:lingola_app/src/widgets/dismiss_keyboard.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/radius.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
+import 'package:lingola_app/widgets/dismiss_keyboard.dart';
 
 /// Library sayfası: header, arama + filtre butonu, Library / Dictionary sekmeleri.
 /// Sekme, filtre ve favori durumu Riverpod [libraryControllerProvider] ile yönetilir.

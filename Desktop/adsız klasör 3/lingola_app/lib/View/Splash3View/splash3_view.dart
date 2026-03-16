@@ -2,12 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
-import 'package:lingola_app/src/widgets/app_primary_button.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/radius.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
+import 'package:lingola_app/widgets/app_primary_button.dart';
 
 /// Splash 3: üstte görsel (splash3), altta sabit beyaz kart.
 class Splash3Screen extends StatelessWidget {

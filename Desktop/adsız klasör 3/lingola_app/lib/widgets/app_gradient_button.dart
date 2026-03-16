@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// Gradient (pill) buton: Get Premium vb. aksiyonlar için.
 /// Turuncu gradient, yuvarlak köşe (radius 50), gölge.

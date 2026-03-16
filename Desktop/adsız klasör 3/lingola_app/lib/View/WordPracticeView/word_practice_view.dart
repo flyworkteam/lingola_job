@@ -10,13 +10,13 @@ import 'package:lingola_app/Models/word_item.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
 import 'package:lingola_app/Services/word_database_service.dart';
 import 'package:lingola_app/Services/word_services.dart';
-import 'package:lingola_app/src/state/practice_words_store.dart';
-import 'package:lingola_app/src/state/word_practice_progress_store.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
-import 'package:lingola_app/src/utils/user_level.dart';
-import 'package:lingola_app/src/widgets/word_card.dart';
+import 'package:lingola_app/state/practice_words_store.dart';
+import 'package:lingola_app/state/word_practice_progress_store.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
+import 'package:lingola_app/utils/user_level.dart';
+import 'package:lingola_app/widgets/word_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Word Practice sayfası — Learn sekmesindeki Word Practice kartına tıklanınca açılır.

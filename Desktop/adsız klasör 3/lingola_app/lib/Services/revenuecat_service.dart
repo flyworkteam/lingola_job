@@ -1,11 +1,11 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:lingola_app/src/config/revenuecat_keys.dart';
+import 'package:lingola_app/config/revenuecat_keys.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
-/// Önce --dart-define ile verilen env, yoksa lib/src/config/revenuecat_keys.dart
+/// Önce --dart-define ile verilen env, yoksa lib/config/revenuecat_keys.dart
 const String _kEnvApple = String.fromEnvironment('REVENUECAT_APPLE_API_KEY');
 const String _kEnvAndroid = String.fromEnvironment('REVENUECAT_ANDROID_API_KEY');
 

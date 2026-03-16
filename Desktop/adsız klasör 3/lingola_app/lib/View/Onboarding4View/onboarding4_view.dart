@@ -5,13 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/View/Onboarding3View/onboarding3_view.dart';
-import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/src/navigation/route_transitions.dart';
-import 'package:lingola_app/src/state/onboarding_state.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
+import 'package:lingola_app/navigation/route_transitions.dart';
+import 'package:lingola_app/state/onboarding_state.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/radius.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// Onboarding 4. sayfa: "Which language would you like to learn?"
 class Onboarding4Screen extends StatefulWidget {

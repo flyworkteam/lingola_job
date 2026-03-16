@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:lingola_app/src/config/app_prefs.dart';
-import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/config/app_prefs.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// İlk açılışta gösterilen splash ekranı.
 /// Soldan sağa gradient (AppColors.splashGradientStart → splashGradientEnd).

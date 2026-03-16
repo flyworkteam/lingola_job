@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:lingola_app/src/navigation/app_routes.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
 import 'package:lingola_app/View/DailyTestView/daily_test_view.dart';
 import 'package:lingola_app/View/LearnView/learn_view.dart';
 import 'package:lingola_app/View/ReadingTestView/reading_test_view.dart';

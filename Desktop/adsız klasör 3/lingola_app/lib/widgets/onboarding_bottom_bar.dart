@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// Onboarding sayfalarında kullanılan sabit Back / Next buton çubuğu.
 /// Padding ve stil tüm sayfalarda tutarlıdır.

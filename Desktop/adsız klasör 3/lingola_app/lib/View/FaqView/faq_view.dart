@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/radius.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// Sıkça sorulan sorular sayfası — Profil > F.A.Q. ile açılır.
 /// Soru ve cevap ayrı kartlarda: soru kartına tıklanınca altında cevap kartı açılır.

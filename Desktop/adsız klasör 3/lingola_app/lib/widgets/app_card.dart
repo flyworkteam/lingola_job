@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/spacing.dart';
 
 /// Ortak kart bileşeni: beyaz arka plan, gölge, yuvarlatılmış köşe.
 /// Tüm liste kartları (A1-Beginner, Continue Lesson vb.) bu bileşeni kullanır.

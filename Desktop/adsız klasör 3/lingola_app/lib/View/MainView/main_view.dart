@@ -4,14 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:lingola_app/Services/notification_activity_service.dart';
-import 'package:lingola_app/src/navigation/app_routes.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
 import 'package:lingola_app/View/HomeView/home_view.dart';
 import 'package:lingola_app/View/LearnTabView/learn_tab_view.dart';
 import 'package:lingola_app/View/LibraryView/library_view.dart';
 import 'package:lingola_app/View/ProfileView/profile_view.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
 import 'package:lingola_app/Services/revenuecat_service.dart';
-import 'package:lingola_app/src/widgets/app_bottom_nav_bar.dart';
+import 'package:lingola_app/widgets/app_bottom_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Ana kabuk: ortak alt navigasyon bar + seçilen sekme.

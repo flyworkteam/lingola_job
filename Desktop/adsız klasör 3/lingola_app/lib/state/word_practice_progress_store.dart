@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/Models/word_item.dart';
 import 'package:lingola_app/Services/word_database_service.dart';
-import 'package:lingola_app/src/utils/user_level.dart';
+import 'package:lingola_app/utils/user_level.dart';
 
 class WordPracticeProgressSnapshot {
   const WordPracticeProgressSnapshot({

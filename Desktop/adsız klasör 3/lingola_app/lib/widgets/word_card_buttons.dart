@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// Ortak ipucu (ampul) butonu — 2 katmanlı gölge efektiyle. Kart içinde kullanılır.
 class WordCardHintButton extends StatelessWidget {

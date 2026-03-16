@@ -13,12 +13,12 @@ import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
 import 'package:lingola_app/Services/word_database_service.dart';
 import 'package:lingola_app/Services/word_services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
-import 'package:lingola_app/src/widgets/app_bottom_nav_bar.dart';
-import 'package:lingola_app/src/widgets/word_card.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
+import 'package:lingola_app/widgets/app_bottom_nav_bar.dart';
+import 'package:lingola_app/widgets/word_card.dart';
 
 /// Most Frequently Used Terms — mesleki kelimeler (professional_words) ile Learn New Words
 /// mantığında: üstte kelime, altında okunuş, çeviri, örnek cümle; swipe ile ilerleme.

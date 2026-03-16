@@ -8,10 +8,10 @@ import 'package:lingola_app/Models/word_item.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
 import 'package:lingola_app/Services/word_database_service.dart';
 import 'package:lingola_app/Services/word_services.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/typography.dart';
-import 'package:lingola_app/src/utils/user_level.dart';
-import 'package:lingola_app/src/widgets/word_card_buttons.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/typography.dart';
+import 'package:lingola_app/utils/user_level.dart';
+import 'package:lingola_app/widgets/word_card_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DailyTestScreen extends ConsumerStatefulWidget {

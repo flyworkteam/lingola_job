@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:lingola_app/src/config/app_prefs.dart';
-import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/config/app_prefs.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/radius.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// Onboarding 7. sayfa: Mavi arka plan, animasyonlu progress 0% → 100%
 class Onboarding7Screen extends StatefulWidget {

@@ -19,7 +19,7 @@ import 'package:lingola_app/View/PremiumInfoView/premium_info_view.dart';
 import 'package:lingola_app/View/MostFrequentlyUsedTermsView/most_frequently_used_terms_view.dart';
 import 'package:lingola_app/View/ProfileSettingsView/profile_settings_view.dart';
 import 'package:lingola_app/View/ForgotPasswordView/forgot_password_view.dart';
-import 'package:lingola_app/src/config/app_prefs.dart';
+import 'package:lingola_app/config/app_prefs.dart';
 
 import 'app_routes.dart';
 

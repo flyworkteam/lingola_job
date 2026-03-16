@@ -9,10 +9,10 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/Models/saved_word_item.dart';
 import 'package:lingola_app/Riverpod/Providers/all_providers.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/widgets/word_card.dart';
-import 'package:lingola_app/src/widgets/word_card_buttons.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/widgets/word_card.dart';
+import 'package:lingola_app/widgets/word_card_buttons.dart';
 
 /// Saved Word sayfası — Word Practice ile aynı kart ve önizleme.
 /// Kayıtlı kelimeler [savedWordsProvider] ile reaktif; liste değişince UI güncellenir.

@@ -6,8 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/Services/revenuecat_service.dart';
 import 'package:lingola_app/firebase_options.dart';
-import 'package:lingola_app/src/navigation/app_router.dart';
-import 'package:lingola_app/src/theme/app_theme.dart';
+import 'package:lingola_app/navigation/app_router.dart';
+import 'package:lingola_app/theme/app_theme.dart';
 
 /// Tek instance: locale değişince MaterialApp yeniden build olur ama router aynı kalır,
 /// böylece onboarding ortasında dil değişince başa dönülmez.

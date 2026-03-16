@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
 
 /// Ortak primary buton: marka mavisi, iç gölge, tek kaynaktan stiller.
 /// Tüm ekranlarda bu bileşen kullanılır; çıplak FilledButton/InkWell ile buton yazılmaz.

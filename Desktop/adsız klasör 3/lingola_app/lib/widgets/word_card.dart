@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lingola_app/Models/word_item.dart';
 import 'package:lingola_app/Services/word_services.dart';
-import 'package:lingola_app/src/widgets/word_card_buttons.dart';
+import 'package:lingola_app/widgets/word_card_buttons.dart';
 
 /// Ortak 3D mavi kelime kartı boyutları ve renkleri.
 abstract final class WordCardTheme {

@@ -9,13 +9,13 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/src/theme/colors.dart';
-import 'package:lingola_app/src/theme/radius.dart';
-import 'package:lingola_app/src/theme/spacing.dart';
-import 'package:lingola_app/src/theme/typography.dart';
-import 'package:lingola_app/src/utils/profile_avatar_storage.dart';
-import 'package:lingola_app/src/widgets/dismiss_keyboard.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
+import 'package:lingola_app/theme/colors.dart';
+import 'package:lingola_app/theme/radius.dart';
+import 'package:lingola_app/theme/spacing.dart';
+import 'package:lingola_app/theme/typography.dart';
+import 'package:lingola_app/utils/profile_avatar_storage.dart';
+import 'package:lingola_app/widgets/dismiss_keyboard.dart';
 
 /// Profil ayarları sayfası: avatar, ad, e-posta alanları.
 class ProfileSettingsScreen extends StatefulWidget {
