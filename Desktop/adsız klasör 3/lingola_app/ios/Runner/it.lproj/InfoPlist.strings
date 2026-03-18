@@ -1,0 +1,6 @@
+/* Descrizioni dei permessi in italiano */
+"NSCameraUsageDescription" = "Abbiamo bisogno dell'accesso alla fotocamera per scattare la tua foto del profilo.";
+"NSMicrophoneUsageDescription" = "Abbiamo bisogno dell'accesso al microfono per ascoltare la tua pronuncia durante il test di lettura.";
+"NSPhotoLibraryUsageDescription" = "Abbiamo bisogno dell'accesso alla tua libreria di foto per permetterti di scegliere un'immagine del profilo.";
+"NSSpeechRecognitionUsageDescription" = "Abbiamo bisogno del riconoscimento vocale per capire le parole che dici durante il test di lettura.";
+"NSUserTrackingUsageDescription" = "Questo viene utilizzato per accedere con Facebook e per offrire un'esperienza personalizzata.";

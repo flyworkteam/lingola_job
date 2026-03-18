@@ -6,6 +6,20 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>tr</string>
+		<string>de</string>
+		<string>es</string>
+		<string>fr</string>
+		<string>hi</string>
+		<string>it</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>pt</string>
+		<string>ru</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Lingola App</string>
 	<key>CFBundleExecutable</key>
@@ -70,15 +84,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Profil fotoğrafınızı çekebilmek için kameraya ihtiyacımız var.</string>
+	<string>We need access to the camera to take your profile photo.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Reading test sırasında telaffuzunuzu dinlemek için mikrofona ihtiyacımız var.</string>
+	<string>We need access to the microphone to listen to your pronunciation during the reading test.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Profil fotoğrafınızı seçebilmek için fotoğraf albümüne erişmemiz gerekiyor.</string>
+	<string>We need access to your photo library to let you choose a profile picture.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Reading test sırasında söylediğiniz kelimeleri anlayabilmek için konuşma tanımaya ihtiyacımız var.</string>
+	<string>We need speech recognition to understand the words you say during the reading test.</string>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>Facebook ile giriş ve kişiselleştirilmiş deneyim için kullanılır.</string>
+	<string>This is used for Facebook login and to provide a personalized experience.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

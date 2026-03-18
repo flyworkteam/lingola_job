@@ -1,0 +1,6 @@
+/* 한국어 권한 설명 */
+"NSCameraUsageDescription" = "프로필 사진을 촬영하기 위해 카메라에 접근해야 합니다.";
+"NSMicrophoneUsageDescription" = "읽기 테스트 중에 발음을 듣기 위해 마이크에 접근해야 합니다.";
+"NSPhotoLibraryUsageDescription" = "프로필 이미지를 선택하기 위해 사진 라이브러리에 접근해야 합니다.";
+"NSSpeechRecognitionUsageDescription" = "읽기 테스트 중에 말하는 단어를 이해하기 위해 음성 인식이 필요합니다.";
+"NSUserTrackingUsageDescription" = "Facebook 로그인 및 맞춤형 경험을 제공하기 위해 사용됩니다.";

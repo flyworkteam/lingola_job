@@ -1,0 +1,6 @@
+/* Türkçe izin açıklamaları */
+"NSCameraUsageDescription" = "Profil fotoğrafınızı çekebilmek için kameraya ihtiyacımız var.";
+"NSMicrophoneUsageDescription" = "Okuma testi sırasında telaffuzunuzu dinlemek için mikrofona ihtiyacımız var.";
+"NSPhotoLibraryUsageDescription" = "Profil fotoğrafınızı seçebilmek için fotoğraf albümüne erişmemiz gerekiyor.";
+"NSSpeechRecognitionUsageDescription" = "Okuma testi sırasında söylediğiniz kelimeleri anlayabilmek için konuşma tanımaya ihtiyacımız var.";
+"NSUserTrackingUsageDescription" = "Facebook ile giriş ve kişiselleştirilmiş deneyim için kullanılır.";

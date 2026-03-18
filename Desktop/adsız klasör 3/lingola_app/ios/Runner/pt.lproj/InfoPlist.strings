@@ -1,0 +1,6 @@
+/* Descricoes de permissao em portugues */
+"NSCameraUsageDescription" = "Precisamos de acesso à câmera para tirar sua foto de perfil.";
+"NSMicrophoneUsageDescription" = "Precisamos de acesso ao microfone para ouvir sua pronúncia durante o teste de leitura.";
+"NSPhotoLibraryUsageDescription" = "Precisamos de acesso à sua biblioteca de fotos para que você possa escolher uma imagem de perfil.";
+"NSSpeechRecognitionUsageDescription" = "Precisamos de reconhecimento de voz para entender as palavras que você diz durante o teste de leitura.";
+"NSUserTrackingUsageDescription" = "Isto é usado para login no Facebook e para fornecer uma experiência personalizada.";

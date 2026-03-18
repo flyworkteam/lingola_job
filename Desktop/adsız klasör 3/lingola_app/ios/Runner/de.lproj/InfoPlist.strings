@@ -1,0 +1,6 @@
+/* Deutsche Berechtigungsbeschreibungen */
+"NSCameraUsageDescription" = "Wir benötigen Zugriff auf die Kamera, um dein Profilfoto aufzunehmen.";
+"NSMicrophoneUsageDescription" = "Wir benötigen Zugriff auf das Mikrofon, um deine Aussprache während des Lesetests anzuhören.";
+"NSPhotoLibraryUsageDescription" = "Wir benötigen Zugriff auf deine Fotogalerie, damit du ein Profilbild auswählen kannst.";
+"NSSpeechRecognitionUsageDescription" = "Wir benötigen Spracherkennung, um die Worte zu verstehen, die du während des Lesetests sagst.";
+"NSUserTrackingUsageDescription" = "Dies wird für die Facebook-Anmeldung und um ein personalisiertes Erlebnis bereitzustellen verwendet.";

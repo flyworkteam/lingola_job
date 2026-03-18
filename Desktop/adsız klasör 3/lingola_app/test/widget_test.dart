@@ -7,8 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:lingola_app/View/SplashView/splash_view.dart';
-import 'package:lingola_app/src/navigation/app_routes.dart';
-import 'package:lingola_app/src/theme/app_theme.dart';
+import 'package:lingola_app/navigation/app_routes.dart';
+import 'package:lingola_app/theme/app_theme.dart';
 
 void main() {
   testWidgets('Splash screen builds and shows app title', (WidgetTester tester) async {

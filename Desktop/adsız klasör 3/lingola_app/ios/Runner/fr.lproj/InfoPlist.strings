@@ -1,0 +1,6 @@
+/* Descriptions des autorisations en français */
+"NSCameraUsageDescription" = "Nous avons besoin d'accéder à la caméra pour prendre votre photo de profil.";
+"NSMicrophoneUsageDescription" = "Nous avons besoin d'accéder au micro pour écouter votre prononciation pendant le test de lecture.";
+"NSPhotoLibraryUsageDescription" = "Nous avons besoin d'accéder à votre bibliothèque de photos pour que vous puissiez choisir une photo de profil.";
+"NSSpeechRecognitionUsageDescription" = "Nous avons besoin de la reconnaissance vocale pour comprendre les mots que vous dites pendant le test de lecture.";
+"NSUserTrackingUsageDescription" = "Ceci est utilisé pour la connexion Facebook et pour offrir une expérience personnalisée.";

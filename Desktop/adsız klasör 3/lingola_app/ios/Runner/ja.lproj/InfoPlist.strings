@@ -1,0 +1,6 @@
+/* 日本語の許可説明 */
+"NSCameraUsageDescription" = "プロフィール写真を撮影するために、カメラへのアクセスが必要です。";
+"NSMicrophoneUsageDescription" = "読み取りテスト中にあなたの発音を聞くために、マイクへのアクセスが必要です。";
+"NSPhotoLibraryUsageDescription" = "プロフィール画像を選ぶために、写真ライブラリへのアクセスが必要です。";
+"NSSpeechRecognitionUsageDescription" = "読み取りテスト中にあなたが話す言葉を理解するために、音声認識が必要です。";
+"NSUserTrackingUsageDescription" = "Facebook ログインと、パーソナライズされた体験を提供するために使用されます。";

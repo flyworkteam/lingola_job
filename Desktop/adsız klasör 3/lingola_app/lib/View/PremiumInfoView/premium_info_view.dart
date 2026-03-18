@@ -86,6 +86,15 @@ class PremiumInfoScreen extends StatelessWidget {
   }
 
   Widget _buildBenefitsCard(BuildContext context) {
+    final benefits = [
+      context.tr('notifications.premium_benefit_1'),
+      context.tr('notifications.premium_benefit_2'),
+      context.tr('notifications.premium_benefit_3'),
+      context.tr('notifications.premium_benefit_4'),
+      context.tr('notifications.premium_benefit_5'),
+      context.tr('notifications.premium_benefit_6'),
+      context.tr('notifications.premium_benefit_7'),
+    ];
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
@@ -140,6 +149,33 @@ class PremiumInfoScreen extends StatelessWidget {
             style: AppTypography.bodySmall.copyWith(
               color: Colors.white.withValues(alpha: 0.95),
               fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          ...benefits.map(
+            (b) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      b,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: Colors.white.withValues(alpha: 0.95),
+                        fontSize: 14,
+                        height: 1.25,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
