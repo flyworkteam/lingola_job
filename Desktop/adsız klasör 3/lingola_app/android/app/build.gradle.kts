@@ -1,10 +1,17 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+// 1. key.properties dosyasını okumak için gereken yapılandırma
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
-    // START: FlutterFire Configuration
     id("com.google.gms.google-services")
-    // END: FlutterFire Configuration
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -22,21 +29,33 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    // 2. İmza ayarlarını tanımlıyoruz
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
+            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as String?
+        }
+    }
+
     defaultConfig {
         applicationId = "com.flywork.lingolajobapp"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // 64K DEX limit aşımını önlemek için multidex
         multiDexEnabled = true
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // 3. Debug imzasını kaldırıp oluşturduğumuz release imzasını atıyoruz
+            signingConfig = signingConfigs.getByName("release")
+            
+            // Kod küçültme ve temizleme (Opsiyonel ama önerilir)
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
