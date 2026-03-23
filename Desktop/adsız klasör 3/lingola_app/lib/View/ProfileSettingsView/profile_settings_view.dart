@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/navigation/app_routes.dart';
@@ -43,6 +44,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   File? _avatarFile;
 
   final ImagePicker _imagePicker = ImagePicker();
+
+  bool get _isLikelyIpad {
+    final shortestSide = MediaQuery.sizeOf(context).shortestSide;
+    return Platform.isIOS && shortestSide >= 600;
+  }
 
   static const List<_ProfileLanguage> _languages = [
     _ProfileLanguage(id: 'english', title: 'English', flagAsset: 'assets/bayrak/flag_english.svg'),
@@ -282,8 +288,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   void _showPhotoSourceSheet(BuildContext context) {
+    if (!mounted) return;
     final box = _cameraButtonKey.currentContext?.findRenderObject() as RenderBox?;
-    if (box == null) return;
+    if (box == null) {
+      _showPhotoSourceSheetFallback(context);
+      return;
+    }
     final offset = box.localToGlobal(Offset.zero);
     final size = box.size;
     const double arrowWidth = 14;
@@ -345,7 +355,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             label: context.tr('profile_settings.take_photo'),
                             onTap: () {
                               dismiss();
-                              _pickImage(ImageSource.camera);
+                              _handleImageSelectionTap(ImageSource.camera);
                             },
                           ),
                           Divider(height: 1, indent: 48, endIndent: 12, color: AppColors.onSurfaceVariant.withValues(alpha: 0.2)),
@@ -355,7 +365,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                             label: context.tr('profile_settings.select_from_gallery'),
                             onTap: () {
                               dismiss();
-                              _pickImage(ImageSource.gallery);
+                              _handleImageSelectionTap(ImageSource.gallery);
                             },
                           ),
                         ],
@@ -369,7 +379,67 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         ],
       ),
     );
-    Overlay.of(context).insert(overlayEntry);
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
+    if (overlay == null) {
+      _showPhotoSourceSheetFallback(context);
+      return;
+    }
+    try {
+      overlay.insert(overlayEntry);
+    } catch (_) {
+      _showPhotoSourceSheetFallback(context);
+    }
+  }
+
+  void _showPhotoSourceSheetFallback(BuildContext context) {
+    if (!mounted) return;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.xxl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.surfaceVariant,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            _photoDropdownOption(
+              context,
+              iconAsset: 'assets/icons/icon_photo_camera.svg',
+              label: context.tr('profile_settings.take_photo'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _handleImageSelectionTap(ImageSource.camera);
+              },
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _photoDropdownOption(
+              context,
+              iconAsset: 'assets/icons/icon_photo_gallery.svg',
+              label: context.tr('profile_settings.select_from_gallery'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _handleImageSelectionTap(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _photoDropdownOption(
@@ -411,52 +481,50 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   Widget _buildAvatar() {
-    return GestureDetector(
-      onTap: () {},
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 4),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primaryDropShadow.withValues(alpha: 0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ClipOval(
-              child: _avatarFile != null
-                  ? Image.file(
-                      _avatarFile!,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.asset(
-                      'assets/dummy/image 2.png',
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-            ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 4),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryDropShadow.withValues(alpha: 0.2),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: GestureDetector(
-              onTap: () => _showPhotoSourceSheet(context),
-              child: KeyedSubtree(
-                key: _cameraButtonKey,
-                child: Container(
-                  width: 32,
-                  height: 32,
+          child: ClipOval(
+            child: _avatarFile != null
+                ? Image.file(
+                    _avatarFile!,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    'assets/dummy/image 2.png',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+          ),
+        ),
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: GestureDetector(
+            onTap: () => _showPhotoSourceSheet(context),
+            child: KeyedSubtree(
+              key: _cameraButtonKey,
+              child: Container(
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   color: AppColors.splashGradientStart,
                   shape: BoxShape.circle,
@@ -476,10 +544,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ),
               ),
             ),
-            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -977,22 +1044,127 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     context.pop(ProfileSettingsResult(name: name));
   }
 
-  Future<void> _pickImage(ImageSource source) async {
+  Future<void> _handleImageSelectionTap(ImageSource source) async {
     try {
+      if (source == ImageSource.camera) {
+        final supportsCamera = _imagePicker.supportsImageSource(ImageSource.camera);
+        if (!supportsCamera) {
+          if (_isLikelyIpad) {
+            _showImagePickerMessage('Camera is not available on this iPad. Opening gallery instead.');
+            await _handleImageSelectionTap(ImageSource.gallery);
+          } else {
+            _showImagePickerMessage('Camera is not available on this device. Please use gallery.');
+          }
+          return;
+        }
+      }
+
+      final hasPermission = await _ensureImagePermission(source);
+      if (!hasPermission) return;
+
       final picked = await _imagePicker.pickImage(
         source: source,
         maxWidth: 800,
         maxHeight: 800,
         imageQuality: 85,
+        preferredCameraDevice: CameraDevice.rear,
+        requestFullMetadata: false,
       );
       if (picked == null) return;
       final savedFile = await ProfileAvatarStorage.savePickedAvatar(picked);
       if (savedFile == null) return;
 
+      if (!mounted) return;
       setState(() => _avatarFile = savedFile);
+    } on PlatformException catch (e) {
+      _handleImagePickerPlatformError(e, source: source);
     } catch (_) {
-      // Sessizce yut; istenirse ileride loglanabilir.
+      final fallbackMessage = source == ImageSource.camera
+          ? 'Could not open camera. Please try gallery.'
+          : 'Could not open photo library. Please try again.';
+      _showImagePickerMessage(fallbackMessage);
     }
+  }
+
+  Future<bool> _ensureImagePermission(ImageSource source) async {
+    final permission = source == ImageSource.camera ? Permission.camera : Permission.photos;
+    var status = await permission.status;
+
+    if (status.isGranted || status.isLimited) {
+      return true;
+    }
+
+    status = await permission.request();
+    if (status.isGranted || status.isLimited) {
+      return true;
+    }
+
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      final permissionName = source == ImageSource.camera ? 'Camera' : 'Photos';
+      _showImagePickerMessage('$permissionName access is disabled. Enable it in iOS Settings.');
+      await _promptOpenSettings();
+      return false;
+    }
+
+    final deniedMessage = source == ImageSource.camera
+        ? 'Camera permission is required to take a photo.'
+        : 'Photo library permission is required to select an image.';
+    _showImagePickerMessage(deniedMessage);
+    return false;
+  }
+
+  void _handleImagePickerPlatformError(
+    PlatformException error, {
+    required ImageSource source,
+  }) {
+    final message = switch (error.code) {
+      'camera_access_denied' || 'photo_access_denied' || 'photo_access_not_granted' =>
+        source == ImageSource.camera
+            ? 'Camera permission denied. Enable it in iOS Settings.'
+            : 'Photo library permission denied. Enable it in iOS Settings.',
+      'camera_access_restricted' => 'Camera access is restricted on this device.',
+      'camera_unavailable' => _isLikelyIpad
+          ? 'Camera is unavailable on this iPad. Please use gallery.'
+          : 'Camera is unavailable on this device. Please use gallery.',
+      _ => source == ImageSource.camera
+          ? 'Could not open camera. Please try again.'
+          : 'Could not open photo library. Please try again.',
+    };
+    _showImagePickerMessage(message);
+  }
+
+  Future<void> _promptOpenSettings() async {
+    if (!mounted) return;
+    final shouldOpen = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Permission needed'),
+        content: const Text('Please enable camera/photo access in iOS Settings.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
+    if (shouldOpen == true) {
+      await openAppSettings();
+    }
+  }
+
+  void _showImagePickerMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   void _onAccountDeleted() {
@@ -1167,7 +1339,7 @@ class _ProfileProfession {
   final String title;
 }
 
-/// Dropdown üstündeki kamera ikonuna bakan beyaz ok.
+/// Dropdown ustundeki kamera ikonuna bakan beyaz ok.
 class _DropdownArrowPainter extends CustomPainter {
   _DropdownArrowPainter({
     required this.arrowCenterX,
