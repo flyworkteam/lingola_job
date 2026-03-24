@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/painting.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -41,11 +42,15 @@ abstract final class ProfileAvatarStorage {
     final normalizedExt = ext.isEmpty ? '.jpg' : ext;
     final avatarPath = p.join(
       avatarsDir.path,
-      '$_avatarFileBaseName$normalizedExt',
+      '${_avatarFileBaseName}_${DateTime.now().millisecondsSinceEpoch}$normalizedExt',
     );
     final avatarFile = File(avatarPath);
 
+    if (previousPath != null && previousPath.isNotEmpty) {
+      await FileImage(File(previousPath)).evict();
+    }
     await avatarFile.writeAsBytes(bytes, flush: true);
+    await FileImage(avatarFile).evict();
     await prefs.setString(avatarPrefsKey, avatarFile.path);
 
     await _cleanupOldAvatarFiles(
@@ -105,7 +110,7 @@ abstract final class ProfileAvatarStorage {
         continue;
       }
       final fileName = p.basenameWithoutExtension(path);
-      if (fileName == _avatarFileBaseName || fileName == 'avatar') {
+      if (fileName.startsWith(_avatarFileBaseName) || fileName == 'avatar') {
         try {
           await file.delete();
         } catch (_) {}

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lingola_app/theme/colors.dart';
 import 'package:lingola_app/theme/radius.dart';
 import 'package:lingola_app/theme/spacing.dart';
@@ -8,11 +9,13 @@ import 'package:lingola_app/theme/typography.dart';
 /// Tek bildirim öğesi (liste silindiğinde state'ten kaldırılır).
 class _NotificationItem {
   const _NotificationItem({
+    required this.id,
     required this.emoji,
     required this.titleKey,
     required this.subtitleKey,
     required this.time,
   });
+  final String id;
   final String emoji;
   final String titleKey;
   final String subtitleKey;
@@ -36,24 +39,51 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   late List<_NotificationItem> _notifications;
+  static const String _keyDismissedNotificationIds = 'dismissed_notification_ids';
+
+  // TODO: OneSignal verileri entegre edildiğinde her bildirimi buraya unique id ile mapleyin.
+  static const List<_NotificationItem> _allNotifications = [];
 
   @override
   void initState() {
     super.initState();
-    _notifications = [
-      const _NotificationItem(
-        emoji: '☕',
-        titleKey: 'notifications.notif1_title',
-        subtitleKey: 'notifications.notif1_subtitle',
-        time: '17:58',
-      ),
-      const _NotificationItem(
-        emoji: '🤔',
-        titleKey: 'notifications.notif2_title',
-        subtitleKey: 'notifications.notif2_subtitle',
-        time: '14:20',
-      ),
-    ];
+    _notifications = const [];
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final dismissedIds =
+        (prefs.getStringList(_keyDismissedNotificationIds) ?? const <String>[])
+            .toSet();
+    final visible =
+        _allNotifications.where((item) => !dismissedIds.contains(item.id)).toList();
+    if (!mounted) return;
+    setState(() => _notifications = visible);
+  }
+
+  Future<void> _dismissNotification(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final dismissedIds =
+        (prefs.getStringList(_keyDismissedNotificationIds) ?? const <String>[])
+            .toSet();
+    dismissedIds.add(id);
+    await prefs.setStringList(
+      _keyDismissedNotificationIds,
+      dismissedIds.toList(),
+    );
+    if (!mounted) return;
+    setState(() {
+      _notifications.removeWhere((item) => item.id == id);
+    });
+  }
+
+  Future<void> _dismissAllNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final allIds = _allNotifications.map((e) => e.id).toList();
+    await prefs.setStringList(_keyDismissedNotificationIds, allIds);
+    if (!mounted) return;
+    setState(() => _notifications.clear());
   }
 
   static const double _headerExpandedHeight = 100;
@@ -125,7 +155,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     onSelected: (value) {
                       if (value == 'delete_all') {
                         _showDeleteAllConfirmDialog(context, () {
-                          setState(() => _notifications.clear());
+                          _dismissAllNotifications();
                         });
                       }
                     },
@@ -184,6 +214,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                   child: _buildNotificationCard(
                     context,
+                    id: n.id,
                     emoji: n.emoji,
                     title: context.tr(n.titleKey),
                     subtitle: context.tr(n.subtitleKey),
@@ -449,6 +480,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   /// Beyaz bildirim kartı: emoji, başlık, alt metin, saat.
   Widget _buildNotificationCard(
     BuildContext context, {
+    required String id,
     required String emoji,
     required String title,
     required String subtitle,
@@ -504,6 +536,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             style: AppTypography.caption.copyWith(
               color: AppColors.onSurfaceVariant.withValues(alpha: 0.8),
               fontSize: 12,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          InkWell(
+            onTap: () => _dismissNotification(id),
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                Icons.close_rounded,
+                size: 18,
+                color: AppColors.onSurfaceVariant.withValues(alpha: 0.75),
+              ),
             ),
           ),
         ],

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:lingola_app/Services/auth_service.dart';
 import 'package:lingola_app/Services/revenuecat_service.dart';
@@ -51,12 +52,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _notificationsEnabled = true;
   late String _userName;
   File? _avatarFile;
+  String _appVersion = '';
 
   @override
   void initState() {
     super.initState();
     _userName = widget.userName;
     _loadAvatar();
+    _loadAppVersion();
   }
 
   @override
@@ -69,6 +72,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final file = await ProfileAvatarStorage.loadAvatarFile();
     if (!mounted) return;
     setState(() => _avatarFile = file);
+  }
+
+  Future<void> _loadAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    if (!mounted) return;
+    setState(() => _appVersion = packageInfo.version);
   }
 
   void _onSignOutConfirmed() async {
@@ -114,7 +123,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildMenuList(context),
                   const SizedBox(height: AppSpacing.xl),
                   Text(
-                    context.tr('profile.version'),
+                    _appVersion.isEmpty
+                        ? context.tr('profile.version')
+                        : '${context.tr('profile.version').replaceAll(RegExp(r'\s*\d+\.\d+\.\d+.*$'), '')} $_appVersion',
                     textAlign: TextAlign.center,
                     style: AppTypography.caption.copyWith(
                       color: AppColors.onSurfaceVariant,

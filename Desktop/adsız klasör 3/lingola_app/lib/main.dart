@@ -1,10 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lingola_app/Services/revenuecat_service.dart';
+import 'package:lingola_app/config/onesignal_config.dart';
 import 'package:lingola_app/firebase_options.dart';
 import 'package:lingola_app/navigation/app_router.dart';
 import 'package:lingola_app/theme/app_theme.dart';
@@ -65,6 +68,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await _configureOneSignalIfAvailable();
   final prefs = await SharedPreferences.getInstance();
   final onboardingCompleted = prefs.getBool(_keyOnboardingCompleted) ?? false;
   final initialLocale = _resolveInitialLocale(
@@ -82,6 +86,36 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   );
+}
+
+Future<void> _configureOneSignalIfAvailable() async {
+  if (oneSignalAppId.isEmpty || kIsWeb) return;
+  final platform = defaultTargetPlatform;
+  if (platform != TargetPlatform.android && platform != TargetPlatform.iOS) {
+    return;
+  }
+
+  try {
+    if (kDebugMode) {
+      await OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+    }
+    await OneSignal.initialize(oneSignalAppId);
+    await OneSignal.Notifications.requestPermission(true);
+    if (kDebugMode) {
+      OneSignal.User.pushSubscription.addObserver((state) {
+        debugPrint(
+          'OneSignal subscription: id=${state.current.id}, '
+          'optedIn=${state.current.optedIn}, tokenLen=${state.current.token?.length ?? 0}',
+        );
+      });
+      final sub = OneSignal.User.pushSubscription;
+      debugPrint(
+        'OneSignal after init: id=${sub.id}, optedIn=${sub.optedIn}, tokenLen=${sub.token?.length ?? 0}',
+      );
+    }
+  } catch (e, st) {
+    debugPrint('OneSignal configure error: $e\n$st');
+  }
 }
 
 class MyApp extends StatelessWidget {

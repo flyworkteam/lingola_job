@@ -10,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:lingola_app/Services/auth_service.dart';
+import 'package:lingola_app/config/app_prefs.dart';
 import 'package:lingola_app/navigation/app_routes.dart';
 import 'package:lingola_app/theme/colors.dart';
 import 'package:lingola_app/theme/radius.dart';
@@ -1167,8 +1169,11 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  void _onAccountDeleted() {
-    context.go(AppPaths.onboarding);
+  Future<void> _onAccountDeleted() async {
+    await AuthService.instance.signOut();
+    await AppPrefs.clearOnboardingCompleted();
+    if (!mounted) return;
+    context.go(AppPaths.splash);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(context.tr('profile_settings.account_deleted'), style: GoogleFonts.nunitoSans(color: Colors.white)),
