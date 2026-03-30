@@ -11,7 +11,8 @@
     "skip": "Omitir",
     "done": "Hecho",
     "loading": "Cargando...",
-    "error": "Ha ocurrido un error"
+    "error": "Ha ocurrido un error",
+    "default_display_name": "Estudiante"
   },
   "word_practice": {
     "title": "Práctica de palabras",

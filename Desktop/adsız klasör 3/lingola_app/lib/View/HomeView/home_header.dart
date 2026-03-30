@@ -113,12 +113,7 @@ extension HomeHeaderExtensions on _HomeScreenState {
                             height: 56,
                             fit: BoxFit.cover,
                           )
-                        : Image.asset(
-                            'assets/dummy/image 2.png',
-                            width: 56,
-                            height: 56,
-                            fit: BoxFit.cover,
-                          ),
+                        : const DefaultAvatarPlaceholder(size: 56),
                   ),
                 ),
                 AppSpacing.md.width,
@@ -200,7 +195,7 @@ extension HomeHeaderExtensions on _HomeScreenState {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'home.hello_user'.tr(args: [widget.userName.split(' ').first]),
+                        'home.hello_user'.tr(args: [_firstHelloName(context)]),
                         style: AppTypography.bodySmall.copyWith(
                           color: AppColors.onSurfaceVariant,
                         ),

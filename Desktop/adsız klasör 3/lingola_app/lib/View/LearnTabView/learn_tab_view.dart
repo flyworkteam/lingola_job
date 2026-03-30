@@ -12,7 +12,7 @@ import 'package:lingola_app/View/WordPracticeView/word_practice_view.dart';
 class LearnTab extends StatefulWidget {
   const LearnTab({
     super.key,
-    this.userName = 'Jhon Doe',
+    this.userName = '',
     this.savedWordsCount = 0,
     this.totalXp = 0,
     this.avatarVersion = 0,

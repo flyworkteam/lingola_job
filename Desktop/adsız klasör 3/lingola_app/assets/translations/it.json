@@ -11,7 +11,8 @@
     "skip": "Salta",
     "done": "Fatto",
     "loading": "Caricamento...",
-    "error": "Si è verificato un errore"
+    "error": "Si è verificato un errore",
+    "default_display_name": "Studente"
   },
   "word_practice": {
     "title": "Pratica parole",

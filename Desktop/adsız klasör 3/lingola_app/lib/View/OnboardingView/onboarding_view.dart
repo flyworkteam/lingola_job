@@ -13,6 +13,12 @@ import 'package:lingola_app/theme/radius.dart';
 import 'package:lingola_app/theme/spacing.dart';
 import 'package:lingola_app/theme/typography.dart';
 
+double _onboardingContentMaxWidth(BuildContext context) {
+  final s = MediaQuery.sizeOf(context);
+  if (s.shortestSide < 600) return double.infinity;
+  return 520;
+}
+
 /// Onboarding ekranı: splash1_screen yapısında, onboard.png kullanır.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -145,7 +151,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget build(BuildContext context) {
     _ensureAnimations();
     final size = MediaQuery.sizeOf(context);
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final maxContentW = _onboardingContentMaxWidth(context);
     final imageHeight = size.height * 0.57;
+    const overlap = 50.0;
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -153,9 +163,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         left: false,
         right: false,
         child: Stack(
+          fit: StackFit.expand,
           clipBehavior: Clip.none,
           children: [
             Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -165,6 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     child: Image.asset(
                       'assets/onboard/onboard.png',
                       fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
                     ),
                   ),
                 ),
@@ -174,135 +187,139 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             Positioned(
               left: 0,
               right: 0,
-              top: imageHeight - 50,
-              child: FadeTransition(
-                opacity: _fade!,
-                child: SlideTransition(
-                  position: _slide!,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(
-                      AppSpacing.xl,
-                      AppSpacing.md,
-                      AppSpacing.xl,
-                      AppSpacing.xl + MediaQuery.paddingOf(context).bottom,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(AppRadius.xl),
-                        topRight: Radius.circular(AppRadius.xl),
-                      ),
-                    ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: MediaQuery.sizeOf(context).height * 0.55,
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              child: AppTitle(
-                                context.tr('onboarding.welcome'),
-                                style: AppTypography.onboardingTitle,
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                            SizedBox(height: AppSpacing.md),
-                            SizedBox(
-                              width: double.infinity,
-                              child: AppBody(
-                                context.tr('onboarding.login_subtitle'),
-                                style: AppTypography.onboardingDescription,
-                                textAlign: TextAlign.left,
-                              ),
-                            ),
-                            SizedBox(height: AppSpacing.xl),
-                            ..._buildLoginButtons(context),
-                            SizedBox(height: AppSpacing.xl),
-                            Wrap(
-                              alignment: WrapAlignment.center,
-                              children: [
-                                Text(
-                                  context.tr('onboarding.legal_prefix'),
-                                  style: AppTypography.onboardingDescription
-                                      .copyWith(
-                                        color: AppColors.onboardingText,
-                                        fontSize: 12,
-                                      ),
-                                  textAlign: TextAlign.center,
+              top: imageHeight - overlap,
+              bottom: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(AppRadius.xl),
+                    topRight: Radius.circular(AppRadius.xl),
+                  ),
+                ),
+                child: FadeTransition(
+                  opacity: _fade!,
+                  child: SlideTransition(
+                    position: _slide!,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: maxContentW),
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.fromLTRB(
+                            AppSpacing.xl,
+                            AppSpacing.md,
+                            AppSpacing.xl,
+                            AppSpacing.xl + bottomInset,
+                          ),
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: AppTitle(
+                                  context.tr('onboarding.welcome'),
+                                  style: AppTypography.onboardingTitle,
+                                  textAlign: TextAlign.left,
                                 ),
-                                _InlineLegalLink(
-                                  label: context.tr(
-                                    'onboarding.terms_of_service',
+                              ),
+                              SizedBox(height: AppSpacing.md),
+                              SizedBox(
+                                width: double.infinity,
+                                child: AppBody(
+                                  context.tr('onboarding.login_subtitle'),
+                                  style: AppTypography.onboardingDescription,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              SizedBox(height: AppSpacing.xl),
+                              ..._buildLoginButtons(context),
+                              SizedBox(height: AppSpacing.xl),
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                children: [
+                                  Text(
+                                    context.tr('onboarding.legal_prefix'),
+                                    style: AppTypography.onboardingDescription
+                                        .copyWith(
+                                          color: AppColors.onboardingText,
+                                          fontSize: 12,
+                                        ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  onTap: () => _openLegalDocument(
-                                    context,
-                                    title: context.tr(
+                                  _InlineLegalLink(
+                                    label: context.tr(
                                       'onboarding.terms_of_service',
                                     ),
-                                    assetPath:
-                                        'assets/legal/terms_of_service.txt',
-                                  ),
-                                ),
-                                Text(
-                                  context.tr('onboarding.legal_middle'),
-                                  style: AppTypography.onboardingDescription
-                                      .copyWith(
-                                        color: AppColors.onboardingText,
-                                        fontSize: 12,
+                                    onTap: () => _openLegalDocument(
+                                      context,
+                                      title: context.tr(
+                                        'onboarding.terms_of_service',
                                       ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                _InlineLegalLink(
-                                  label: context.tr(
-                                    'onboarding.privacy_policy',
+                                      assetPath:
+                                          'assets/legal/terms_of_service.txt',
+                                    ),
                                   ),
-                                  onTap: () => _openLegalDocument(
-                                    context,
-                                    title: context.tr(
+                                  Text(
+                                    context.tr('onboarding.legal_middle'),
+                                    style: AppTypography.onboardingDescription
+                                        .copyWith(
+                                          color: AppColors.onboardingText,
+                                          fontSize: 12,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  _InlineLegalLink(
+                                    label: context.tr(
                                       'onboarding.privacy_policy',
                                     ),
-                                    assetPath:
-                                        'assets/legal/privacy_policy.txt',
-                                  ),
-                                ),
-                                Text(
-                                  context.tr('onboarding.legal_and'),
-                                  style: AppTypography.onboardingDescription
-                                      .copyWith(
-                                        color: AppColors.onboardingText,
-                                        fontSize: 12,
+                                    onTap: () => _openLegalDocument(
+                                      context,
+                                      title: context.tr(
+                                        'onboarding.privacy_policy',
                                       ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                _InlineLegalLink(
-                                  label: context.tr(
-                                    'onboarding.cookies_policy',
+                                      assetPath:
+                                          'assets/legal/privacy_policy.txt',
+                                    ),
                                   ),
-                                  onTap: () => _openLegalDocument(
-                                    context,
-                                    title: context.tr(
+                                  Text(
+                                    context.tr('onboarding.legal_and'),
+                                    style: AppTypography.onboardingDescription
+                                        .copyWith(
+                                          color: AppColors.onboardingText,
+                                          fontSize: 12,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  _InlineLegalLink(
+                                    label: context.tr(
                                       'onboarding.cookies_policy',
                                     ),
-                                    assetPath:
-                                        'assets/legal/cookies_policy.txt',
-                                  ),
-                                ),
-                                Text(
-                                  '.',
-                                  style: AppTypography.onboardingDescription
-                                      .copyWith(
-                                        color: AppColors.onboardingText,
-                                        fontSize: 12,
+                                    onTap: () => _openLegalDocument(
+                                      context,
+                                      title: context.tr(
+                                        'onboarding.cookies_policy',
                                       ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ],
+                                      assetPath:
+                                          'assets/legal/cookies_policy.txt',
+                                    ),
+                                  ),
+                                  Text(
+                                    '.',
+                                    style: AppTypography.onboardingDescription
+                                        .copyWith(
+                                          color: AppColors.onboardingText,
+                                          fontSize: 12,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

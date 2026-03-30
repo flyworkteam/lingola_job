@@ -11,7 +11,8 @@
     "skip": "Skip",
     "done": "Done",
     "loading": "Loading...",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "default_display_name": "Learner"
   },
   "word_practice": {
     "title": "Word Practice",

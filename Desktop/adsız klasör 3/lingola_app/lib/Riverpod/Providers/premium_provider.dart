@@ -3,10 +3,10 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import 'package:lingola_app/Services/revenuecat_service.dart';
 
-/// GELİŞTİRME MODU İÇİN KISA YOL:
-/// true yaparsan uygulama her zaman premium gibi davranır (RevenueCat'e bakmadan).
-/// PROD'A ÇIKARKEN MUTLAKA false YAP.
-const bool kForcePremiumForDev = true;
+/// Geliştirmede premium testi: `flutter run --dart-define=FORCE_PREMIUM_DEV=true`
+/// App Store derlemesinde varsayılan **false** (gerçek RevenueCat aboneliği kullanılır).
+const bool kForcePremiumForDev =
+    bool.fromEnvironment('FORCE_PREMIUM_DEV', defaultValue: false);
 
 /// RevenueCat dashboard'da tanımlı entitlement identifier (örn. "premium").
 const String kPremiumEntitlementId = 'premium';

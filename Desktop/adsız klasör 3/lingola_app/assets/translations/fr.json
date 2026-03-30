@@ -11,7 +11,8 @@
     "skip": "Passer",
     "done": "Terminé",
     "loading": "Chargement...",
-    "error": "Une erreur s'est produite"
+    "error": "Une erreur s'est produite",
+    "default_display_name": "Apprenant"
   },
   "word_practice": {
     "title": "Pratique des mots",

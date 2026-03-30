@@ -11,6 +11,13 @@ import 'package:lingola_app/theme/spacing.dart';
 import 'package:lingola_app/theme/typography.dart';
 import 'package:lingola_app/widgets/app_primary_button.dart';
 
+/// Tablet / geniş ekranda okunabilir kolon genişliği (Guideline 4).
+double _introContentMaxWidth(BuildContext context) {
+  final s = MediaQuery.sizeOf(context);
+  if (s.shortestSide < 600) return double.infinity;
+  return 520;
+}
+
 /// Otomatik kayan onboarding slider: splash1, splash2, splash3 tek ekranda.
 /// Belirli aralıklarla sonraki sayfaya geçer; kullanıcı kaydırarak da ilerleyebilir.
 class SplashIntroScreen extends StatefulWidget {
@@ -69,61 +76,65 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final maxW = _introContentMaxWidth(context);
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          PageView(
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            children: [
-              _IntroSlide(
-                currentPage: _currentPage,
-                pageCount: _pageCount,
-                imageTopPadding: 0,
-                imagePath: 'assets/splash/splash1.png',
-                titleLines: context.tr('intro.slide1.title').split('\n'),
-                descriptionLines: context
-                    .tr('intro.slide1.description')
-                    .split('\n'),
-                isLastPage: false,
-                onNext: () => _pageController.nextPage(
-                  duration: const Duration(milliseconds: 400),
-                  curve: Curves.easeInOutCubic,
-                ),
-                onGetStarted: _goToOnboarding,
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          children: [
+            _IntroSlide(
+              currentPage: _currentPage,
+              pageCount: _pageCount,
+              maxContentWidth: maxW,
+              imageTopPadding: 0,
+              imagePath: 'assets/splash/splash1.png',
+              titleLines: context.tr('intro.slide1.title').split('\n'),
+              descriptionLines: context
+                  .tr('intro.slide1.description')
+                  .split('\n'),
+              isLastPage: false,
+              onNext: () => _pageController.nextPage(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOutCubic,
               ),
-              _IntroSlide(
-                currentPage: _currentPage,
-                pageCount: _pageCount,
-                imagePath: 'assets/splash/splash2.png',
-                titleLines: context.tr('intro.slide2.title').split('\n'),
-                descriptionLines: context
-                    .tr('intro.slide2.description')
-                    .split('\n'),
-                isLastPage: false,
-                onNext: () => _pageController.nextPage(
-                  duration: const Duration(milliseconds: 400),
-                  curve: Curves.easeInOutCubic,
-                ),
-                onGetStarted: _goToOnboarding,
+              onGetStarted: _goToOnboarding,
+            ),
+            _IntroSlide(
+              currentPage: _currentPage,
+              pageCount: _pageCount,
+              maxContentWidth: maxW,
+              imagePath: 'assets/splash/splash2.png',
+              titleLines: context.tr('intro.slide2.title').split('\n'),
+              descriptionLines: context
+                  .tr('intro.slide2.description')
+                  .split('\n'),
+              isLastPage: false,
+              onNext: () => _pageController.nextPage(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOutCubic,
               ),
-              _IntroSlide(
-                currentPage: _currentPage,
-                pageCount: _pageCount,
-                imagePath: 'assets/splash/splash3.png',
-                titleLines: context.tr('intro.slide3.title').split('\n'),
-                descriptionLines: context
-                    .tr('intro.slide3.description')
-                    .split('\n'),
-                isLastPage: true,
-                onNext: null,
-                onGetStarted: _goToOnboarding,
-              ),
-            ],
-          ),
-        ],
+              onGetStarted: _goToOnboarding,
+            ),
+            _IntroSlide(
+              currentPage: _currentPage,
+              pageCount: _pageCount,
+              maxContentWidth: maxW,
+              imagePath: 'assets/splash/splash3.png',
+              titleLines: context.tr('intro.slide3.title').split('\n'),
+              descriptionLines: context
+                  .tr('intro.slide3.description')
+                  .split('\n'),
+              isLastPage: true,
+              onNext: null,
+              onGetStarted: _goToOnboarding,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -152,6 +163,7 @@ class _IntroSlide extends StatelessWidget {
   const _IntroSlide({
     required this.currentPage,
     required this.pageCount,
+    required this.maxContentWidth,
     required this.imagePath,
     required this.titleLines,
     required this.descriptionLines,
@@ -163,6 +175,7 @@ class _IntroSlide extends StatelessWidget {
 
   final int currentPage;
   final int pageCount;
+  final double maxContentWidth;
   final String imagePath;
   final double imageTopPadding;
   final List<String> titleLines;
@@ -174,11 +187,20 @@ class _IntroSlide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
     final imageHeight = size.height * 0.60;
+    const overlap = 50.0;
+    final descriptionText = descriptionLines
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .join('\n');
+
     return Stack(
+      fit: StackFit.expand,
       clipBehavior: Clip.none,
       children: [
         Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (imageTopPadding > 0) SizedBox(height: imageTopPadding),
             ClipRRect(
@@ -186,7 +208,11 @@ class _IntroSlide extends StatelessWidget {
               child: SizedBox(
                 width: size.width,
                 height: imageHeight,
-                child: Image.asset(imagePath, fit: BoxFit.cover),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                ),
               ),
             ),
             const Spacer(),
@@ -195,14 +221,9 @@ class _IntroSlide extends StatelessWidget {
         Positioned(
           left: 0,
           right: 0,
-          top: imageHeight - 50,
+          top: imageHeight - overlap,
+          bottom: 0,
           child: Container(
-            padding: EdgeInsets.fromLTRB(
-              AppSpacing.xl,
-              AppSpacing.md,
-              AppSpacing.xl,
-              AppSpacing.xl + MediaQuery.paddingOf(context).bottom,
-            ),
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.only(
@@ -210,76 +231,113 @@ class _IntroSlide extends StatelessWidget {
                 topRight: Radius.circular(AppRadius.xl),
               ),
             ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * 0.55,
-              ),
-              child: SingleChildScrollView(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxContentWidth),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceVariant,
-                        borderRadius: BorderRadius.circular(AppRadius.full),
-                      ),
-                    ),
-                    SizedBox(height: AppSpacing.lg + 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        pageCount,
-                        (index) => Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppSpacing.sm / 2,
-                          ),
-                          child: _PageDot(active: index == currentPage),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.xl,
+                          AppSpacing.md,
+                          AppSpacing.xl,
+                          AppSpacing.sm,
+                        ),
+                        child: LayoutBuilder(
+                          builder: (context, c) {
+                            return FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.topCenter,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: c.maxWidth,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        width: 40,
+                                        height: 4,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.surfaceVariant,
+                                          borderRadius: BorderRadius.circular(
+                                            AppRadius.full,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: AppSpacing.lg + 12),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(
+                                        pageCount,
+                                        (index) => Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: AppSpacing.sm / 2,
+                                          ),
+                                          child: _PageDot(
+                                            active: index == currentPage,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: AppSpacing.lg),
+                                    ...titleLines.map(
+                                      (line) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 4),
+                                        child: AppTitle(
+                                          line,
+                                          style:
+                                              AppTypography.onboardingTitle,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    if (descriptionText.isNotEmpty) ...[
+                                      SizedBox(height: AppSpacing.sm + 4),
+                                      Text(
+                                        descriptionText,
+                                        style: AppTypography
+                                            .onboardingDescription,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
-                    SizedBox(height: AppSpacing.xl),
-                    ...titleLines.map(
-                      (line) => Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: AppTitle(
-                            line,
-                            style: AppTypography.onboardingTitle,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                          ),
-                        ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        AppSpacing.xl,
+                        AppSpacing.sm,
+                        AppSpacing.xl,
+                        AppSpacing.xl + bottomInset,
                       ),
+                      child: isLastPage
+                          ? AppPrimaryButton(
+                              label: context.tr('intro.get_started'),
+                              onPressed: onGetStarted,
+                              borderRadius: 10,
+                            )
+                          : AppPrimaryButton(
+                              label: context.tr('common.next'),
+                              onPressed: onNext ?? () {},
+                              borderRadius: 10,
+                            ),
                     ),
-                    SizedBox(height: AppSpacing.md),
-                    ...descriptionLines.map(
-                      (line) => SizedBox(
-                        width: double.infinity,
-                        child: AppBody(
-                          line,
-                          style: AppTypography.onboardingDescription,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: AppSpacing.xxl + 48),
-                    if (isLastPage)
-                      AppPrimaryButton(
-                        label: context.tr('intro.get_started'),
-                        onPressed: onGetStarted,
-                        borderRadius: 10,
-                      )
-                    else
-                      AppPrimaryButton(
-                        label: context.tr('common.next'),
-                        onPressed: onNext ?? () {},
-                        borderRadius: 10,
-                      ),
                   ],
                 ),
               ),

@@ -11,7 +11,8 @@
     "skip": "Atla",
     "done": "Bitti",
     "loading": "Yükleniyor...",
-    "error": "Bir hata oluştu"
+    "error": "Bir hata oluştu",
+    "default_display_name": "Öğrenci"
   },
   "word_practice": {
     "title": "Kelime Pratiği",

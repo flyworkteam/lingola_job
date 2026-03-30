@@ -103,53 +103,48 @@ class _Onboarding2ScreenState extends State<Onboarding2Screen> {
                         child: _SearchBar(controller: _searchController),
                       ),
                     ),
-                    Transform.translate(
-                      offset: const Offset(0, -33),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          const gap =
-                              AppSpacing.lg; // 16px — kartlar arası boşluk
-                          const maxCellSize =
-                              160.0; // kartlar dar ve kısa (max 130x130)
-                          final w = constraints.maxWidth;
-                          final cellSize = ((w - gap) / 2).clamp(
-                            0.0,
-                            maxCellSize,
-                          );
-                          final gridWidth = 2 * cellSize + gap;
-                          return Center(
-                            child: SizedBox(
-                              width: gridWidth,
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: gap,
-                                      mainAxisSpacing: gap,
-                                      mainAxisExtent: cellSize,
-                                    ),
-                                itemCount: _filteredProfessions(context).length,
-                                itemBuilder: (context, index) {
-                                  final p = _filteredProfessions(
-                                    context,
-                                  )[index];
-                                  final isSelected =
-                                      _selectedProfession == p.id;
-                                  return _ProfessionCard(
-                                    profession: p,
-                                    isSelected: isSelected,
-                                    onTap: () => setState(
-                                      () => _selectedProfession = p.id,
-                                    ),
-                                  );
-                                },
-                              ),
+                    SizedBox(height: AppSpacing.xl),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        const gap = AppSpacing.lg;
+                        const maxCellSize = 160.0;
+                        final w = constraints.maxWidth;
+                        final cellSize = ((w - gap) / 2).clamp(
+                          0.0,
+                          maxCellSize,
+                        );
+                        final gridWidth = 2 * cellSize + gap;
+                        return Center(
+                          child: SizedBox(
+                            width: gridWidth,
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: gap,
+                                    mainAxisSpacing: gap,
+                                    mainAxisExtent: cellSize,
+                                  ),
+                              itemCount: _filteredProfessions(context).length,
+                              itemBuilder: (context, index) {
+                                final p =
+                                    _filteredProfessions(context)[index];
+                                final isSelected =
+                                    _selectedProfession == p.id;
+                                return _ProfessionCard(
+                                  profession: p,
+                                  isSelected: isSelected,
+                                  onTap: () => setState(
+                                    () => _selectedProfession = p.id,
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: AppSpacing.xl),
                     Opacity(

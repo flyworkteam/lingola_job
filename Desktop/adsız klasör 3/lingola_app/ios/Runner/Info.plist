@@ -91,8 +91,6 @@
 	<string>We need access to your photo library to let you choose a profile picture.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>We need speech recognition to understand the words you say during the reading test.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>This is used for Facebook login and to provide a personalized experience.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

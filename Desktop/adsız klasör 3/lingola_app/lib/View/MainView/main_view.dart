@@ -32,7 +32,7 @@ class MainScreen extends ConsumerStatefulWidget {
 
 class _MainScreenState extends ConsumerState<MainScreen> with WidgetsBindingObserver {
   late int _currentIndex;
-  String _userName = 'Jhon Doe';
+  String _userName = '';
   String? _pendingLearnRoute;
   int? _pendingLibraryTabIndex;
   int _avatarVersion = 0;

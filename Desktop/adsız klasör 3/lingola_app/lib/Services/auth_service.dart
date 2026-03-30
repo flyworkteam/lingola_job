@@ -206,6 +206,28 @@ class AuthService {
     // await _facebookAuth.logOut(); // Facebook girişi şimdilik kapalı
   }
 
+  /// Firebase hesabını kalıcı olarak siler. Başarılı: null, hata: kullanıcıya gösterilecek mesaj.
+  /// Misafir / oturum yoksa yalnızca [signOut] benzeri temizlik için null döner.
+  Future<String?> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      await signOut();
+      return null;
+    }
+    try {
+      await user.delete();
+      await _googleSignIn.signOut();
+      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        return 'Güvenlik için lütfen çıkış yapıp tekrar giriş yapın, ardından hesabı silmeyi deneyin.';
+      }
+      return e.message ?? 'Hesap silinemedi.';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   /// Giriş yapmış kullanıcının ID token'ını döner.
   /// Kullanıcı yoksa veya token alınamazsa `null`.
   Future<String?> getIdToken() async {

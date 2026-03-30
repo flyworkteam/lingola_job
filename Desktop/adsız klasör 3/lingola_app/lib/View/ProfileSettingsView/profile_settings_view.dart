@@ -19,6 +19,7 @@ import 'package:lingola_app/theme/spacing.dart';
 import 'package:lingola_app/theme/typography.dart';
 import 'package:lingola_app/utils/profile_avatar_storage.dart';
 import 'package:lingola_app/widgets/dismiss_keyboard.dart';
+import 'package:lingola_app/widgets/default_avatar_placeholder.dart';
 
 /// Profil ayarları sayfası: avatar, ad, e-posta alanları.
 class ProfileSettingsScreen extends StatefulWidget {
@@ -509,12 +510,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     height: 100,
                     fit: BoxFit.cover,
                   )
-                : Image.asset(
-                    'assets/dummy/image 2.png',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
+                : const DefaultAvatarPlaceholder(size: 100),
           ),
         ),
         Positioned(
@@ -1170,13 +1166,26 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   Future<void> _onAccountDeleted() async {
-    await AuthService.instance.signOut();
+    final err = await AuthService.instance.deleteAccount();
+    if (!mounted) return;
+    if (err != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(err),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
     await AppPrefs.clearOnboardingCompleted();
     if (!mounted) return;
     context.go(AppPaths.splash);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.tr('profile_settings.account_deleted'), style: GoogleFonts.nunitoSans(color: Colors.white)),
+        content: Text(
+          context.tr('profile_settings.account_deleted'),
+          style: GoogleFonts.nunitoSans(color: Colors.white),
+        ),
         backgroundColor: const Color(0xFFC1443D),
         behavior: SnackBarBehavior.floating,
       ),

@@ -172,6 +172,55 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
     super.dispose();
   }
 
+  static const Color _bubbleLineGray = Color(0xFFE0E0E0);
+
+  Widget _bubbleSkeletonLine({required double width}) {
+    return Container(
+      width: width,
+      height: 6,
+      decoration: BoxDecoration(
+        color: _bubbleLineGray,
+        borderRadius: BorderRadius.circular(3),
+      ),
+    );
+  }
+
+  Widget _topBubblePlaceholder() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _bubbleSkeletonLine(width: 88),
+        const SizedBox(height: 4),
+        _bubbleSkeletonLine(width: 72),
+      ],
+    );
+  }
+
+  Widget _bottomBubblePlaceholder() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SvgPicture.asset(
+          'assets/onboard/Frame.svg',
+          width: 24,
+          height: 24,
+          fit: BoxFit.contain,
+        ),
+        const SizedBox(width: 8),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _bubbleSkeletonLine(width: 88),
+            const SizedBox(height: 4),
+            _bubbleSkeletonLine(width: 68),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -276,10 +325,12 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                     scale: _centerScale,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return SizedBox(
-                            height: constraints.maxHeight,
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: SizedBox(
+                            width: 360,
+                            height: 400,
                             child: AnimatedBuilder(
                               animation: Listenable.merge([
                                 _floatController,
@@ -363,10 +414,9 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                                             children: [
                                               Container(
                                                 width: 154,
-                                                height: 34,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                   horizontal: 14,
-                                                  vertical: 10,
+                                                  vertical: 8,
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: AppColors.white,
@@ -380,40 +430,8 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                                                         ),
                                                       ),
                                                 ),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      height: 3,
-                                                      width: 117,
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .placeholderBar,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              2,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 6),
-                                                    Container(
-                                                      height: 3,
-                                                      width: 67,
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .placeholderBar,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              2,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                child: Center(
+                                                  child: _topBubblePlaceholder(),
                                                 ),
                                               ),
                                             ],
@@ -423,7 +441,7 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                                     ),
                                     Positioned(
                                       left: 145,
-                                      top: 340,
+                                      top: 260,
                                       child: FadeTransition(
                                         opacity: _char3Opacity,
                                         child: Transform.translate(
@@ -436,10 +454,9 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                                             children: [
                                               Container(
                                                 width: 154,
-                                                height: 34,
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                   horizontal: 14,
-                                                  vertical: 10,
+                                                  vertical: 8,
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: AppColors.white,
@@ -453,59 +470,8 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                                                         ),
                                                       ),
                                                 ),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    SvgPicture.asset(
-                                                      'assets/onboard/Frame.svg',
-                                                      width: 24,
-                                                      height: 24,
-                                                      fit: BoxFit.contain,
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          height: 3,
-                                                          width: 85,
-                                                          decoration: BoxDecoration(
-                                                            color: AppColors
-                                                                .placeholderBar,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  2,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 6),
-                                                        Container(
-                                                          height: 3,
-                                                          width: 50,
-                                                          decoration: BoxDecoration(
-                                                            color: AppColors
-                                                                .placeholderBar,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  2,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
+                                                child: Center(
+                                                  child: _bottomBubblePlaceholder(),
                                                 ),
                                               ),
                                             ],
@@ -517,8 +483,8 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                                 );
                               },
                             ),
-                          );
-                        },
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -540,14 +506,17 @@ class _Onboarding7ScreenState extends State<Onboarding7Screen>
                 builder: (context, child) {
                   final value = _progressAnimation.value;
                   final clampedOpacity = value.clamp(0.5, 1.0);
+                  final ready = value >= 1.0;
                   return Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () async {
-                        await AppPrefs.setOnboardingCompleted();
-                        if (!context.mounted) return;
-                        context.go(AppPaths.home);
-                      },
+                      onTap: !ready
+                          ? null
+                          : () async {
+                              await AppPrefs.setOnboardingCompleted();
+                              if (!context.mounted) return;
+                              context.go(AppPaths.home);
+                            },
                       borderRadius: BorderRadius.circular(AppRadius.xl),
                       child: Container(
                         width: double.infinity,

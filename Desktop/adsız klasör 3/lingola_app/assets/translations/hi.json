@@ -11,7 +11,8 @@
     "skip": "छोड़ें",
     "done": "हो गया",
     "loading": "लोड हो रहा है...",
-    "error": "एक त्रुटि हुई"
+    "error": "एक त्रुटि हुई",
+    "default_display_name": "शिक्षार्थी"
   },
   "word_practice": {
     "title": "शब्द अभ्यास",

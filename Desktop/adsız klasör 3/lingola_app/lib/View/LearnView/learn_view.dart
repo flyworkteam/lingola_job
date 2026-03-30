@@ -12,13 +12,14 @@ import 'package:lingola_app/theme/radius.dart';
 import 'package:lingola_app/theme/spacing.dart';
 import 'package:lingola_app/theme/typography.dart';
 import 'package:lingola_app/utils/profile_avatar_storage.dart';
+import 'package:lingola_app/widgets/default_avatar_placeholder.dart';
 
 /// Learn sekmesi: header (geri + başlık + selamlama + avatar) + Learning Content kartları.
 /// Header kaydırma ile küçülür (SliverAppBar).
 class LearnScreen extends StatefulWidget {
   const LearnScreen({
     super.key,
-    this.userName = 'Jhon Doe',
+    this.userName = '',
     this.savedWordsCount = 255,
     this.totalXp = 0,
     this.avatarVersion = 0,
@@ -167,7 +168,11 @@ class _LearnScreenState extends State<LearnScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                 Text(
-                                  context.tr('learn.hello_user', args: [widget.userName.split(' ').first]),
+                                  context.tr('learn.hello_user', args: [
+                                    widget.userName.trim().isEmpty
+                                        ? context.tr('common.default_display_name')
+                                        : widget.userName.split(RegExp(r'\s+')).first,
+                                  ]),
                                   style: AppTypography.titleLarge.copyWith(
                                     fontSize: 32,
                                     fontWeight: FontWeight.w700,
@@ -198,12 +203,7 @@ class _LearnScreenState extends State<LearnScreen> {
                                           height: 56,
                                           fit: BoxFit.cover,
                                         )
-                                      : Image.asset(
-                                          'assets/dummy/image 2.png',
-                                          width: 56,
-                                          height: 56,
-                                          fit: BoxFit.cover,
-                                        ),
+                                      : const DefaultAvatarPlaceholder(size: 56),
                                 ),
                               ),
                             ],

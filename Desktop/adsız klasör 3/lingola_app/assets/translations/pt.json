@@ -11,7 +11,8 @@
     "skip": "Pular",
     "done": "Concluído",
     "loading": "Carregando...",
-    "error": "Ocorreu um erro"
+    "error": "Ocorreu um erro",
+    "default_display_name": "Aprendiz"
   },
   "word_practice": {
     "title": "Prática de palavras",

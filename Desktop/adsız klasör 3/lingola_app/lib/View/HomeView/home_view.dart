@@ -12,6 +12,7 @@ import 'package:lingola_app/theme/colors.dart';
 import 'package:lingola_app/theme/spacing.dart';
 import 'package:lingola_app/theme/typography.dart';
 import 'package:lingola_app/widgets/app_card.dart';
+import 'package:lingola_app/widgets/default_avatar_placeholder.dart';
 import 'package:lingola_app/widgets/app_gradient_button.dart';
 import 'package:lingola_app/widgets/app_icon_button.dart';
 import 'package:lingola_app/utils/profile_avatar_storage.dart';
@@ -31,7 +32,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     this.title = 'Lingola',
-    this.userName = 'Jhon Doe',
+    this.userName = '',
     this.isPremium = false,
     this.savedWordsCount = 0,
     this.totalXp = 0,
@@ -165,6 +166,12 @@ class _HomeScreenState extends State<HomeScreen> {
   double get _continueLessonProgress => _levelProgress;
   int get _continueLessonPercent => _levelPercent;
 
+  String _firstHelloName(BuildContext context) {
+    final n = widget.userName.trim();
+    if (n.isEmpty) return context.tr('common.default_display_name');
+    return n.split(RegExp(r'\s+')).first;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_hasSyncedLocaleFromContext) {
@@ -284,12 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     height: 56,
                                     fit: BoxFit.cover,
                                   )
-                                : Image.asset(
-                                    'assets/dummy/image 2.png',
-                                    width: 56,
-                                    height: 56,
-                                    fit: BoxFit.cover,
-                                  ),
+                                : const DefaultAvatarPlaceholder(size: 56),
                           ),
                         ),
                         AppSpacing.md.width,
@@ -374,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'home.hello_user'.tr(args: [widget.userName.split(' ').first]),
+                                'home.hello_user'.tr(args: [_firstHelloName(context)]),
                                 style: AppTypography.bodySmall.copyWith(
                                   color: AppColors.onSurfaceVariant,
                                 ),
@@ -532,24 +534,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMaskGroupCards(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: widget.onLearnNewWordsTap,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: SizedBox(
-              width: _cardWidth,
-              height: _cardHeight,
-              child: Stack(
-                children: [
-                  SvgPicture.asset(
-                    'assets/icons/mask_group.svg',
-                    fit: BoxFit.fill,
-                    width: _cardWidth,
-                    height: _cardHeight,
-                  ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gap = _cardGap;
+        final cardW = ((constraints.maxWidth - gap) / 2).clamp(130.0, _cardWidth);
+        final cardH = _cardHeight * cardW / _cardWidth;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: widget.onLearnNewWordsTap,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: SizedBox(
+                  width: cardW,
+                  height: cardH,
+                  child: Stack(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/mask_group.svg',
+                        fit: BoxFit.fill,
+                        width: cardW,
+                        height: cardH,
+                      ),
                               Positioned(
                                 top: _maskCardIconTop,
                                 left: AppSpacing.lg,
@@ -608,21 +615,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-        ),
-        SizedBox(width: _cardGap),
-        GestureDetector(
-          onTap: () => context.push(AppPaths.mostFrequentlyUsedTerms),
-          child: SizedBox(
-            width: _cardWidth,
-            height: _cardHeight,
-            child: Stack(
-              children: [
-                SvgPicture.asset(
-                  'assets/icons/mask_group_1.svg',
-                  fit: BoxFit.fill,
-                  width: _cardWidth,
-                  height: _cardHeight,
-                ),
+            ),
+            SizedBox(width: gap),
+            GestureDetector(
+              onTap: () => context.push(AppPaths.mostFrequentlyUsedTerms),
+              child: SizedBox(
+                width: cardW,
+                height: cardH,
+                child: Stack(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/mask_group_1.svg',
+                      fit: BoxFit.fill,
+                      width: cardW,
+                      height: cardH,
+                    ),
                             Positioned(
                               top: _maskCardIconTop,
                               left: AppSpacing.lg,
@@ -675,8 +682,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                ],
-              );
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildGetPremiumCard() {
@@ -876,15 +885,21 @@ class _HomeScreenState extends State<HomeScreen> {
   static const double _bottomCardHeight = 177;
 
   Widget _buildBottomCards(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: widget.onSavedWordsTap,
-            child: SizedBox(
-              width: _bottomCardWidth,
-              height: _bottomCardHeight,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gap = _bottomCardGap;
+        final cardW = ((constraints.maxWidth - gap) / 2)
+            .clamp(120.0, _bottomCardWidth);
+        final cardH = _bottomCardHeight * cardW / _bottomCardWidth;
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: widget.onSavedWordsTap,
+                child: SizedBox(
+                  width: cardW,
+                  height: cardH,
                         child: AppCard(
                         borderRadius: 22,
                         padding: const EdgeInsets.symmetric(
@@ -961,12 +976,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-          SizedBox(width: _bottomCardGap),
-          GestureDetector(
-            onTap: widget.onDictionaryTap,
-            child: SizedBox(
-              width: _bottomCardWidth,
-              height: _bottomCardHeight,
+              SizedBox(width: gap),
+              GestureDetector(
+                onTap: widget.onDictionaryTap,
+                child: SizedBox(
+                  width: cardW,
+                  height: cardH,
                         child: AppCard(
                           borderRadius: 22,
                           padding: const EdgeInsets.symmetric(
@@ -1043,8 +1058,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                ],
-              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

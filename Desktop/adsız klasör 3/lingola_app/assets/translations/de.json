@@ -11,7 +11,8 @@
     "skip": "Überspringen",
     "done": "Fertig",
     "loading": "Wird geladen...",
-    "error": "Ein Fehler ist aufgetreten"
+    "error": "Ein Fehler ist aufgetreten",
+    "default_display_name": "Lernende/r"
   },
   "word_practice": {
     "title": "Wörter üben",

@@ -16,13 +16,14 @@ import 'package:lingola_app/theme/spacing.dart';
 import 'package:lingola_app/theme/typography.dart';
 import 'package:lingola_app/utils/profile_avatar_storage.dart';
 import 'package:lingola_app/widgets/app_icon_button.dart';
+import 'package:lingola_app/widgets/default_avatar_placeholder.dart';
 
 /// Profil sayfası: header, avatar, ayar listesi, versiyon.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
     super.key,
-    this.userName = 'Jhon Doe',
-    this.userEmail = 'jhon@gmail.com',
+    this.userName = '',
+    this.userEmail = '',
     this.totalXp = 0,
     this.isPremium = false,
     this.onUserNameChanged,
@@ -221,17 +222,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: 100,
                     fit: BoxFit.cover,
                   )
-                : Image.asset(
-                    'assets/dummy/image 2.png',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
+                : const DefaultAvatarPlaceholder(size: 100),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          _userName,
+          _userName.trim().isEmpty
+              ? context.tr('common.default_display_name')
+              : _userName,
           style: AppTypography.titleLarge.copyWith(
             fontWeight: FontWeight.w700,
             color: AppColors.onSurface,
